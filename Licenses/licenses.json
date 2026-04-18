@@ -1,6 +1,7 @@
 {
   "schema_version": "1.0",
   "last_updated": "2026-04-18",
+  "source": "https://spdx.org/licenses/",
   "licenses": [
     {
       "id": "MIT",
@@ -16,14 +17,12 @@
         "requires_attribution": true,
         "requires_source_disclosure": false,
         "requires_same_license": false,
+        "requires_non_commercial": false,
+        "requires_share_alike": false,
         "includes_patent_grant": false,
         "has_network_copyleft": false,
-        "disclaims_liability_warranty": true
-      },
-      "compatibility": {
-        "compatible_with": ["Apache-2.0", "BSD-3-Clause", "GPL-3.0", "LGPL-3.0", "MPL-2.0"],
-        "incompatible_with": ["CC-BY-NC-4.0"],
-        "notes": "One-way compatible with GPL-3.0"
+        "disclaims_liability_warranty": true,
+        "is_content_license": false
       },
       "metadata": {
         "osi_approved": true,
@@ -34,8 +33,8 @@
     },
     {
       "id": "GPL-3.0",
-      "spdx_id": "GPL-3.0",
-      "name": "GNU General Public License v3.0",
+      "spdx_id": "GPL-3.0-only",
+      "name": "GNU General Public License v3.0 only",
       "type": "strong_copyleft",
       "description": "Ensures all derivatives and distributed versions remain open source.",
       "attributes": {
@@ -46,20 +45,46 @@
         "requires_attribution": true,
         "requires_source_disclosure": true,
         "requires_same_license": true,
+        "requires_non_commercial": false,
+        "requires_share_alike": true,
         "includes_patent_grant": true,
         "has_network_copyleft": false,
-        "disclaims_liability_warranty": true
-      },
-      "compatibility": {
-        "compatible_with": ["LGPL-3.0", "AGPL-3.0", "MPL-2.0"],
-        "incompatible_with": ["MIT (if combined improperly)", "Apache-1.1", "CC-BY-NC-4.0"],
-        "notes": "Only compatible with other copyleft or permissive licenses explicitly approved by FSF"
+        "disclaims_liability_warranty": true,
+        "is_content_license": false
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
         "popularity_rank": 3,
         "explanation_hint": "Use when you want to guarantee all downstream modifications stay open."
+      }
+    },
+    {
+      "id": "CC-BY-NC-4.0",
+      "spdx_id": "CC-BY-NC-4.0",
+      "name": "Creative Commons Attribution-NonCommercial 4.0",
+      "type": "content_license",
+      "description": "Allows sharing and adaptation for non-commercial purposes only.",
+      "attributes": {
+        "allows_commercial": false,
+        "allows_modification": true,
+        "allows_distribution": true,
+        "allows_private_use": true,
+        "requires_attribution": true,
+        "requires_source_disclosure": false,
+        "requires_same_license": false,
+        "requires_non_commercial": true,
+        "requires_share_alike": false,
+        "includes_patent_grant": false,
+        "has_network_copyleft": false,
+        "disclaims_liability_warranty": true,
+        "is_content_license": true
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": false,
+        "popularity_rank": 12,
+        "explanation_hint": "Designed for creative content, not software. Prohibits commercial use."
       }
     }
   ]

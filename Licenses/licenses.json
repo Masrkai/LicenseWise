@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-04-18",
+  "licenses": [
+    {
+      "id": "MIT",
+      "spdx_id": "MIT",
+      "name": "MIT License",
+      "type": "permissive",
+      "description": "Short and simple permissive license with only one requirement.",
+      "attributes": {
+        "allows_commercial": true,
+        "allows_modification": true,
+        "allows_distribution": true,
+        "allows_private_use": true,
+        "requires_attribution": true,
+        "requires_source_disclosure": false,
+        "requires_same_license": false,
+        "includes_patent_grant": false,
+        "has_network_copyleft": false,
+        "disclaims_liability_warranty": true
+      },
+      "compatibility": {
+        "compatible_with": ["Apache-2.0", "BSD-3-Clause", "GPL-3.0", "LGPL-3.0", "MPL-2.0"],
+        "incompatible_with": ["CC-BY-NC-4.0"],
+        "notes": "One-way compatible with GPL-3.0"
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 1,
+        "explanation_hint": "Best for maximum adoption with minimal legal overhead."
+      }
+    },
+    {
+      "id": "GPL-3.0",
+      "spdx_id": "GPL-3.0",
+      "name": "GNU General Public License v3.0",
+      "type": "strong_copyleft",
+      "description": "Ensures all derivatives and distributed versions remain open source.",
+      "attributes": {
+        "allows_commercial": true,
+        "allows_modification": true,
+        "allows_distribution": true,
+        "allows_private_use": true,
+        "requires_attribution": true,
+        "requires_source_disclosure": true,
+        "requires_same_license": true,
+        "includes_patent_grant": true,
+        "has_network_copyleft": false,
+        "disclaims_liability_warranty": true
+      },
+      "compatibility": {
+        "compatible_with": ["LGPL-3.0", "AGPL-3.0", "MPL-2.0"],
+        "incompatible_with": ["MIT (if combined improperly)", "Apache-1.1", "CC-BY-NC-4.0"],
+        "notes": "Only compatible with other copyleft or permissive licenses explicitly approved by FSF"
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 3,
+        "explanation_hint": "Use when you want to guarantee all downstream modifications stay open."
+      }
+    }
+  ]
+}

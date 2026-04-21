@@ -19,14 +19,12 @@ block like
         "requires_attribution": true,
         "requires_source_disclosure": false,
         "requires_same_license": false,
+        "requires_non_commercial": false,
+        "requires_share_alike": false,
         "includes_patent_grant": false,
         "has_network_copyleft": false,
-        "disclaims_liability_warranty": true
-      },
-      "compatibility": {
-        "compatible_with": ["Apache-2.0", "BSD-3-Clause", "GPL-3.0", "LGPL-3.0", "MPL-2.0"],
-        "incompatible_with": ["CC-BY-NC-4.0"],
-        "notes": "One-way compatible with GPL-3.0"
+        "disclaims_liability_warranty": true,
+        "is_content_license": false
       },
       "metadata": {
         "osi_approved": true,
@@ -35,7 +33,6 @@ block like
         "explanation_hint": "Best for maximum adoption with minimal legal overhead."
       }
     },
-
 ```
 
 BEFORE you add a license check it here:

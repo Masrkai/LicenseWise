@@ -5,6 +5,14 @@
 - **Select the most appropriate license** for their new software project based on goals, distribution model, and legal preferences
 - **Analyze existing software licenses** to understand permissions, obligations, and restrictions before reuse/integration
 
+# DISCLAIMER
+
+This is just a project by CS students we aren't lawyers or claim to be layers and this didn't have a review from a lawyer either
+We are SIMPLY just trying to de-mystify this area from our professional life to be able to talk and have a conversation with developers/lawyers
+or simply people who are involved in the matter
+
+don't take a result as definitive 100% correct or claim that we have made any damages to you as we ARE NOT RESPONSIBLE for how anyone uses this software
+
 ---
 
 ## Knowledge Representation (Rule-Based System – Recommended)

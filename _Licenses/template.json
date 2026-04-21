@@ -1,0 +1,37 @@
+{
+  "id": "<internal_identifier>",
+  "spdx_id": "<SPDX_SHORT_IDENTIFIER>",
+  "name": "<Human Readable License Name>",
+  "type": "<permissive|copyleft|weak_copyleft|proprietary|other>",
+  "description": "<Concise one-sentence summary>",
+  
+  "permissions": {
+    "commercial_use": <boolean>,
+    "distribution": <boolean>,
+    "modification": <boolean>,
+    "private_use": <boolean>
+  },
+  
+  "conditions": {
+    "include_copyright": <boolean>,
+    "document_changes": <boolean>,
+    "disclose_source": <boolean>,
+    "include_license": <boolean>,
+    "net_copyleft": <boolean>,
+    "same_license": <boolean>
+  },
+  
+  "limitations": {
+    "liability": <boolean>,
+    "trademark_use": <boolean>,
+    "warranty": <boolean>,
+    "patent_use": <boolean>
+  },
+  
+  "metadata": {
+    "osi_approved": <boolean>,
+    "fsf_free": <boolean>,
+    "popularity_rank": <integer_or_null>,
+    "explanation_hint": "<Optional practical guidance>"
+  }
+}

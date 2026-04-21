@@ -37,3 +37,4 @@ block like
 
 BEFORE you add a license check it here:
 - https://spdx.org/licenses/
+- https://choosealicense.com/

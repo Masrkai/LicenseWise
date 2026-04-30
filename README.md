@@ -215,4 +215,3 @@ LicenseWise/
 4. **Prototype early**: CLI version first, then enhance with explanations/UI
 5. **Document as you build**: Capture rule sources, design decisions, test cases
 
-Would you like me to help you draft the first 10 rules, design the JSON schema for licenses, or sketch the inference engine logic next? 🛠️

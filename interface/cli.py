@@ -4,8 +4,8 @@ Interactive command-line interface for license recommendation and analysis.
 """
 
 import sys
-from inference.inference_engine import InferenceEngine
-from explanation.explanation_engine import ExplanationEngine
+from Inference.inference_engine import InferenceEngine
+from Inference.explanation_engine import ExplanationEngine
 
 
 class LicenseWiseCLI:

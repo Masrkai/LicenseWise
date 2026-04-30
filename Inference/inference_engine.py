@@ -3,8 +3,8 @@ Inference Engine for LicenseWise
 Implements forward chaining for license recommendation and backward chaining for compliance analysis.
 """
 
-from knowledge.rules import Rules
-from explanation.explanation_engine import ExplanationEngine
+from Knowledge.rules import Rules
+from Inference.explanation_engine import ExplanationEngine
 
 
 class InferenceEngine:

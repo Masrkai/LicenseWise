@@ -1,10 +1,8 @@
 """
 Inference Engine for LicenseWise
 Implements forward chaining for license recommendation and backward chaining for compliance analysis.
+Records every fired rule in the explanation engine to show HOW results were reached.
 """
-
-from Knowledge.rules import Rules
-from Inference.explanation_engine import ExplanationEngine
 
 
 class InferenceEngine:
@@ -12,10 +10,14 @@ class InferenceEngine:
     Hybrid inference engine supporting:
     - Forward chaining: Facts → Rules → Recommendations
     - Backward chaining: Goal → Required facts → Verification
+
+    Every fired rule is recorded in the explanation engine to build
+    a traceable reasoning path showing HOW the conclusion was reached.
     """
 
-    def __init__(self):
-        self.explanation = ExplanationEngine()
+    def __init__(self, rules_list, explanation_engine):
+        self.rules = rules_list
+        self.explanation = explanation_engine
         self.working_memory = {
             "recommended": set(),
             "eliminated": set(),
@@ -30,35 +32,40 @@ class InferenceEngine:
             "warnings": [],
         }
         self.explanation.trace = []
+        self.explanation.fired_rules = []
 
     def forward_chain(self, facts):
         """
         Forward chaining: Given user facts, fire all matching rules.
+        Records each fired rule in the explanation engine to show HOW
+        the final recommendation was reached.
+
         Returns the final working memory state.
         """
         self.reset()
 
-        for rule in Rules:
+        print("\n🧠 Running forward chaining inference...")
+        print("   Matching your answers against the rule base...\n")
+
+        for rule in self.rules:
             try:
                 if rule.matches(facts):
-                    # Determine action type from rule name
-                    if rule.name.startswith("recommend_"):
-                        action_type = "recommend"
-                    elif rule.name.startswith("eliminate_"):
-                        action_type = "eliminate"
-                    elif rule.name.startswith("warn_"):
-                        action_type = "warn"
-                    else:
-                        action_type = "other"
-
-                    # Record in explanation trace
-                    self.explanation.record(rule.name, facts, rule.explanation, action_type)
+                    # Record this fired rule in the explanation engine
+                    # This captures HOW the engine reached its conclusion
+                    self.explanation.record_fired_rule(rule, facts)
 
                     # Fire the rule
                     rule.fire(self.working_memory)
             except Exception as e:
                 # Skip rules that fail due to missing facts
                 continue
+
+        print(f"   ✓ Evaluated {len(self.rules)} rules")
+        print(f"   ✓ Fired {len(self.explanation.trace)} rules")
+        print(f"   ✓ Found {len(self.working_memory['recommended'])} recommendations")
+        print(f"   ✓ Eliminated {len(self.working_memory['eliminated'])} licenses")
+        if self.working_memory['warnings']:
+            print(f"   ✓ Generated {len(self.working_memory['warnings'])} warnings")
 
         return self.working_memory
 
@@ -75,9 +82,15 @@ class InferenceEngine:
         Returns:
             dict with 'compatible' (bool), 'violations' (list), and 'explanation' (str)
         """
-        # Load license data
         import json
-        with open('knowledge/licenses.json', 'r') as f:
+        import os
+
+        # Find licenses.json relative to this file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        kb_dir = os.path.join(os.path.dirname(current_dir), 'knowledge')
+        json_path = os.path.join(kb_dir, 'licenses.json')
+
+        with open(json_path, 'r') as f:
             licenses_data = json.load(f)
 
         license_info = None
@@ -90,13 +103,14 @@ class InferenceEngine:
             return {
                 "compatible": False,
                 "violations": [f"License '{license_id}' not found in knowledge base."],
-                "explanation": "Unknown license identifier."
+                "explanation": "Unknown license identifier.",
+                "how": "The engine could not find this license in the SPDX database."
             }
 
         violations = []
         explanations = []
+        how_explanations = []
 
-        # Check each license condition against user facts
         conditions = license_info.get("conditions", {})
         permissions = license_info.get("permissions", {})
 
@@ -107,6 +121,10 @@ class InferenceEngine:
                 f"{license_id} requires disclosing source code (disclose_source=true), "
                 f"but you indicated closed_source=true."
             )
+            how_explanations.append(
+                f"HOW: The engine checked {license_id}'s conditions and found disclose_source=true. "
+                f"You answered closed_source=true, so this license was flagged as incompatible."
+            )
 
         # Same license check
         if conditions.get("same_license") and facts.get("wants_relicense"):
@@ -114,6 +132,10 @@ class InferenceEngine:
             explanations.append(
                 f"{license_id} requires derivatives use the same license (same_license=true), "
                 f"but you want freedom to relicense."
+            )
+            how_explanations.append(
+                f"HOW: The engine checked {license_id}'s conditions and found same_license=true. "
+                f"You answered wants_relicense=true, so this license was flagged as incompatible."
             )
 
         # Network copyleft check
@@ -123,6 +145,10 @@ class InferenceEngine:
                 f"{license_id} triggers copyleft on network use (net_copyleft=true). "
                 f"Running this as a closed-source SaaS violates this condition."
             )
+            how_explanations.append(
+                f"HOW: The engine checked {license_id}'s conditions and found net_copyleft=true. "
+                f"You answered saas=true AND closed_source=true, so this license was flagged."
+            )
 
         # Commercial use check
         if not permissions.get("commercial_use") and facts.get("commercial_use"):
@@ -130,21 +156,35 @@ class InferenceEngine:
             explanations.append(
                 f"{license_id} does not permit commercial use (commercial_use=false)."
             )
+            how_explanations.append(
+                f"HOW: The engine checked {license_id}'s permissions and found commercial_use=false. "
+                f"You answered commercial_use=true, so this license was flagged."
+            )
 
-        # Patent protection check
+        # Patent protection check (warning, not violation)
         if facts.get("need_patent_protection") and not license_info.get("limitations", {}).get("patent_use"):
-            # This is a warning, not a violation
             explanations.append(
                 f"⚠️ {license_id} does not include an explicit patent grant. "
                 f"Consider Apache-2.0 if patent protection is critical."
             )
+            how_explanations.append(
+                f"HOW: The engine checked {license_id}'s limitations and found patent_use=false. "
+                f"You answered need_patent_protection=true, so a warning was generated."
+            )
 
         compatible = len(violations) == 0
+
+        # Build the HOW explanation
+        how_result = "\n".join(how_explanations) if how_explanations else (
+            f"HOW: The engine checked all conditions of {license_id} against your answers. "
+            f"No conflicts were found, so the license is compatible with your intended use."
+        )
 
         return {
             "compatible": compatible,
             "violations": violations,
             "explanation": "\n".join(explanations) if explanations else f"{license_id} is compatible with your intended use.",
+            "how": how_result,
             "license_info": license_info
         }
 

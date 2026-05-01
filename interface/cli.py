@@ -1,19 +1,28 @@
 """
 CLI Interface for LicenseWise
 Interactive command-line interface for license recommendation and analysis.
+Shows HOW the engine reached each conclusion through reasoning traces.
 """
 
 import sys
+import os
+
+# Add project root to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from Inference.inference_engine import InferenceEngine
 from Inference.explanation_engine import ExplanationEngine
 
 
 class LicenseWiseCLI:
-    """Interactive CLI for LicenseWise."""
+    """Interactive CLI for LicenseWise with full explanation support."""
 
     def __init__(self):
-        self.engine = InferenceEngine()
+        # Import rules here to avoid circular imports
+        from Knowledge.rules import Rules
+        self.rules = Rules
         self.explanation = ExplanationEngine()
+        self.engine = InferenceEngine(self.rules, self.explanation)
         self.facts = {}
 
     def ask_yes_no(self, question, fact_name):
@@ -21,7 +30,7 @@ class LicenseWiseCLI:
         print(f"\n❓ {question}")
 
         # Show why this question matters
-        why = self.explanation.explain_question(fact_name, [])
+        why = self.explanation.explain_question(fact_name)
         print(f"   💡 Why we ask: {why}")
 
         while True:
@@ -41,7 +50,7 @@ class LicenseWiseCLI:
     def ask_choice(self, question, fact_name, choices):
         """Ask a multiple-choice question."""
         print(f"\n❓ {question}")
-        why = self.explanation.explain_question(fact_name, [])
+        why = self.explanation.explain_question(fact_name)
         print(f"   💡 Why we ask: {why}")
 
         for i, choice in enumerate(choices, 1):
@@ -71,10 +80,11 @@ class LicenseWiseCLI:
         print("Type 'skip' or press Enter to skip any question.\n")
 
         # Core questions
-        self.ask_yes_no("Will you distribute your software to others?", "closed_source")
-        # Invert: if they distribute, closed_source is False
-        if self.facts.get("closed_source") is not None:
-            self.facts["closed_source"] = not self.facts["closed_source"]
+        distribute = self.ask_yes_no("Will you distribute your software to others?", "distribute")
+        # Invert logic: if they distribute, closed_source is False
+        if self.facts.get("distribute") is not None:
+            self.facts["closed_source"] = not self.facts["distribute"]
+            del self.facts["distribute"]
 
         self.ask_yes_no("Will the software be used over a network (SaaS/web app)?", "saas")
         self.ask_yes_no("Is commercial use intended?", "commercial_use")
@@ -122,6 +132,10 @@ class LicenseWiseCLI:
         report = self.explanation.generate_final_report(wm, self.facts)
         print(report)
 
+        # Also print the concise HOW summary
+        summary = self.explanation.generate_summary(wm, self.facts)
+        print(summary)
+
     def run_analysis(self):
         """Run the license analysis mode."""
         print("=" * 60)
@@ -143,9 +157,10 @@ class LicenseWiseCLI:
         print("\nPlease answer a few quick questions:")
         self.facts = {}
 
-        self.ask_yes_no("Will you distribute the software?", "closed_source")
-        if self.facts.get("closed_source") is not None:
-            self.facts["closed_source"] = not self.facts["closed_source"]
+        distribute = self.ask_yes_no("Will you distribute the software?", "distribute")
+        if self.facts.get("distribute") is not None:
+            self.facts["closed_source"] = not self.facts["distribute"]
+            del self.facts["distribute"]
 
         self.ask_yes_no("Will it be used over a network (SaaS)?", "saas")
         self.ask_yes_no("Is commercial use intended?", "commercial_use")
@@ -167,6 +182,10 @@ class LicenseWiseCLI:
                 print(f"   • {v}")
 
         print(f"\n💡 Analysis:\n   {result['explanation']}")
+
+        # Show HOW the engine reached this conclusion
+        print(f"\n🔍 HOW the engine reached this conclusion:")
+        print(f"   {result['how']}")
 
         # Suggest alternatives if incompatible
         if not result["compatible"]:

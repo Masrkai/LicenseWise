@@ -11,9 +11,10 @@ Usage:
 
 import sys
 import argparse
+import os
 
 # Add project root to path
-sys.path.insert(0, '.')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from interface.cli import LicenseWiseCLI
 

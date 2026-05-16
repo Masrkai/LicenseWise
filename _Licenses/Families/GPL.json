@@ -1,0 +1,179 @@
+{
+  "schema_version": "1.5",
+  "last_updated": "2026-04-22",
+  "source": "https://spdx.org/licenses/ ",
+  "licenses": [
+
+    {
+      "id": "GPL-2.0",
+      "spdx_id": "GPL-2.0-only",
+      "name": "GNU General Public License v2.0 only",
+      "type": "copyleft",
+      "description": "Strong copyleft license that requires derivatives to be GPL-2.0; used by the Linux kernel.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": true
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 5,
+        "explanation_hint": "Historically significant (Linux kernel). Incompatible with Apache-2.0 and GPL-3.0 unless 'or later' clause is present. Use GPL-3.0 for new projects."
+      }
+    },
+
+    {
+      "id": "GPL-3.0",
+      "spdx_id": "GPL-3.0-only",
+      "name": "GNU General Public License v3.0 only",
+      "type": "copyleft",
+      "description": "Ensures all derivatives and distributed versions remain open source.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": true
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": true
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 3,
+        "explanation_hint": "Use when you want to guarantee all downstream modifications stay open."
+      }
+    },
+
+
+    {
+      "id": "LGPL-2.1",
+      "spdx_id": "LGPL-2.1-only",
+      "name": "GNU Lesser General Public License v2.1 only",
+      "type": "weak_copyleft",
+      "description": "Allows proprietary software to link against the library without copyleft infection, but modifications to the library itself must be shared.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 7,
+        "explanation_hint": "Key nuance: dynamic linking is generally safe for proprietary apps; static linking may trigger copyleft depending on interpretation. Always clarify linking type."
+      }
+    },
+
+    {
+      "id": "LGPL-3.0",
+      "spdx_id": "LGPL-3.0-only",
+      "name": "GNU Lesser General Public License v3.0 only",
+      "type": "weak_copyleft",
+      "description": "LGPL-2.1 terms plus GPL-3.0 additions (anti-tivoization, patent terms). Preferred for new libraries.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": true
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 9,
+        "explanation_hint": "Superset of LGPL-2.1 with GPL-3.0 protections. Use for libraries where you want wide adoption but still require library modifications to be shared."
+      }
+    },
+
+    {
+      "id": "AGPL-3.0",
+      "spdx_id": "AGPL-3.0-only",
+      "name": "GNU Affero General Public License v3.0",
+      "type": "copyleft",
+      "description": "GPL-3.0 extended with a network-use (SaaS) copyleft clause: users who interact over a network must be given source access.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": true,
+        "same_license": true
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": true
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 6,
+        "explanation_hint": "The 'viral SaaS' license. If you run AGPL software as a web service, you must offer users the source. Ideal for open-core business models. Businesses often avoid it for internal tools."
+      }
+    }
+
+  ]
+}

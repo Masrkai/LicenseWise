@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.5",
+  "last_updated": "2026-04-22",
+  "source": "https://spdx.org/licenses/ ",
+  "licenses": [
+    {
+      "id": "EPL-2.0",
+      "spdx_id": "EPL-2.0",
+      "name": "Eclipse Public License 2.0",
+      "type": "weak_copyleft",
+      "description": "File-level weak copyleft; modifications to EPL files must be shared. Allows combining with GPL-2.0+ under certain conditions.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": true
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 15,
+        "explanation_hint": "Used by Eclipse IDE, Jakarta EE, and many Java projects. Includes an explicit patent grant and a patent termination clause. Copyleft is per 'module', not per file."
+      }
+    },
+    {
+      "id": "Zlib",
+      "spdx_id": "Zlib",
+      "name": "zlib License",
+      "type": "permissive",
+      "description": "Very permissive; modified versions must be marked as changed and cannot be misrepresented as original. Common in game development.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": false,
+        "include_license": false,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 22,
+        "explanation_hint": "Used by zlib, libpng, SDL. Unlike MIT, you must mark modified sources as changed. No attribution required in binaries — common in game engines and embedded systems."
+      }
+    },
+    {
+      "id": "PostgreSQL",
+      "spdx_id": "PostgreSQL",
+      "name": "PostgreSQL License",
+      "type": "permissive",
+      "description": "Short permissive license similar to MIT/BSD, used exclusively by the PostgreSQL project.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 23,
+        "explanation_hint": "Essentially MIT-equivalent. Used only by PostgreSQL. No practical reason to use it for new projects — choose MIT or BSD-2 instead."
+      }
+    }
+  ]
+}

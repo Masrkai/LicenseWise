@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.5",
+  "last_updated": "2026-04-22",
+  "source": "https://spdx.org/licenses/ ",
+  "licenses": [
+    {
+      "id": "EUPL-1.2",
+      "spdx_id": "EUPL-1.2",
+      "name": "European Union Public Licence 1.2",
+      "type": "weak_copyleft",
+      "description": "Copyleft license designed for EU public sector software; legally valid across all EU jurisdictions. Compatible with several other copyleft licenses.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": true
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 18,
+        "explanation_hint": "Specifically designed for EU law. Compatible (at distribution) with GPL-2.0, GPL-3.0, AGPL-3.0, LGPL, MPL, CDDL, EPL. Good for government and public sector projects in Europe."
+      }
+    }
+  ]
+}

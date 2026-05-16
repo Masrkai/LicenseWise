@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.5",
+  "last_updated": "2026-04-22",
+  "source": "https://spdx.org/licenses/ ",
+  "licenses": [
+    {
+      "id": "BSD-2-Clause",
+      "spdx_id": "BSD-2-Clause",
+      "name": "BSD 2-Clause 'Simplified' License",
+      "type": "permissive",
+      "description": "Permissive license similar to MIT; requires attribution in source and binary distributions.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 4,
+        "explanation_hint": "Functionally near-identical to MIT. FreeBSD uses this. Slightly more formal phrasing. No patent grant."
+      }
+    },
+
+    {
+      "id": "BSD-3-Clause",
+      "spdx_id": "BSD-3-Clause",
+      "name": "BSD 3-Clause 'New' or 'Revised' License",
+      "type": "permissive",
+      "description": "BSD-2-Clause plus a non-endorsement clause prohibiting use of the project name for promotion without permission.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": true,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 4,
+        "explanation_hint": "Adds a non-endorsement clause vs BSD-2. Used by Django and many academic/research projects. No patent grant — consider Apache-2.0 for that."
+      }
+    }
+  ]
+}

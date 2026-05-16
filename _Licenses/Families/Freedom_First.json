@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.5",
+  "last_updated": "2026-04-22",
+  "source": "https://spdx.org/licenses/ ",
+  "licenses": [
+    {
+      "id": "MIT",
+      "spdx_id": "MIT",
+      "name": "MIT License",
+      "type": "permissive",
+      "description": "Short and simple permissive license with only one requirement.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 1,
+        "explanation_hint": "Best for maximum adoption with minimal legal overhead."
+      }
+    },
+    {
+      "id": "Apache-2.0",
+      "spdx_id": "Apache-2.0",
+      "name": "Apache License 2.0",
+      "type": "permissive",
+      "description": "Permissive license with an explicit patent grant and protection against contributor patent claims.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": true,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 2,
+        "explanation_hint": "Best permissive choice when patent protection matters, e.g. corporate or hardware-adjacent projects."
+      }
+    },
+    {
+      "id": "ISC",
+      "spdx_id": "ISC",
+      "name": "ISC License",
+      "type": "permissive",
+      "description": "Functionally equivalent to MIT/BSD-2-Clause but shorter; default for many npm packages.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 6,
+        "explanation_hint": "Preferred by OpenBSD; common in Node.js ecosystem. Legally equivalent to MIT — choose whichever your ecosystem prefers."
+      }
+    },
+
+    {
+      "id": "Unlicense",
+      "spdx_id": "Unlicense",
+      "name": "The Unlicense",
+      "type": "permissive",
+      "description": "Dedicates software to the public domain; no restrictions whatsoever.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": false,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": false,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 11,
+        "explanation_hint": "Maximum freedom — no attribution required. Not valid in jurisdictions without a public domain concept. Consider CC0 as a safer alternative for cross-jurisdictional use."
+      }
+    }
+  ]
+}

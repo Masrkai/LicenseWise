@@ -1,0 +1,242 @@
+{
+  "schema_version": "1.5",
+  "last_updated": "2026-04-22",
+  "source": "https://spdx.org/licenses/ ",
+  "licenses": [
+    {
+      "id": "CC-BY-NC-4.0",
+      "spdx_id": "CC-BY-NC-4.0",
+      "name": "Creative Commons Attribution-NonCommercial 4.0",
+      "type": "other",
+      "description": "Allows sharing and adaptation for non-commercial purposes only.",
+      "permissions": {
+        "commercial_use": false,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": false,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": false,
+        "popularity_rank": 12,
+        "explanation_hint": "Designed for creative content, not software. Prohibits commercial use."
+      }
+    },
+    {
+      "id": "CC0-1.0",
+      "spdx_id": "CC0-1.0",
+      "name": "Creative Commons Zero v1.0 Universal",
+      "type": "permissive",
+      "description": "Public domain dedication with fallback permissive license for jurisdictions that don't recognize public domain waivers.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": false,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": false,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": true,
+        "popularity_rank": 13,
+        "explanation_hint": "Preferred public domain tool for datasets and creative works. More legally robust than Unlicense internationally. Not OSI-approved (CC licenses are not designed for software)."
+      }
+    },
+    {
+      "id": "CDDL-1.0",
+      "spdx_id": "CDDL-1.0",
+      "name": "Common Development and Distribution License 1.0",
+      "type": "weak_copyleft",
+      "description": "File-level copyleft from Sun Microsystems; used for OpenSolaris and ZFS. Modifications to covered files must be shared.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": true
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 20,
+        "explanation_hint": "Historically used by Sun/Oracle for ZFS and NetBeans. INCOMPATIBLE with GPL (FSF says so explicitly) — major source of controversy when Linux wanted ZFS. Not recommended for new projects."
+      }
+    },
+    {
+      "id": "CC-BY-4.0",
+      "spdx_id": "CC-BY-4.0",
+      "name": "Creative Commons Attribution 4.0 International",
+      "type": "other",
+      "description": "Allows any use including commercial, with attribution required. Designed for creative works, not software.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": false,
+        "popularity_rank": 10,
+        "explanation_hint": "For documentation, datasets, media assets. NOT recommended for source code. OSI explicitly states CC licenses are not suitable for software."
+      }
+    },
+
+    {
+      "id": "CC-BY-SA-4.0",
+      "spdx_id": "CC-BY-SA-4.0",
+      "name": "Creative Commons Attribution-ShareAlike 4.0 International",
+      "type": "other",
+      "description": "Attribution required; derivatives must use the same or a compatible license (ShareAlike = copyleft for content).",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": true
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": false,
+        "popularity_rank": 11,
+        "explanation_hint": "Wikipedia's license. 'Copyleft for content' — derivatives must also be CC-BY-SA. Not for software. Compatible with GPL-3.0 per Creative Commons."
+      }
+    },
+
+    {
+      "id": "CC-BY-NC-4.0",
+      "spdx_id": "CC-BY-NC-4.0",
+      "name": "Creative Commons Attribution-NonCommercial 4.0 International",
+      "type": "other",
+      "description": "Allows sharing and adaptation for non-commercial purposes only with attribution.",
+      "permissions": {
+        "commercial_use": false,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": false,
+        "popularity_rank": 12,
+        "explanation_hint": "For academic/creative work you want freely shared but not monetized. 'Commercial' is broadly interpreted — even indirect revenue can count. Not for software."
+      }
+    },
+
+    {
+      "id": "CC-BY-NC-SA-4.0",
+      "spdx_id": "CC-BY-NC-SA-4.0",
+      "name": "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International",
+      "type": "other",
+      "description": "Non-commercial use only; derivatives must use the same license. Most restrictive standard CC license.",
+      "permissions": {
+        "commercial_use": false,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": true
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": false,
+        "popularity_rank": 14,
+        "explanation_hint": "Widely used for educational materials and course content. Maximum control for non-commercial creators. Incompatible with most software licenses."
+      }
+    }
+
+  ]
+}

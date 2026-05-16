@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.5",
+  "last_updated": "2026-04-22",
+  "source": "https://spdx.org/licenses/ ",
+  "licenses": [
+
+    {
+      "id": "BSL-1.0",
+      "spdx_id": "BSL-1.0",
+      "name": "Business Source License 1.1",
+      "type": "proprietary",
+      "description": "Source-available but not open source: restricts production use until a specified Change Date, after which a designated open-source license applies.",
+      "permissions": {
+        "commercial_use": false,
+        "distribution": false,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": false,
+        "popularity_rank": 17,
+        "explanation_hint": "Used by MariaDB, HashiCorp (Terraform), CockroachDB. NOT open source — it is 'source available'. Converts to an open-source license (e.g., Apache-2.0) after the Change Date (usually 4 years). Commercial production use requires a commercial license before that date."
+      }
+    },
+
+    {
+      "id": "Elastic-2.0",
+      "spdx_id": "Elastic-2.0",
+      "name": "Elastic License 2.0",
+      "type": "proprietary",
+      "description": "Source-available license that prohibits providing the software as a managed service and circumventing license key restrictions.",
+      "permissions": {
+        "commercial_use": false,
+        "distribution": false,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": true,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": false,
+        "popularity_rank": 19,
+        "explanation_hint": "Used by Elasticsearch 7.11+ and Kibana. Allows internal and commercial use, but you CANNOT offer it as a SaaS/cloud service. Created in response to AWS re-licensing concerns. NOT open source by OSI definition."
+      }
+    },
+
+    {
+      "id": "Proprietary",
+      "spdx_id": null,
+      "name": "Proprietary / All Rights Reserved",
+      "type": "proprietary",
+      "description": "No rights granted beyond what the license explicitly states. Default copyright law applies — use, distribution, and modification require explicit permission.",
+      "permissions": {
+        "commercial_use": false,
+        "distribution": false,
+        "modification": false,
+        "private_use": false
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": true,
+        "warranty": true,
+        "patent_use": true
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": false,
+        "popularity_rank": null,
+        "explanation_hint": "Default when no license is specified — all rights reserved by the author. Others cannot legally use, copy, modify, or distribute. Add a license file to allow any use."
+      }
+    }
+  ]
+}

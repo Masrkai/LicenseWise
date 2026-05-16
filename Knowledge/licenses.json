@@ -1,0 +1,304 @@
+{
+  "schema_version": "1.5",
+  "last_updated": "2026-04-30",
+  "source": "https://spdx.org/licenses/",
+  "licenses": [
+    {
+      "id": "MIT",
+      "spdx_id": "MIT",
+      "name": "MIT License",
+      "type": "permissive",
+      "description": "Short and simple permissive license with only one requirement.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 1,
+        "explanation_hint": "Best for maximum adoption with minimal legal overhead."
+      }
+    },
+    {
+      "id": "Apache-2.0",
+      "spdx_id": "Apache-2.0",
+      "name": "Apache License 2.0",
+      "type": "permissive",
+      "description": "Permissive license with an explicit patent grant and protection against contributor patent claims.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": true,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 2,
+        "explanation_hint": "Best permissive choice when patent protection matters, e.g. corporate or hardware-adjacent projects."
+      }
+    },
+    {
+      "id": "GPL-3.0",
+      "spdx_id": "GPL-3.0-only",
+      "name": "GNU General Public License v3.0 only",
+      "type": "copyleft",
+      "description": "Ensures all derivatives and distributed versions remain open source.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": true
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": true
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 3,
+        "explanation_hint": "Use when you want to guarantee all downstream modifications stay open."
+      }
+    },
+    {
+      "id": "AGPL-3.0",
+      "spdx_id": "AGPL-3.0-only",
+      "name": "GNU Affero General Public License v3.0",
+      "type": "copyleft",
+      "description": "Like GPL-3.0 but also requires source disclosure when the software is used over a network (SaaS).",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": true,
+        "same_license": true
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": true
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 6,
+        "explanation_hint": "Strongest copyleft. Triggers source disclosure even for network/SaaS deployments. Avoid if you want to keep server-side code private."
+      }
+    },
+    {
+      "id": "LGPL-2.1",
+      "spdx_id": "LGPL-2.1-only",
+      "name": "GNU Lesser General Public License v2.1",
+      "type": "weak_copyleft",
+      "description": "Copyleft applies only to the library itself; applications that link to it may use any license.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 5,
+        "explanation_hint": "Good for libraries you want proprietary apps to be able to use, while keeping the library itself open. Dynamic linking is generally safe; static linking may require more care."
+      }
+    },
+    {
+      "id": "MPL-2.0",
+      "spdx_id": "MPL-2.0",
+      "name": "Mozilla Public License 2.0",
+      "type": "weak_copyleft",
+      "description": "File-level copyleft: modified files must stay open, but the rest of the project can be proprietary.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": true,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 7,
+        "explanation_hint": "Middle ground: only the files you modify must stay open. Good for mixed open/proprietary codebases."
+      }
+    },
+    {
+      "id": "BSD-2-Clause",
+      "spdx_id": "BSD-2-Clause",
+      "name": "BSD 2-Clause Simplified License",
+      "type": "permissive",
+      "description": "Permissive license similar to MIT with a slightly different attribution requirement.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 4,
+        "explanation_hint": "Very similar to MIT. Common in academic and BSD Unix-derived projects. No patent grant."
+      }
+    },
+    {
+      "id": "Unlicense",
+      "spdx_id": "Unlicense",
+      "name": "The Unlicense",
+      "type": "permissive",
+      "description": "Dedicates the software to the public domain with no restrictions whatsoever.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": false,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": false,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 10,
+        "explanation_hint": "Maximum freedom — essentially public domain. No attribution required at all. Not recognized in all jurisdictions."
+      }
+    },
+    {
+      "id": "CC-BY-NC-4.0",
+      "spdx_id": "CC-BY-NC-4.0",
+      "name": "Creative Commons Attribution-NonCommercial 4.0",
+      "type": "other",
+      "description": "Allows sharing and adaptation for non-commercial purposes only.",
+      "permissions": {
+        "commercial_use": false,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": false,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": false,
+        "popularity_rank": 12,
+        "explanation_hint": "Designed for creative content, not software. Prohibits commercial use."
+      }
+    }
+  ]
+}

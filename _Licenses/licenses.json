@@ -37,6 +37,39 @@
       }
     },
     {
+      "id": "Apache-2.0",
+      "spdx_id": "Apache-2.0",
+      "name": "Apache License 2.0",
+      "type": "permissive",
+      "description": "Permissive license with an explicit patent grant and protection against contributor patent claims.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": true,
+        "warranty": true,
+        "patent_use": false
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "popularity_rank": 2,
+        "explanation_hint": "Best permissive choice when patent protection matters, e.g. corporate or hardware-adjacent projects."
+      }
+    },
+    {
       "id": "GPL-3.0",
       "spdx_id": "GPL-3.0-only",
       "name": "GNU General Public License v3.0 only",

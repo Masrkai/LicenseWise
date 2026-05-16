@@ -135,80 +135,6 @@
         "explanation_hint": "Designed for creative content, not software. Prohibits commercial use."
       }
     },
-    {
-  "schema_version": "2.0",
-  "last_updated": "2026-05-16",
-  "source": "https://spdx.org/licenses/",
-  "note": "All boolean fields follow the template.json schema. 'limitations.liability' = true means liability IS disclaimed (i.e., protected). Same for 'limitations.warranty'.",
-  "licenses": [
-
-    {
-      "id": "MIT",
-      "spdx_id": "MIT",
-      "name": "MIT License",
-      "type": "permissive",
-      "description": "Short and simple permissive license with only one requirement: attribution.",
-      "permissions": {
-        "commercial_use": true,
-        "distribution": true,
-        "modification": true,
-        "private_use": true
-      },
-      "conditions": {
-        "include_copyright": true,
-        "document_changes": false,
-        "disclose_source": false,
-        "include_license": true,
-        "net_copyleft": false,
-        "same_license": false
-      },
-      "limitations": {
-        "liability": true,
-        "trademark_use": false,
-        "warranty": true,
-        "patent_use": false
-      },
-      "metadata": {
-        "osi_approved": true,
-        "fsf_free": true,
-        "popularity_rank": 1,
-        "explanation_hint": "Best for maximum adoption with minimal legal overhead. No patent grant — use Apache-2.0 if that matters."
-      }
-    },
-
-    {
-      "id": "Apache-2.0",
-      "spdx_id": "Apache-2.0",
-      "name": "Apache License 2.0",
-      "type": "permissive",
-      "description": "Permissive license with an explicit patent grant and a contributor agreement clause.",
-      "permissions": {
-        "commercial_use": true,
-        "distribution": true,
-        "modification": true,
-        "private_use": true
-      },
-      "conditions": {
-        "include_copyright": true,
-        "document_changes": true,
-        "disclose_source": false,
-        "include_license": true,
-        "net_copyleft": false,
-        "same_license": false
-      },
-      "limitations": {
-        "liability": true,
-        "trademark_use": true,
-        "warranty": true,
-        "patent_use": true
-      },
-      "metadata": {
-        "osi_approved": true,
-        "fsf_free": true,
-        "popularity_rank": 2,
-        "explanation_hint": "Choose over MIT when patent protection is important (e.g., corporate/enterprise projects). Widely compatible except with GPL-2.0."
-      }
-    },
 
     {
       "id": "GPL-2.0",
@@ -1095,7 +1021,4 @@
     }
 
   ]
-}
-  ]
-
 }

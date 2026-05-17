@@ -1,59 +1,26 @@
-#!/usr/bin/env python3
-"""
-LicenseWise – Main Entry Point
-Intelligent Software License Selection & Compliance Analyzer
-
-Usage:
-    python main.py              # Interactive CLI
-    python main.py --recommend  # Recommendation mode directly
-    python main.py --analyze    # Analysis mode directly
-"""
-
 import sys
 import argparse
-import os
+from pathlib import Path
 
 # Add project root to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from interface.cli import LicenseWiseCLI
-
+sys.path.insert(0, str(Path(__file__).parent))
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="LicenseWise – Intelligent Software License Selection",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  python main.py              # Interactive mode
-  python main.py --recommend  # Start recommendation wizard
-  python main.py --analyze    # Start license analysis
-        """
-    )
-
-    parser.add_argument(
-        "--recommend",
-        action="store_true",
-        help="Start license recommendation wizard"
-    )
-
-    parser.add_argument(
-        "--analyze",
-        action="store_true",
-        help="Start license analysis mode"
-    )
-
+    parser = argparse.ArgumentParser(description="LicenseWise – KBS License Advisor")
+    parser.add_argument("--gui", action="store_true", help="Launch Gradio web interface")
     args = parser.parse_args()
 
-    cli = LicenseWiseCLI()
-
-    if args.recommend:
-        cli.run_recommendation()
-    elif args.analyze:
-        cli.run_analysis()
+    if args.gui:
+        try:
+            from interface.gradio_app import launch_gui
+            print("Starting Gradio web interface...")
+            launch_gui()
+        except ImportError as e:
+            print("Error: Gradio not installed. Please run: pip install gradio")
+            sys.exit(1)
     else:
-        cli.run()
-
+        from interface.cli import main_cli
+        main_cli()
 
 if __name__ == "__main__":
     main()

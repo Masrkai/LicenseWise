@@ -2,20 +2,17 @@
 merge_families.py
 -----------------
 Reads every JSON file in the Families/ folder and merges them into a single
-licenses.json at the _Licenses/ root.
+licenses JSON object in-memory, then prints the final result instead of
+writing it to a new file.
 
 Usage:
     python merge_families.py
-
-Output:
-    _Licenses/licenses.json   (deduplicated, sorted by popularity_rank)
 """
 import os
 import json
 from pathlib import Path
 
 FAMILIES_DIR = Path(__file__).parent / "Families"
-OUTPUT_FILE  = Path(__file__).parent / "licenses.json"
 
 
 def load_families(families_dir: Path) -> dict[str, list]:
@@ -28,10 +25,10 @@ def load_families(families_dir: Path) -> dict[str, list]:
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
 
+        # Your provided JSON files use path.stem as the fallback family name
         family_name = data.get("family", path.stem)
         licenses    = data.get("licenses", [])
         families[family_name] = licenses
-        print(f"  Loaded {len(licenses):>2} licenses from {path.name}  (family: {family_name})")
 
     return families
 
@@ -77,32 +74,21 @@ def build_output(merged: list[dict], families: dict[str, list]) -> dict:
 
 
 def main():
-    print(f"\nScanning: {FAMILIES_DIR}")
     if not FAMILIES_DIR.is_dir():
         raise FileNotFoundError(f"Families directory not found: {FAMILIES_DIR}")
 
     families = load_families(FAMILIES_DIR)
 
     if not families:
-        print("No family JSON files found. Nothing to merge.")
         return
 
     merged  = merge(families)
     output  = build_output(merged, families)
 
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-        json.dump(output, f, indent=2, ensure_ascii=False)
-
-    print(f"\n✓ Merged {len(merged)} unique licenses from {len(families)} families")
-    print(f"✓ Written to: {OUTPUT_FILE}\n")
-
-    # Quick duplicate check
-    ids = [l.get("spdx_id") or l.get("id") for l in merged]
-    dupes = [x for x in ids if ids.count(x) > 1]
-    if dupes:
-        print(f"⚠ Duplicate IDs still present (should not happen): {set(dupes)}")
-    else:
-        print("✓ No duplicates detected")
+    # Instead of writing to an OUTPUT_FILE, we convert the final object
+    # to a string and print it out directly.
+    final_json_string = json.dumps(output, indent=2, ensure_ascii=False)
+    print(final_json_string)
 
 
 if __name__ == "__main__":

@@ -27,8 +27,8 @@ pkgs.mkShell {
     ninja
 
     zlib
-    glibc.bin
     libGL
+    glibc.bin
     stdenv.cc.cc.lib
   ];
 

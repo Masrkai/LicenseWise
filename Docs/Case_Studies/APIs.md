@@ -1,4 +1,7 @@
-# spdx
+## We have collected the main sources for Licensing information and tried to study their API (Highly expected to be in future work section)
+
+
+### spdx
 
 ```bash
 # JSON summary of all licenses
@@ -45,7 +48,7 @@ curl https://raw.githubusercontent.com/spdx/license-list-data/main/json/details/
 }
 ```
 
-# OSI Approved
+### OSI Approved
 
 ```bash
 # List all OSI-approved licenses
@@ -59,7 +62,7 @@ curl https://opensource.org/api/license/mit
 {"id":"mit","name":"The MIT License","spdx_id":"MIT","version":"N\/A","submission_date":"","submission_url":"","submitter_name":"","approved":false,"approval_date":"","license_steward_version":"","license_steward_url":"","board_minutes":"","stewards":[],"keywords":["popular-strong-community"],"_links":{"self":{"href":"https:\/\/opensource.org\/api\/license\/mit"},"html":{"href":"https:\/\/opensource.org\/license\/mit"},"collection":{"href":"https:\/\/opensource.org\/api\/licenses"}}}
 ```
 
-# FSF Approved
+### FSF Approved
 
 ```bash
 # Full dataset

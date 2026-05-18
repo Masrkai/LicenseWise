@@ -67,7 +67,7 @@ def get_licenses_data() -> List[Dict[str, Any]]:
     1. Look for licenses.json in project root
     2. Look for licenses.json in Licenses/ directory
     3. Load all *.json files from Licenses/ directory
-    
+
     Results are cached after the first call.
     Raises FileNotFoundError if no license data can be found.
     """
@@ -75,26 +75,26 @@ def get_licenses_data() -> List[Dict[str, Any]]:
     if _LICENSES_DATA_CACHE is None:
         # This file is in interface/ -> parent.parent = project root
         project_root = Path(__file__).parent.parent
-        
+
         # Strategy 1: Check for licenses.json in project root
         root_licenses_json = project_root / "licenses.json"
         if root_licenses_json.exists():
             _LICENSES_DATA_CACHE = load_licenses_from_json(root_licenses_json)
             return _LICENSES_DATA_CACHE
-        
+
         # Strategy 2: Check for licenses.json in Licenses/ directory
         licenses_dir = project_root / "Licenses"
         licenses_json = licenses_dir / "licenses.json"
         if licenses_json.exists():
             _LICENSES_DATA_CACHE = load_licenses_from_json(licenses_json)
             return _LICENSES_DATA_CACHE
-        
+
         # Strategy 3: Load all *.json files from Licenses/ directory
         if licenses_dir.exists():
             _LICENSES_DATA_CACHE = load_all_licenses(licenses_dir)
             if _LICENSES_DATA_CACHE:
                 return _LICENSES_DATA_CACHE
-        
+
         # No license data found
         raise FileNotFoundError(
             f"No license data found. Tried:\n"
@@ -103,5 +103,5 @@ def get_licenses_data() -> List[Dict[str, Any]]:
             f"  3. *.json files in {licenses_dir}\n"
             "Make sure at least one of these exists."
         )
-    
+
     return _LICENSES_DATA_CACHE

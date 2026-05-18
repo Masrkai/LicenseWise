@@ -7,9 +7,17 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from Inference.backward_chain import backward_chain
 from Inference.forward_chain import forward_chain
-from Inference.explanation_engine import explain_question, generate_final_report, generate_summary
+from Inference.explanation_engine import (
+    explain_question,
+    generate_final_report,
+    generate_summary,
+)
 from Rules.rules import RULES
-from interface.common import get_licenses_data, yes_no_to_bool, distribute_to_closed_source
+from interface.common import (
+    get_licenses_data,
+    yes_no_to_bool,
+    distribute_to_closed_source,
+)
 
 
 # ----------------------------------------------------------------------
@@ -74,32 +82,74 @@ def run_recommendation(licenses_data: list) -> None:
     facts["closed_source"] = distribute_to_closed_source(facts.get("distribute"))
     facts.pop("distribute", None)
 
-    ask_yes_no("Will the software be used over a network (SaaS/web app)?", "saas", facts)
+    ask_yes_no(
+        "Will the software be used over a network (SaaS/web app)?", "saas", facts
+    )
     ask_yes_no("Is commercial use intended?", "commercial_use", facts)
     ask_yes_no("Do you need patent protection?", "need_patent_protection", facts)
-    ask_yes_no("Do you want derivatives to remain open source (copyleft)?", "want_copyleft", facts)
+    ask_yes_no(
+        "Do you want derivatives to remain open source (copyleft)?",
+        "want_copyleft",
+        facts,
+    )
 
     if facts.get("want_copyleft"):
-        ask_yes_no("Do you want copyleft only at the library level (weak copyleft)?", "want_weak_copyleft", facts)
+        ask_yes_no(
+            "Do you want copyleft only at the library level (weak copyleft)?",
+            "want_weak_copyleft",
+            facts,
+        )
         if not facts.get("want_weak_copyleft"):
-            ask_yes_no("Do you want copyleft only at the file level?", "want_file_copyleft", facts)
+            ask_yes_no(
+                "Do you want copyleft only at the file level?",
+                "want_file_copyleft",
+                facts,
+            )
 
-    ask_yes_no("Do you want freedom to relicense derivatives?", "wants_relicense", facts)
+    ask_yes_no(
+        "Do you want freedom to relicense derivatives?", "wants_relicense", facts
+    )
 
-    ask_choice("What type of project is this?", "project_type", ["Software", "Library", "Content"], facts)
+    ask_choice(
+        "What type of project is this?",
+        "project_type",
+        ["Software", "Library", "Content"],
+        facts,
+    )
 
     if facts.get("project_type") == "library":
-        ask_choice("How will the library be linked?", "linking_type", ["Dynamic", "Static"], facts)
+        ask_choice(
+            "How will the library be linked?",
+            "linking_type",
+            ["Dynamic", "Static"],
+            facts,
+        )
         ask_yes_no("Will you modify the library?", "modify_library", facts)
 
-    ask_yes_no("Do you want to dedicate this to the public domain?", "want_public_domain", facts)
+    ask_yes_no(
+        "Do you want to dedicate this to the public domain?",
+        "want_public_domain",
+        facts,
+    )
 
     if not facts.get("want_public_domain"):
-        ask_yes_no("Do you prefer a simple permissive license (minimal requirements)?", "want_simple_permissive", facts)
+        ask_yes_no(
+            "Do you prefer a simple permissive license (minimal requirements)?",
+            "want_simple_permissive",
+            facts,
+        )
 
     ask_yes_no("Is this an academic or research project?", "academic_project", facts)
-    ask_yes_no("Will this be a mixed open/proprietary codebase?", "mixed_open_proprietary", facts)
-    ask_yes_no("Are you concerned about legal recognition in all jurisdictions?", "concerned_about_legal_recognition", facts)
+    ask_yes_no(
+        "Will this be a mixed open/proprietary codebase?",
+        "mixed_open_proprietary",
+        facts,
+    )
+    ask_yes_no(
+        "Are you concerned about legal recognition in all jurisdictions?",
+        "concerned_about_legal_recognition",
+        facts,
+    )
 
     print("\n" + "=" * 60)
     print("🧠 Analyzing your requirements...")
@@ -168,14 +218,14 @@ def run_analysis(licenses_data: list) -> None:
 
     # Show explanation
     print(f"\n💡 Analysis:")
-    for line in result['explanation'].split('\n'):
+    for line in result["explanation"].split("\n"):
         if line.strip():
             print(f"   {line}")
 
     # Show how the decision was made
     if result.get("how"):
         print(f"\n🔍 Reasoning:")
-        for line in result['how'].split('\n'):
+        for line in result["how"].split("\n"):
             if line.strip():
                 print(f"   {line}")
 
@@ -190,37 +240,54 @@ def run_analysis(licenses_data: list) -> None:
         lic = result["license_info"]
         print(f"\n📄 License Info: {lic.get('name', license_id)}")
         print(f"   Type: {lic.get('type', 'unknown')}")
-        if lic.get('description'):
+        if lic.get("description"):
             print(f"   Description: {lic['description']}")
 
     # Suggest alternatives if incompatible
     if not result["compatible"] and result["violations"]:
         print("\n💡 Alternative licenses to consider:")
-        all_text = " ".join(result["violations"]).lower() + " " + result.get("explanation", "").lower()
-        
+        all_text = (
+            " ".join(result["violations"]).lower()
+            + " "
+            + result.get("explanation", "").lower()
+        )
+
         suggestions = []
-        if "source disclosure" in all_text or "disclose_source" in all_text or "closed" in all_text:
-            suggestions.extend([
-                "MIT – No source disclosure required",
-                "Apache-2.0 – No source disclosure + patent grant",
-                "BSD-2-Clause – Simple permissive, no source disclosure"
-            ])
-        if "same license" in all_text or "same_license" in all_text or "relicense" in all_text:
-            suggestions.extend([
-                "MIT – No same-license requirement",
-                "Apache-2.0 – No same-license requirement"
-            ])
+        if (
+            "source disclosure" in all_text
+            or "disclose_source" in all_text
+            or "closed" in all_text
+        ):
+            suggestions.extend(
+                [
+                    "MIT – No source disclosure required",
+                    "Apache-2.0 – No source disclosure + patent grant",
+                    "BSD-2-Clause – Simple permissive, no source disclosure",
+                ]
+            )
+        if (
+            "same license" in all_text
+            or "same_license" in all_text
+            or "relicense" in all_text
+        ):
+            suggestions.extend(
+                [
+                    "MIT – No same-license requirement",
+                    "Apache-2.0 – No same-license requirement",
+                ]
+            )
         if "commercial" in all_text:
-            suggestions.extend([
-                "MIT – Allows commercial use",
-                "Apache-2.0 – Allows commercial use with patent grant"
-            ])
+            suggestions.extend(
+                [
+                    "MIT – Allows commercial use",
+                    "Apache-2.0 – Allows commercial use with patent grant",
+                ]
+            )
         if "network" in all_text or "saas" in all_text:
-            suggestions.extend([
-                "MIT – No network copyleft",
-                "Apache-2.0 – No network copyleft"
-            ])
-        
+            suggestions.extend(
+                ["MIT – No network copyleft", "Apache-2.0 – No network copyleft"]
+            )
+
         # Remove duplicates while preserving order
         seen = set()
         for sugg in suggestions:

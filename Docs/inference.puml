@@ -1,0 +1,53 @@
+@startuml
+!theme plain
+skinparam activity {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+  FontColor #0D47A1
+  ArrowColor #37474F
+}
+
+title LicenseWise - Inference Flow
+
+|User|
+start
+:Select Mode;
+
+if (Mode?) then ([Recommendation])
+  :Answer project questions;
+  :Collect facts;
+else ([Analysis])
+  :Enter license ID;
+  :Answer use-case questions;
+  :Collect facts;
+endif
+
+|Inference Engine|
+if (Mode?) then ([Recommendation])
+  :Forward Chaining;
+  :Evaluate all rules sequentially;
+  :Build Working Memory\n(recommended, eliminated, warnings);
+  :Generate Report & Summary;
+else ([Analysis])
+  :Backward Chaining;
+  :Run Forward Chaining as subroutine;
+  :Check license against Working Memory;
+  
+  if (License eliminated?) then ([Yes])
+    :Collect violations;
+    :Mark as NOT COMPATIBLE;
+  else if (License recommended?) then ([Yes])
+    :Mark as COMPATIBLE;
+  else ([No - fallback])
+    :Direct metadata check;
+    :Compare facts vs license conditions;
+  endif
+endif
+
+|User|
+:Display Results;
+:Show explanation & reasoning;
+
+stop
+
+@enduml

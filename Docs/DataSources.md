@@ -92,3 +92,5 @@ ex apache-2.0
     },
 
 ```
+
+![diagram](dataflow.svg)

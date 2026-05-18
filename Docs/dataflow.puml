@@ -1,0 +1,56 @@
+@startuml
+!theme plain
+skinparam sequence {
+  ArrowColor #37474F
+  LifeLineBorderColor #455A64
+  participant "User" as User
+  participant "CLI/WebUI" as UI
+  participant "Inference Engine" as Engine
+  participant "Rule Base" as Rules
+  participant "License DB" as LicDB
+  participant "Working Memory" as WM
+}
+
+User -> UI : Provide answers
+activate UI
+
+UI -> Engine : Run inference with facts
+activate Engine
+
+Engine -> Rules : Get all rules
+activate Rules
+Rules --> Engine : Return rule list
+deactivate Rules
+
+loop Each rule
+  Engine -> Engine : Evaluate condition(facts)
+  alt Condition true
+    Engine -> WM : Execute action (add/remove/warn)
+    Engine -> Engine : Record step in trace
+  end
+end
+
+alt Mode = Analysis
+  Engine -> LicDB : Query license metadata
+  activate LicDB
+  LicDB --> Engine : Return license info
+  deactivate LicDB
+  
+  Engine -> WM : Check license against eliminated/recommended
+  alt License eliminated
+    Engine -> Engine : Collect violations
+  else License recommended
+    Engine -> Engine : Mark compatible
+  else No conclusion
+    Engine -> Engine : Direct metadata validation
+  end
+end
+
+Engine --> UI : Return working memory + trace
+deactivate Engine
+
+UI -> UI : Generate report from trace
+UI --> User : Display results + explanation
+deactivate UI
+
+@enduml

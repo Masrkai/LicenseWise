@@ -1,1 +1,4 @@
 gradio
+networkx
+numpy
+matplotlib

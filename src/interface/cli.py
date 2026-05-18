@@ -1,6 +1,5 @@
 import os
 import sys
-import json
 from pathlib import Path
 
 # Add project root for imports
@@ -10,19 +9,8 @@ from Inference.backward_chain import backward_chain
 from Inference.forward_chain import forward_chain
 from Inference.explanation_engine import explain_question, generate_final_report, generate_summary
 from Rules.rules import RULES
+from interface.common import get_licenses_data, yes_no_to_bool, distribute_to_closed_source
 
-# ----------------------------------------------------------------------
-# Load license data from JSON files (in memory, not combined to one file)
-# ----------------------------------------------------------------------
-def load_all_licenses(licenses_dir: Path) -> list:
-    """Load all JSON files from Licenses/ directory and return list of license dicts."""
-    all_licenses = []
-    for json_file in licenses_dir.glob("*.json"):
-        with open(json_file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            licenses = data.get("licenses", [])
-            all_licenses.extend(licenses)
-    return all_licenses
 
 # ----------------------------------------------------------------------
 # Helper to ask questions
@@ -45,6 +33,7 @@ def ask_yes_no(question: str, fact_name: str, facts: dict) -> None:
         else:
             print("   Please answer 'yes', 'no', or 'skip'.")
 
+
 def ask_choice(question: str, fact_name: str, choices: list, facts: dict) -> None:
     """Ask a multiple‑choice question."""
     print(f"\n❓ {question}")
@@ -66,6 +55,7 @@ def ask_choice(question: str, fact_name: str, choices: list, facts: dict) -> Non
         except ValueError:
             print("   Please enter a number.")
 
+
 # ----------------------------------------------------------------------
 # Recommendation mode
 # ----------------------------------------------------------------------
@@ -79,13 +69,9 @@ def run_recommendation(licenses_data: list) -> None:
 
     facts = {}
 
-    # Distribution -> closed_source
+    # Distribution -> closed_source using shared utility
     ask_yes_no("Will you distribute your software to others?", "distribute", facts)
-    if facts.get("distribute") is not None:
-        facts["closed_source"] = not facts["distribute"]
-    else:
-        facts["closed_source"] = None
-    # Remove distribute to avoid confusion
+    facts["closed_source"] = distribute_to_closed_source(facts.get("distribute"))
     facts.pop("distribute", None)
 
     ask_yes_no("Will the software be used over a network (SaaS/web app)?", "saas", facts)
@@ -127,8 +113,9 @@ def run_recommendation(licenses_data: list) -> None:
     summary = generate_summary(wm, facts, trace)
     print(summary)
 
+
 # ----------------------------------------------------------------------
-# Analysis mode (backward chaining)
+# Analysis mode (fixed version)
 # ----------------------------------------------------------------------
 def run_analysis(licenses_data: list) -> None:
     """Check compatibility of a specific license."""
@@ -136,7 +123,7 @@ def run_analysis(licenses_data: list) -> None:
     print("🔹 LicenseWise – License Analysis")
     print("=" * 60)
 
-    license_id = input("\nEnter license name or SPDX ID (e.g., GPL-3.0): ").strip()
+    license_id = input("\nEnter license name or SPDX ID (e.g., GPL-3.0, MIT): ").strip()
     if not license_id:
         print("No license entered.")
         return
@@ -154,10 +141,7 @@ def run_analysis(licenses_data: list) -> None:
     facts = {}
 
     ask_yes_no("Will you distribute the software?", "distribute", facts)
-    if facts.get("distribute") is not None:
-        facts["closed_source"] = not facts["distribute"]
-    else:
-        facts["closed_source"] = None
+    facts["closed_source"] = distribute_to_closed_source(facts.get("distribute"))
     facts.pop("distribute", None)
 
     ask_yes_no("Will it be used over a network (SaaS)?", "saas", facts)
@@ -165,51 +149,104 @@ def run_analysis(licenses_data: list) -> None:
     ask_yes_no("Do you need patent protection?", "need_patent_protection", facts)
     ask_yes_no("Do you want to relicense derivatives?", "wants_relicense", facts)
 
+    # Run the backward chain
     result = backward_chain(license_id, facts, licenses_data)
 
     print("\n" + "=" * 60)
-    if result["compatible"]:
+    if result["compatible"] is True:
         print(f"✅ {license_id} is COMPATIBLE with your intended use.")
-    else:
+    elif result["compatible"] is False:
         print(f"❌ {license_id} is NOT COMPATIBLE with your intended use.")
+    else:
+        print(f"❓ {license_id} compatibility unclear. See explanation below.")
 
-    if result["violations"]:
-        print("\nViolations:")
+    # Show violations
+    if result.get("violations"):
+        print("\n⚠️  Violations found:")
         for v in result["violations"]:
             print(f"   • {v}")
 
-    print(f"\n💡 Analysis:\n   {result['explanation']}")
-    print(f"\n🔍 HOW the engine reached this conclusion:\n   {result['how']}")
+    # Show explanation
+    print(f"\n💡 Analysis:")
+    for line in result['explanation'].split('\n'):
+        if line.strip():
+            print(f"   {line}")
 
-    if not result["compatible"]:
-        print("\n📋 Alternative licenses to consider:")
-        if any("source_disclosure" in v for v in result["violations"]):
-            print("   • MIT – No source disclosure required")
-            print("   • Apache-2.0 – No source disclosure + patent grant")
-        if any("same_license" in v for v in result["violations"]):
-            print("   • MIT – No same-license requirement")
-            print("   • Apache-2.0 – No same-license requirement")
-        if any("commercial" in v for v in result["violations"]):
-            print("   • Any OSI-approved permissive license (MIT, Apache-2.0)")
+    # Show how the decision was made
+    if result.get("how"):
+        print(f"\n🔍 Reasoning:")
+        for line in result['how'].split('\n'):
+            if line.strip():
+                print(f"   {line}")
+
+    # Show warnings
+    if result.get("warnings"):
+        print(f"\n⚠️  Warnings:")
+        for w in result["warnings"]:
+            print(f"   • {w}")
+
+    # Show license info if available
+    if result.get("license_info"):
+        lic = result["license_info"]
+        print(f"\n📄 License Info: {lic.get('name', license_id)}")
+        print(f"   Type: {lic.get('type', 'unknown')}")
+        if lic.get('description'):
+            print(f"   Description: {lic['description']}")
+
+    # Suggest alternatives if incompatible
+    if not result["compatible"] and result["violations"]:
+        print("\n💡 Alternative licenses to consider:")
+        all_text = " ".join(result["violations"]).lower() + " " + result.get("explanation", "").lower()
+        
+        suggestions = []
+        if "source disclosure" in all_text or "disclose_source" in all_text or "closed" in all_text:
+            suggestions.extend([
+                "MIT – No source disclosure required",
+                "Apache-2.0 – No source disclosure + patent grant",
+                "BSD-2-Clause – Simple permissive, no source disclosure"
+            ])
+        if "same license" in all_text or "same_license" in all_text or "relicense" in all_text:
+            suggestions.extend([
+                "MIT – No same-license requirement",
+                "Apache-2.0 – No same-license requirement"
+            ])
+        if "commercial" in all_text:
+            suggestions.extend([
+                "MIT – Allows commercial use",
+                "Apache-2.0 – Allows commercial use with patent grant"
+            ])
+        if "network" in all_text or "saas" in all_text:
+            suggestions.extend([
+                "MIT – No network copyleft",
+                "Apache-2.0 – No network copyleft"
+            ])
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        for sugg in suggestions:
+            if sugg not in seen:
+                print(f"   • {sugg}")
+                seen.add(sugg)
 
     print("\n" + "=" * 60)
-    print("⚠️ DISCLAIMER: This is not legal advice. Consult a lawyer.")
+    print("⚠️  DISCLAIMER: This is not legal advice. Consult a lawyer.")
     print("=" * 60)
+
 
 # ----------------------------------------------------------------------
 # Main CLI entry
 # ----------------------------------------------------------------------
 def main_cli():
-    """Main entry point for CLI."""
-    # Locate Licenses directory
-    base_dir = Path(__file__).parent.parent
-    licenses_dir = base_dir / "Licenses"
-    if not licenses_dir.exists():
-        print("ERROR: Licenses directory not found.", file=sys.stderr)
+    try:
+        licenses_data = get_licenses_data()
+        print(f"✓ Loaded {len(licenses_data)} licenses from JSON files.")
+    except FileNotFoundError as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        print("\n💡 Make sure you have one of the following:", file=sys.stderr)
+        print("   • licenses.json in your project root", file=sys.stderr)
+        print("   • licenses.json in Licenses/ directory", file=sys.stderr)
+        print("   • *.json files in Licenses/ directory", file=sys.stderr)
         sys.exit(1)
-
-    licenses_data = load_all_licenses(licenses_dir)
-    print(f"Loaded {len(licenses_data)} licenses from JSON files.")
 
     print("\n")
     print("╔══════════════════════════════════════════════════════════════╗")
@@ -233,6 +270,7 @@ def main_cli():
             sys.exit(0)
         else:
             print("Invalid choice. Please enter 1, 2, or 3.")
+
 
 if __name__ == "__main__":
     main_cli()

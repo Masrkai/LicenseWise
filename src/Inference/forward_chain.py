@@ -36,6 +36,7 @@ def forward_chain(
                     "matched_facts": {k: v for k, v in facts.items() if v is not None},
                     "explanation": rule["explanation"],
                     "action": rule.get("action_type", "UNKNOWN"),
+                    "licenses_affected": rule.get("licenses_affected", [])
                 }
                 trace.append(step)
 

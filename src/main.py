@@ -16,7 +16,7 @@ def main():
             print("Starting Gradio web interface...")
             launch_gui()
         except ImportError as e:
-            print("Error: Gradio not installed. Please run: pip install gradio")
+            print(e)
             sys.exit(1)
     else:
         from interface.cli import main_cli

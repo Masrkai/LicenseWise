@@ -7,19 +7,13 @@
   },
 }:
 
-let
-  unstable = import <unstable> { config.allowUnfree = true; };
-in
-
 pkgs.mkShell {
-  name = "LinuxAssistant";
+  name = "LicenseWise";
 
   buildInputs = with pkgs; [
     uv
-    python312
-    python312Packages.pip
-    python312Packages.ipykernel
-    python312Packages.ipywidgets
+    python313
+    python313Packages.pip
 
     cudaPackages.cudatoolkit
 
@@ -57,7 +51,7 @@ pkgs.mkShell {
     # Create / activate venv
     if [ ! -d ".venv" ]; then
       echo "→ Creating venv with uv..."
-      uv venv .venv --python python3.12
+      uv venv .venv --python python3.13
     fi
     source .venv/bin/activate
   '';

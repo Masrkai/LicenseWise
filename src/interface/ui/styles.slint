@@ -1,0 +1,43 @@
+import { Button, ComboBox, ScrollView } from "std-widgets.slint";
+
+export global Theme {
+    out property <brush> primary: #4f46e5;
+    out property <brush> primary-hover: #4338ca;
+    out property <brush> primary-light: #eef2ff;
+    out property <brush> text-color: #1e293b;
+    out property <brush> text-muted: #64748b;
+    out property <brush> warning: #f59e0b;
+    out property <brush> success: #10b981;
+    out property <brush> background: #f1f5f9;
+    out property <brush> surface: #ffffff;
+    out property <brush> border: #e2e8f0;
+    out property <length> font-size-label: 14px;
+    out property <length> font-size-heading: 20px;
+    out property <length> font-size-subheading: 16px;
+    out property <length> spacing-unit: 8px;
+    out property <length> radius: 8px;
+}
+
+export component YesNoSkipCombo inherits ComboBox {
+    model: ["skip", "yes", "no"];
+    current-value: "skip";
+}
+
+export component RecommendationCombo inherits ComboBox {
+    model: ["skip", "Software", "Library", "Content"];
+    current-value: "skip";
+}
+
+export component LinkingCombo inherits ComboBox {
+    model: ["skip", "Dynamic", "Static"];
+    current-value: "skip";
+}
+
+export component ActionButton inherits Button {
+    primary: true;
+    height: 40px;
+    min-width: 200px;
+}
+
+export component OutputScrollView inherits ScrollView {
+}

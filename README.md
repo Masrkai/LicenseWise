@@ -17,7 +17,7 @@
 
 - **Two Interfaces**
   - **CLI** – Lightweight terminal wizard.
-  - **Gradio Web UI** – Full‑featured browser interface with tabs for recommendation and analysis.
+  - **Slint GUI** – Native desktop interface (also supports WASM/web) with tabs for recommendation and analysis.
 
 - **Rich License Knowledge Base**
   Licenses are stored as JSON files grouped by family (GPL, BSD, Creative Commons, etc.). The system includes metadata such as conditions, permissions, and limitations, as well as popularity rankings.
@@ -75,20 +75,20 @@ Select mode:
 - **Mode 1** asks a series of questions and produces a report with recommended licenses, eliminated ones, warnings, and a complete inference trace.
 - **Mode 2** asks for a license identifier (e.g., `MIT`, `Apache-2.0`, `GPL-3.0`) and a few follow‑up questions, then tells you whether it is compatible.
 
-### Gradio Web Interface
+### Slint GUI Interface
 
-Launch the web UI with the `--gui` flag:
+Launch the GUI with the `--gui` flag:
 
 ```bash
 python main.py --gui
 ```
 
-A local web server will start (usually at `http://127.0.0.1:7860`). The interface has two tabs:
+A native desktop window will open. The interface has two tabs:
 
-- **License Recommendation** – all the questions from the CLI presented as radio buttons.
+- **License Recommendation** – all the questions from the CLI presented as combo box selectors.
 - **License Analysis** – enter a license ID and answer five key questions.
 
-The interface is styled with a custom CSS file (`interface/style.css`).
+The UI is defined in `.slint` files under `interface/ui/`.
 
 ---
 
@@ -133,7 +133,7 @@ All license information is stored in the `Licenses/` directory. The folder conta
 - `families_merger.py` – merges all family files into a single in‑memory structure for use by the inference engine.
 - `families_deduplicate.py` – a utility to check for duplicate license entries.
 
-> **Note:** The system does **not** require a single monolithic `licenses.json`. The merger is called dynamically by the CLI/Gradio at startup.
+> **Note:** The system does **not** require a single monolithic `licenses.json`. The merger is called dynamically by the CLI/Slint at startup.
 
 ---
 
@@ -147,18 +147,23 @@ All license information is stored in the `Licenses/` directory. The folder conta
 │   └── explanation_engine.py
 ├── interface/                # User interfaces
 │   ├── cli.py
-│   ├── gradio_app.py
-│   └── style.css
+│   ├── slint_app.py
+│   ├── common.py
+│   └── ui/
+│       ├── main.slint
+│       ├── recommendation.slint
+│       ├── analysis.slint
+│       └── styles.slint
 ├── Licenses/                 # License knowledge base
 │   ├── Families/             # JSON files grouped by family
 │   ├── families_merger.py
 │   └── families_deduplicate.py
 ├── Rules/
-│   └── rules.py              # Forward‑chaining rule definitions
+│   └── license_rules.pl      # Forward‑chaining rule definitions
 ├── Tests/                    # (optional) test files
 ├── Docs/                     # Documentation and case studies
 ├── main.py                   # Main entry point (CLI + --gui)
-├── requirements.txt          # Python dependencies (gradio)
+├── requirements.txt          # Python dependencies (slint)
 ├── shell.nix                 # Nix development environment
 └── README.md                 # This file
 ```
@@ -169,7 +174,7 @@ All license information is stored in the `Licenses/` directory. The folder conta
 
 1. Place a new JSON file in `Licenses/Families/` or edit an existing one.
    Use the same schema as the existing files (see `licenses_template.jsonl`).
-2. The merger script (`families_merger.py`) will automatically combine all families when the CLI/Gradio loads.
+2. The merger script (`families_merger.py`) will automatically combine all families when the CLI/Slint loads.
 3. If you introduce a new condition or permission, update the backward chaining logic in `backward_chain.py` and the relevant rules in `rules.py`.
 
 ---
@@ -210,7 +215,7 @@ It does **not** constitute legal advice. License selection involves legal conseq
 ## Requirements
 
 - Python 3.12+
-- `gradio` (only for the web interface)
+- `slint` (for the GUI interface)
 - (Optional) `uv` for fast environment management
 
 All required packages are listed in `requirements.txt`.

@@ -77,7 +77,7 @@ def suggest_alternatives(
 
     Args:
         violation_text: combined violation and explanation text (lowercase)
-        format: 'plain' for CLI, 'markdown' for Gradio (wraps license IDs in bold)
+        format: 'plain' for CLI, 'markdown' for GUI (wraps license IDs in bold)
 
     Returns:
         Deduplicated list of suggestion strings.

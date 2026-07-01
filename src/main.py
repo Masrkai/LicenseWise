@@ -4,13 +4,13 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser(description="LicenseWise \u2013 KBS License Advisor")
-    parser.add_argument("--gui", action="store_true", help="Launch Gradio web interface")
+    parser.add_argument("--gui", action="store_true", help="Launch Slint GUI interface")
     args = parser.parse_args()
 
     if args.gui:
         try:
-            from interface.gradio_app import launch_gui
-            print("Starting Gradio web interface...")
+            from interface.slint_app import launch_gui
+            print("Starting Slint GUI interface...")
             launch_gui()
         except ImportError as e:
             print(e)

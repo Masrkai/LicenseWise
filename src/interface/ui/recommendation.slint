@@ -1,0 +1,173 @@
+import { Theme, YesNoSkipCombo, RecommendationCombo, LinkingCombo, ActionButton, OutputScrollView } from "styles.slint";
+
+export component RecommendationTab inherits VerticalLayout {
+    spacing: 16px;
+    padding: 0px;
+
+    in-out property <string> distribute: "skip";
+    in-out property <string> saas: "skip";
+    in-out property <string> commercial_use: "skip";
+    in-out property <string> need_patent: "skip";
+    in-out property <string> want_copyleft: "skip";
+    in-out property <string> want_weak_copyleft: "skip";
+    in-out property <string> want_file_copyleft: "skip";
+    in-out property <string> wants_relicense: "skip";
+    in-out property <string> project_type: "skip";
+    in-out property <string> linking_type: "skip";
+    in-out property <string> modify_library: "skip";
+    in-out property <string> want_public_domain: "skip";
+    in-out property <string> want_simple_permissive: "skip";
+    in-out property <string> academic: "skip";
+    in-out property <string> mixed_codebase: "skip";
+    in-out property <string> legal_recognition: "skip";
+    in-out property <string> output-text: "Results will appear here after clicking the button above";
+
+    callback get-recommendation();
+
+    Text {
+        text: "Project Requirements";
+        font-size: Theme.font-size-heading;
+        color: Theme.text-color;
+    }
+
+    Text {
+        text: "Fill out the form below to get personalized license recommendations based on your project's needs.";
+        font-size: Theme.font-size-label;
+        color: Theme.text-muted;
+        wrap: word-wrap;
+    }
+
+    Rectangle {
+        background: Theme.surface;
+        border-radius: Theme.radius;
+        border-width: 1px;
+        border-color: Theme.border;
+        clip: true;
+        drop-shadow-offset-x: 0px;
+        drop-shadow-offset-y: 1px;
+        drop-shadow-blur: 4px;
+        drop-shadow-color: rgba(0, 0, 0, 0.08);
+
+        VerticalLayout {
+            padding: 20px;
+            spacing: 16px;
+
+            Text {
+                text: "Distribution & Usage";
+                font-size: Theme.font-size-subheading;
+                color: Theme.text-color;
+            }
+
+            HorizontalLayout {
+                spacing: 16px;
+
+                VerticalLayout {
+                    spacing: 8px;
+                    horizontal-stretch: 1;
+
+                    VerticalLayout { spacing: 4px; Text { text: "Will you distribute your software to others?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.distribute; } }
+                    VerticalLayout { spacing: 4px; Text { text: "Will the software be used over a network (SaaS)?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.saas; } }
+                    VerticalLayout { spacing: 4px; Text { text: "Is commercial use intended?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.commercial_use; } }
+                    VerticalLayout { spacing: 4px; Text { text: "Do you need patent protection?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.need_patent; } }
+                    VerticalLayout { spacing: 4px; Text { text: "Do you want derivatives to remain open source (copyleft)?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.want_copyleft; } }
+                }
+
+                VerticalLayout {
+                    spacing: 8px;
+                    horizontal-stretch: 1;
+
+                    Text {
+                        text: "License Preferences";
+                        font-size: Theme.font-size-subheading;
+                        color: Theme.text-color;
+                    }
+
+                    VerticalLayout { spacing: 4px; Text { text: "Want weak copyleft (library level)?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.want_weak_copyleft; } }
+                    VerticalLayout { spacing: 4px; Text { text: "Want file-level copyleft?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.want_file_copyleft; } }
+                    VerticalLayout { spacing: 4px; Text { text: "Freedom to relicense derivatives?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.wants_relicense; } }
+                    VerticalLayout { spacing: 4px; Text { text: "Project type"; font-size: 13px; color: Theme.text-muted; } RecommendationCombo { current-value <=> root.project_type; } }
+                    VerticalLayout { spacing: 4px; Text { text: "Linking type (if library)"; font-size: 13px; color: Theme.text-muted; } LinkingCombo { current-value <=> root.linking_type; } }
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        background: Theme.surface;
+        border-radius: Theme.radius;
+        border-width: 1px;
+        border-color: Theme.border;
+        clip: true;
+        drop-shadow-offset-x: 0px;
+        drop-shadow-offset-y: 1px;
+        drop-shadow-blur: 4px;
+        drop-shadow-color: rgba(0, 0, 0, 0.08);
+
+        VerticalLayout {
+            padding: 20px;
+            spacing: 12px;
+
+            Text {
+                text: "Additional Options";
+                font-size: Theme.font-size-subheading;
+                color: Theme.text-color;
+            }
+
+            HorizontalLayout {
+                spacing: 16px;
+                VerticalLayout { spacing: 4px; horizontal-stretch: 1; Text { text: "Will you modify the library?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.modify_library; } }
+                VerticalLayout { spacing: 4px; horizontal-stretch: 1; Text { text: "Dedicate to public domain?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.want_public_domain; } }
+                VerticalLayout { spacing: 4px; horizontal-stretch: 1; Text { text: "Prefer simple permissive license?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.want_simple_permissive; } }
+            }
+
+            HorizontalLayout {
+                spacing: 16px;
+                VerticalLayout { spacing: 4px; horizontal-stretch: 1; Text { text: "Academic project?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.academic; } }
+                VerticalLayout { spacing: 4px; horizontal-stretch: 1; Text { text: "Mixed open/proprietary codebase?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.mixed_codebase; } }
+                VerticalLayout { spacing: 4px; horizontal-stretch: 1; Text { text: "Concerned about legal recognition?"; font-size: 13px; color: Theme.text-muted; } YesNoSkipCombo { current-value <=> root.legal_recognition; } }
+            }
+        }
+    }
+
+    ActionButton {
+        text: "Get Recommendation";
+        clicked => { root.get-recommendation(); }
+    }
+
+    Rectangle {
+        background: Theme.surface;
+        border-radius: Theme.radius;
+        border-width: 1px;
+        border-color: Theme.border;
+        clip: true;
+        drop-shadow-offset-x: 0px;
+        drop-shadow-offset-y: 1px;
+        drop-shadow-blur: 4px;
+        drop-shadow-color: rgba(0, 0, 0, 0.08);
+
+        VerticalLayout {
+            padding: 16px;
+            spacing: 8px;
+
+            Text {
+                text: "Results";
+                font-size: Theme.font-size-subheading;
+                color: Theme.text-color;
+            }
+
+            OutputScrollView {
+                vertical-stretch: 1;
+                min-height: 120px;
+
+                Text {
+                    text: root.output-text;
+                    font-size: Theme.font-size-label;
+                    color: Theme.text-color;
+                    wrap: word-wrap;
+                    width: parent.width - 20px;
+                    x: 10px;
+                }
+            }
+        }
+    }
+}

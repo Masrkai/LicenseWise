@@ -14,7 +14,6 @@ from Inference.explanation_engine import (
     generate_final_report,
     generate_summary,
 )
-from Rules.rules import RULES
 from interface.common import (
     get_licenses_data,
     yes_no_to_bool,
@@ -129,7 +128,7 @@ def recommend_handler(
             legal_recognition,
         )
         trace = []
-        wm = forward_chain(facts, RULES, LICENSES_DATA, trace)
+        wm = forward_chain(facts, [], LICENSES_DATA, trace)
         report = generate_final_report(wm, facts, trace)
         summary = generate_summary(wm, facts, trace)
         return report + "\n\n" + summary

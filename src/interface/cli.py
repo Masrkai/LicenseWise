@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -6,17 +5,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from Inference.backward_chain import backward_chain
-from Inference.forward_chain import forward_chain
 from Inference.explanation_engine import (
     explain_question,
     generate_final_report,
     generate_summary,
 )
-from Rules.rules import RULES
+from Inference.forward_chain import forward_chain
 from interface.common import (
-    get_licenses_data,
-    yes_no_to_bool,
     distribute_to_closed_source,
+    get_licenses_data,
 )
 
 
@@ -156,7 +153,7 @@ def run_recommendation(licenses_data: list) -> None:
     print("=" * 60)
 
     trace = []
-    wm = forward_chain(facts, RULES, licenses_data, trace)
+    wm = forward_chain(facts, [], licenses_data, trace)
 
     report = generate_final_report(wm, facts, trace)
     print(report)
@@ -217,21 +214,21 @@ def run_analysis(licenses_data: list) -> None:
             print(f"   • {v}")
 
     # Show explanation
-    print(f"\n💡 Analysis:")
+    print("\n💡 Analysis:")
     for line in result["explanation"].split("\n"):
         if line.strip():
             print(f"   {line}")
 
     # Show how the decision was made
     if result.get("how"):
-        print(f"\n🔍 Reasoning:")
+        print("\n🔍 Reasoning:")
         for line in result["how"].split("\n"):
             if line.strip():
                 print(f"   {line}")
 
     # Show warnings
     if result.get("warnings"):
-        print(f"\n⚠️  Warnings:")
+        print("\n⚠️  Warnings:")
         for w in result["warnings"]:
             print(f"   • {w}")
 
@@ -317,7 +314,7 @@ def main_cli():
 
     print("\n")
     print("╔══════════════════════════════════════════════════════════════╗")
-    print("║           📘 LICENSEWISE – Knowledge-Based System            ║")
+    print("║         LICENSEWISE – Knowledge-Based System                 ║")
     print("║         Intelligent Software License Selection               ║")
     print("╚══════════════════════════════════════════════════════════════╝")
 

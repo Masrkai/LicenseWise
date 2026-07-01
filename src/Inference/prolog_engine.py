@@ -11,6 +11,62 @@ from pathlib import Path
 from pyswip import Prolog
 
 
+# Metadata condition checks shared between _metadata_fallback and backward_chain.
+# Each entry: (condition_field, fact_key, message, how_template)
+METADATA_CONDITIONS = [
+    (
+        "disclose_source",
+        "closed_source",
+        "License requires source disclosure, but you want closed-source",
+        "{license_id} requires disclose_source=true, but you answered closed_source=true",
+    ),
+    (
+        "same_license",
+        "wants_relicense",
+        "License requires derivatives to use the same license, but you want to relicense",
+        "{license_id} requires same_license=true, but you answered wants_relicense=true",
+    ),
+    # net_copyleft is a special compound check (needs saas AND closed_source)
+]
+
+
+def _check_metadata_conditions(
+    license_id: str,
+    facts: Dict[str, Any],
+    conds: Dict[str, Any],
+    perms: Dict[str, Any],
+) -> tuple:
+    """
+    Check license metadata conditions against user facts.
+    Returns (violations, how_steps) as parallel lists.
+    """
+    violations = []
+    how_steps = []
+
+    for cond_field, fact_key, message, how_template in METADATA_CONDITIONS:
+        if conds.get(cond_field) and facts.get(fact_key):
+            violations.append(message)
+            how_steps.append(how_template.format(license_id=license_id))
+
+    # Compound check: net_copyleft + saas + closed_source
+    if conds.get("net_copyleft") and facts.get("saas") and facts.get("closed_source"):
+        violations.append(
+            "License has network copyleft, incompatible with closed-source SaaS"
+        )
+        how_steps.append(
+            f"{license_id} has net_copyleft=true, but you want SaaS + closed-source"
+        )
+
+    # Permission check: commercial_use
+    if not perms.get("commercial_use") and facts.get("commercial_use"):
+        violations.append("License prohibits commercial use, but you need it")
+        how_steps.append(
+            f"{license_id} has commercial_use=false, but you answered commercial_use=true"
+        )
+
+    return violations, how_steps
+
+
 class PrologEngine:
     """SWI-Prolog inference engine via pyswip."""
 
@@ -62,7 +118,7 @@ class PrologEngine:
         ids.discard(None)
         return ids
 
-    def _build_trace(self) -> List[Dict]:
+    def build_trace(self) -> List[Dict]:
         """Query step/6 facts and build trace preserving original format."""
         trace = []
         for sol in self.prolog.query(
@@ -119,45 +175,6 @@ class PrologEngine:
     # Backward chain
     # ------------------------------------------------------------------
 
-    def _metadata_fallback(
-        self,
-        license_id: str,
-        facts: Dict[str, Any],
-        lic: Dict,
-    ) -> List[str]:
-        """
-        Check license metadata conditions against user facts
-        when no rule fires for this license.
-        """
-        violations = []
-        conds = lic.get("conditions", {})
-        perms = lic.get("permissions", {})
-
-        if conds.get("disclose_source") and facts.get("closed_source"):
-            violations.append(
-                "License requires source disclosure, but you want closed-source"
-            )
-
-        if conds.get("same_license") and facts.get("wants_relicense"):
-            violations.append(
-                "License requires derivatives to use the same license, "
-                "but you want to relicense"
-            )
-
-        if (
-            conds.get("net_copyleft")
-            and facts.get("saas")
-            and facts.get("closed_source")
-        ):
-            violations.append(
-                "License has network copyleft, incompatible with closed-source SaaS"
-            )
-
-        if not perms.get("commercial_use") and facts.get("commercial_use"):
-            violations.append("License prohibits commercial use, but you need it")
-
-        return violations
-
     def backward_chain(
         self,
         license_id: str,
@@ -183,7 +200,7 @@ class PrologEngine:
                 prolog_status[pid] = sol["R"]
 
         # Collect trace
-        trace = self._build_trace()
+        trace = self.build_trace()
 
         # Determine status
         is_eliminated = any(
@@ -251,35 +268,11 @@ class PrologEngine:
                     "trace": trace,
                 }
 
-            violations = self._metadata_fallback(license_id, facts, lic)
-            how_steps = []
             conds = lic.get("conditions", {})
             perms = lic.get("permissions", {})
-
-            if conds.get("disclose_source") and facts.get("closed_source"):
-                how_steps.append(
-                    f"{license_id} requires disclose_source=true, "
-                    f"but you answered closed_source=true"
-                )
-            if conds.get("same_license") and facts.get("wants_relicense"):
-                how_steps.append(
-                    f"{license_id} requires same_license=true, "
-                    f"but you answered wants_relicense=true"
-                )
-            if (
-                conds.get("net_copyleft")
-                and facts.get("saas")
-                and facts.get("closed_source")
-            ):
-                how_steps.append(
-                    f"{license_id} has net_copyleft=true, "
-                    f"but you want SaaS + closed-source"
-                )
-            if not perms.get("commercial_use") and facts.get("commercial_use"):
-                how_steps.append(
-                    f"{license_id} has commercial_use=false, "
-                    f"but you answered commercial_use=true"
-                )
+            violations, how_steps = _check_metadata_conditions(
+                license_id, facts, conds, perms
+            )
 
             # Patent warning
             if facts.get("need_patent_protection") and not lic.get(

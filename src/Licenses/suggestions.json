@@ -1,0 +1,31 @@
+[
+  {
+    "keywords": ["source disclosure", "disclose_source", "closed"],
+    "suggestions": [
+      {"id": "MIT", "note": "No source disclosure required"},
+      {"id": "Apache-2.0", "note": "No source disclosure + patent grant"},
+      {"id": "BSD-2-Clause", "note": "Simple permissive, no source disclosure"}
+    ]
+  },
+  {
+    "keywords": ["same license", "same_license", "relicense"],
+    "suggestions": [
+      {"id": "MIT", "note": "No same-license requirement"},
+      {"id": "Apache-2.0", "note": "No same-license requirement"}
+    ]
+  },
+  {
+    "keywords": ["commercial"],
+    "suggestions": [
+      {"id": "MIT", "note": "Allows commercial use"},
+      {"id": "Apache-2.0", "note": "Allows commercial use with patent grant"}
+    ]
+  },
+  {
+    "keywords": ["network", "saas"],
+    "suggestions": [
+      {"id": "MIT", "note": "No network copyleft"},
+      {"id": "Apache-2.0", "note": "No network copyleft"}
+    ]
+  }
+]

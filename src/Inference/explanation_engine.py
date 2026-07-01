@@ -1,36 +1,44 @@
 from typing import Any, Dict, List
 
-from Inference.prolog_engine import PrologEngine
-
-_engine = None
-
-
-def _get_engine() -> PrologEngine:
-    global _engine
-    if _engine is None:
-        _engine = PrologEngine()
-    return _engine
+from Inference import get_engine
+from Licenses.report_templates import (
+    REPORT_HEADER,
+    SECTION_RECOMMENDED,
+    SECTION_ELIMINATED,
+    SECTION_WARNINGS,
+    SECTION_CONFIDENCE,
+    TRACE_HEADER,
+    TRACE_ACTION_ICONS,
+    SUMMARY_HEADER,
+    SUMMARY_RECOMMENDED,
+    SUMMARY_ELIMINATED,
+    SUMMARY_WARNED,
+    SUMMARY_FOOTER,
+    NO_LICENSES_RECOMMENDED,
+    NO_RULES_FIRED,
+    DISCLAIMER,
+    SEP,
+    SEP_SHORT,
+)
 
 
 def explain_question(fact_name: str) -> str:
     """Return an explanation why a particular question is asked (from Prolog KB)."""
-    engine = _get_engine()
+    engine = get_engine()
     return engine.get_question_explanation(fact_name)
 
 
 def format_trace(trace: List[Dict]) -> str:
     """Format the reasoning trace into a human-readable string."""
     if not trace:
-        return "No rules were fired during inference."
+        return NO_RULES_FIRED
 
     lines = []
-    lines.append("HOW THE ENGINE REACHED THIS CONCLUSION:")
-    lines.append("=" * 60)
+    lines.append(TRACE_HEADER)
+    lines.append(SEP)
 
     for entry in trace:
-        icon = {"RECOMMEND": "+", "ELIMINATE": "x", "WARN": "!"}.get(
-            entry.get("action", "OTHER"), "*"
-        )
+        icon = TRACE_ACTION_ICONS.get(entry.get("action", "OTHER"), "*")
         lines.append(f"\nStep {entry['step']}: [{icon}] {entry['rule_name']}")
         lines.append(f"   Action: {entry.get('action', 'UNKNOWN')}")
         if entry.get("matched_facts"):
@@ -50,26 +58,24 @@ def generate_final_report(
 ) -> str:
     """Generate the complete final report including reasoning trace."""
     lines = []
-    lines.append("=" * 60)
-    lines.append("LICENSEWISE FINAL REPORT")
-    lines.append("=" * 60)
+    lines.append(SEP)
+    lines.append(REPORT_HEADER)
+    lines.append(SEP)
 
     if wm["recommended"]:
-        lines.append("\nRECOMMENDED LICENSES:")
+        lines.append(f"\n{SECTION_RECOMMENDED}")
         for lic in sorted(wm["recommended"]):
             lines.append(f"   * {lic}")
     else:
-        lines.append(
-            "\nNo licenses were recommended. Please review your project goals."
-        )
+        lines.append(NO_LICENSES_RECOMMENDED)
 
     if wm["eliminated"]:
-        lines.append("\nELIMINATED LICENSES:")
+        lines.append(f"\n{SECTION_ELIMINATED}")
         for lic in sorted(wm["eliminated"]):
             lines.append(f"   * {lic}")
 
     if wm["warnings"]:
-        lines.append("\nWARNINGS:")
+        lines.append(f"\n{SECTION_WARNINGS}")
         for warn in wm["warnings"]:
             lines.append(f"   * {warn}")
 
@@ -83,15 +89,13 @@ def generate_final_report(
         if provided >= 4
         else "LOW"
     )
-    lines.append(f"\nCONFIDENCE: {confidence} (provided {provided}/{total} facts)")
+    lines.append(f"\n{SECTION_CONFIDENCE} {confidence} (provided {provided}/{total} facts)")
 
     lines.append("\n" + format_trace(trace))
 
-    lines.append("\n" + "=" * 60)
-    lines.append(
-        "DISCLAIMER: This is not legal advice. Consult a lawyer for production use."
-    )
-    lines.append("=" * 60)
+    lines.append("\n" + SEP)
+    lines.append(DISCLAIMER)
+    lines.append(SEP)
     return "\n".join(lines)
 
 
@@ -100,30 +104,28 @@ def generate_summary(
 ) -> str:
     """Concise summary of how the conclusion was reached."""
     lines = []
-    lines.append("\nEXPLANATION: How did the engine get this result?")
-    lines.append("-" * 50)
+    lines.append(f"\n{SUMMARY_HEADER}")
+    lines.append(SEP_SHORT)
 
     recommend_steps = [e for e in trace if "RECOMMEND" in e.get("action", "")]
     eliminate_steps = [e for e in trace if "ELIMINATE" in e.get("action", "")]
     warn_steps = [e for e in trace if "WARN" in e.get("action", "")]
 
     if recommend_steps:
-        lines.append("\nThe engine RECOMMENDED licenses because:")
+        lines.append(f"\n{SUMMARY_RECOMMENDED}")
         for step in recommend_steps:
             lines.append(f"  {step['step']}. {step['explanation']}")
 
     if eliminate_steps:
-        lines.append("\nThe engine ELIMINATED licenses because:")
+        lines.append(f"\n{SUMMARY_ELIMINATED}")
         for step in eliminate_steps:
             lines.append(f"  {step['step']}. {step['explanation']}")
 
     if warn_steps:
-        lines.append("\nThe engine WARNED because:")
+        lines.append(f"\n{SUMMARY_WARNED}")
         for step in warn_steps:
             lines.append(f"  {step['step']}. {step['explanation']}")
 
-    lines.append("\n" + "-" * 50)
-    lines.append(
-        "Each step above was triggered by matching your answers against the rule base."
-    )
+    lines.append("\n" + SEP_SHORT)
+    lines.append(SUMMARY_FOOTER)
     return "\n".join(lines)

@@ -1,15 +1,6 @@
 from typing import Any, Dict, List
 
-from Inference.prolog_engine import PrologEngine
-
-_engine = None
-
-
-def _get_engine() -> PrologEngine:
-    global _engine
-    if _engine is None:
-        _engine = PrologEngine()
-    return _engine
+from Inference import get_engine
 
 
 def forward_chain(
@@ -30,7 +21,7 @@ def forward_chain(
     Returns:
         working_memory dict with keys: recommended (set), eliminated (set), warnings (list)
     """
-    engine = _get_engine()
+    engine = get_engine()
     wm = engine.forward_chain(facts, licenses_data)
-    trace.extend(engine._build_trace())
+    trace.extend(engine.build_trace())
     return wm

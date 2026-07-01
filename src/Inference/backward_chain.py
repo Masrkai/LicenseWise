@@ -1,15 +1,6 @@
 from typing import Any, Dict, List
 
-from Inference.prolog_engine import PrologEngine
-
-_engine = None
-
-
-def _get_engine() -> PrologEngine:
-    global _engine
-    if _engine is None:
-        _engine = PrologEngine()
-    return _engine
+from Inference import get_engine
 
 
 def backward_chain(
@@ -29,5 +20,5 @@ def backward_chain(
     Returns:
         dict with keys: compatible, violations, explanation, how, license_info, warnings, trace
     """
-    engine = _get_engine()
+    engine = get_engine()
     return engine.backward_chain(license_id, facts, licenses_data)

@@ -114,14 +114,10 @@ warning('BSD-2-Clause', 'No patent grant. Consider Apache-2.0.') :-
                 ['BSD-2-Clause'], 'BSD licenses offer no patent protection.').
 
 % --- Unlicense / CC0 ---
-recommend('Unlicense') :-
+recommend(License) :-
+    member(License, ['Unlicense', 'CC0-1.0']),
     fact(want_public_domain),
-    assert_step('A12', 'recommend_Unlicense_if_public_domain', 'RECOMMEND',
-                ['Unlicense', 'CC0-1.0'], 'Unlicense and CC0 dedicate work to the public domain with no restrictions.').
-
-recommend('CC0-1.0') :-
-    fact(want_public_domain),
-    assert_step('A12', 'recommend_Unlicense_if_public_domain', 'RECOMMEND',
+    assert_step('A12', 'recommend_public_domain', 'RECOMMEND',
                 ['Unlicense', 'CC0-1.0'], 'Unlicense and CC0 dedicate work to the public domain with no restrictions.').
 
 warning('Unlicense', 'Public domain dedication may not be recognized everywhere. Consider CC0.') :-
@@ -228,17 +224,12 @@ eliminate('CC-BY-NC-4.0') :-
 % E. General elimination rules (copyleft when private mods wanted)
 % ============================================================
 
-eliminate('GPL-2.0') :-
-    private_mods,
-    assert_step('E01', 'exclude_copyleft_if_private_mods', 'ELIMINATE',
-                ['GPL-2.0', 'GPL-3.0', 'AGPL-3.0'], 'GPL and AGPL require source sharing of derivatives.').
+copyleft_license('GPL-2.0').
+copyleft_license('GPL-3.0').
+copyleft_license('AGPL-3.0').
 
-eliminate('GPL-3.0') :-
-    private_mods,
-    assert_step('E01', 'exclude_copyleft_if_private_mods', 'ELIMINATE',
-                ['GPL-2.0', 'GPL-3.0', 'AGPL-3.0'], 'GPL and AGPL require source sharing of derivatives.').
-
-eliminate('AGPL-3.0') :-
+eliminate(License) :-
+    copyleft_license(License),
     private_mods,
     assert_step('E01', 'exclude_copyleft_if_private_mods', 'ELIMINATE',
                 ['GPL-2.0', 'GPL-3.0', 'AGPL-3.0'], 'GPL and AGPL require source sharing of derivatives.').

@@ -1,0 +1,244 @@
+import { Button } from "std-widgets.slint";
+import { Theme, ActionButton } from "styles.slint";
+import { RecommendationTab } from "recommendation.slint";
+import { AnalysisTab } from "analysis.slint";
+
+export component LicenseWiseApp inherits Window {
+    title: "LicenseWise - KBS License Advisor";
+    preferred-width: 1000px;
+    preferred-height: 800px;
+    background: Theme.background;
+
+    in property <string> status-text: "Loading...";
+    in property <string> license-count: "0";
+
+    callback get-recommendation();
+    callback check-compatibility();
+
+    property <int> current-tab: 0;
+
+    in-out property <string> distribute: "skip";
+    in-out property <string> saas: "skip";
+    in-out property <string> commercial_use: "skip";
+    in-out property <string> need_patent: "skip";
+    in-out property <string> want_copyleft: "skip";
+    in-out property <string> want_weak_copyleft: "skip";
+    in-out property <string> want_file_copyleft: "skip";
+    in-out property <string> wants_relicense: "skip";
+    in-out property <string> project_type: "skip";
+    in-out property <string> linking_type: "skip";
+    in-out property <string> modify_library: "skip";
+    in-out property <string> want_public_domain: "skip";
+    in-out property <string> want_simple_permissive: "skip";
+    in-out property <string> academic: "skip";
+    in-out property <string> mixed_codebase: "skip";
+    in-out property <string> legal_recognition: "skip";
+    in-out property <string> recommend_output: "Results will appear here after clicking the button above";
+
+    in-out property <string> license_id_input: "";
+    in-out property <string> distribute_an: "skip";
+    in-out property <string> saas_an: "skip";
+    in-out property <string> commercial_an: "skip";
+    in-out property <string> patent_an: "skip";
+    in-out property <string> relicense_an: "skip";
+    in-out property <string> analyze_output: "Compatibility results will appear here after clicking the button above";
+
+    VerticalLayout {
+        padding: 24px;
+        spacing: 12px;
+
+        HorizontalLayout {
+            spacing: 10px;
+
+            Rectangle {
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+                background: Theme.primary;
+                VerticalLayout {
+                    Text {
+                        text: "⚖";
+                        font-size: 18px;
+                        color: white;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+
+            VerticalLayout {
+                spacing: 2px;
+                Text {
+                    text: "LicenseWise";
+                    font-size: 22px;
+                    font-weight: 700;
+                    color: Theme.text-color;
+                }
+                Text {
+                    text: "Knowledge-Based License Advisor";
+                    font-size: 12px;
+                    color: Theme.text-muted;
+                }
+            }
+
+            Rectangle {
+                horizontal-stretch: 1;
+            }
+
+            Button {
+                text: Theme.dark-mode ? "☀ Light" : "🌙 Dark";
+
+                min-width: 90px;
+                height: 32px;
+                clicked => { Theme.dark-mode = !Theme.dark-mode; }
+            }
+        }
+
+        Text {
+            text: root.status-text;
+            font-size: Theme.font-size-label;
+            color: Theme.success;
+            wrap: word-wrap;
+        }
+
+        Text {
+            text: "Answer the questions below to get a license recommendation or check a specific license's compatibility.";
+            font-size: Theme.font-size-label;
+            color: Theme.text-muted;
+            wrap: word-wrap;
+        }
+
+        Rectangle {
+            height: 1px;
+            background: Theme.border;
+        }
+
+        HorizontalLayout {
+            spacing: 0px;
+
+            Rectangle {
+                horizontal-stretch: 1;
+                height: 42px;
+
+                VerticalLayout {
+                    spacing: 0px;
+
+                    Rectangle {
+                        height: 40px;
+                        background: root.current-tab == 0 ? Theme.primary-light : transparent;
+                        border-top-left-radius: 6px;
+                        border-top-right-radius: 6px;
+
+                        Text {
+                            text: "License Recommendation";
+                            font-size: 14px;
+                            color: root.current-tab == 0 ? Theme.primary : Theme.text-muted;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+
+                    Rectangle {
+                        height: 2px;
+                        background: root.current-tab == 0 ? Theme.primary : transparent;
+                        animate background { duration: 150ms; }
+                    }
+                }
+
+                TouchArea {
+                    clicked => { root.current-tab = 0; }
+                }
+            }
+
+            Rectangle {
+                horizontal-stretch: 1;
+                height: 42px;
+
+                VerticalLayout {
+                    spacing: 0px;
+
+                    Rectangle {
+                        height: 40px;
+                        background: root.current-tab == 1 ? Theme.primary-light : transparent;
+                        border-top-left-radius: 6px;
+                        border-top-right-radius: 6px;
+
+                        Text {
+                            text: "License Analysis";
+                            font-size: 14px;
+                            color: root.current-tab == 1 ? Theme.primary : Theme.text-muted;
+                            horizontal-alignment: center;
+                            vertical-alignment: center;
+                        }
+                    }
+
+                    Rectangle {
+                        height: 2px;
+                        background: root.current-tab == 1 ? Theme.primary : transparent;
+                        animate background { duration: 150ms; }
+                    }
+                }
+
+                TouchArea {
+                    clicked => { root.current-tab = 1; }
+                }
+            }
+        }
+
+        if root.current-tab == 0: RecommendationTab {
+            vertical-stretch: 1;
+
+            distribute <=> root.distribute;
+            saas <=> root.saas;
+            commercial_use <=> root.commercial_use;
+            need_patent <=> root.need_patent;
+            want_copyleft <=> root.want_copyleft;
+            want_weak_copyleft <=> root.want_weak_copyleft;
+            want_file_copyleft <=> root.want_file_copyleft;
+            wants_relicense <=> root.wants_relicense;
+            project_type <=> root.project_type;
+            linking_type <=> root.linking_type;
+            modify_library <=> root.modify_library;
+            want_public_domain <=> root.want_public_domain;
+            want_simple_permissive <=> root.want_simple_permissive;
+            academic <=> root.academic;
+            mixed_codebase <=> root.mixed_codebase;
+            legal_recognition <=> root.legal_recognition;
+            output-text <=> root.recommend_output;
+
+            get-recommendation => { root.get-recommendation(); }
+        }
+
+        if root.current-tab == 1: AnalysisTab {
+            vertical-stretch: 1;
+
+            license-id-input <=> root.license_id_input;
+            distribute-an <=> root.distribute_an;
+            saas-an <=> root.saas_an;
+            commercial-an <=> root.commercial_an;
+            patent-an <=> root.patent_an;
+            relicense-an <=> root.relicense_an;
+            output-text <=> root.analyze_output;
+
+            check-compatibility => { root.check-compatibility(); }
+        }
+
+        Rectangle {
+            height: 1px;
+            background: Theme.border;
+        }
+
+        Text {
+            text: "Disclaimer: This tool is for educational purposes only and does not constitute legal advice. Always consult a qualified intellectual property lawyer for production use.";
+            font-size: 12px;
+            color: Theme.text-muted;
+            wrap: word-wrap;
+        }
+
+        Text {
+            text: "Database: " + root.license-count + " licenses loaded from JSON";
+            font-size: 12px;
+            color: Theme.text-muted;
+        }
+    }
+}

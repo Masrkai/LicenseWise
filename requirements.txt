@@ -1,0 +1,9 @@
+networkx
+matplotlib
+
+# Datawork
+numpy
+pyswip
+
+# UI
+slint == 1.17.0b2

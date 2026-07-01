@@ -1,0 +1,96 @@
+@startuml
+!theme plain
+skinparam componentStyle rectangle
+skinparam backgroundColor #FAFAFA
+skinparam component {
+  BackgroundColor #E1F5FE
+  BorderColor #0277BD
+  FontColor #01579B
+}
+skinparam interface {
+  BackgroundColor #FFF9C4
+  BorderColor #F9A825
+}
+skinparam database {
+  BackgroundColor #E8F5E9
+  BorderColor #2E7D32
+}
+skinparam node {
+  BackgroundColor #F3E5F5
+  BorderColor #7B1FA2
+}
+skinparam arrow {
+  Color #37474F
+}
+
+title LicenseWise - System Architecture (KBS)
+
+' ===== USER INTERFACE LAYER =====
+node "User Interface Layer" {
+  interface "CLI Interface" as CLI
+  interface "Gradio Web UI" as WEBUI
+  note right of WEBUI : gradio_app.py\nstyle.css
+  note right of CLI : cli.py
+}
+
+' ===== CORE INFERENCE ENGINE =====
+node "Inference Engine" {
+  component "Forward Chaining" as FC
+  component "Backward Chaining" as BC
+  component "Explanation Engine" as EE
+  note bottom of FC : forward_chain.py\nForward Rule Evaluation
+  note bottom of BC : backward_chain.py\nGoal-Driven Analysis
+  note bottom of EE : explanation_engine.py\nReport Generation
+}
+
+' ===== KNOWLEDGE BASE =====
+database "Knowledge Base" {
+  database "Rule Base" as RULES
+  database "License Database" as LICDB
+  database "Working Memory" as WM
+  note right of RULES : rules.py\nProduction Rules
+  note right of LICDB : JSON Files\nLicense Metadata
+  note right of WM : Dynamic Facts\nInference Results
+}
+
+' ===== UTILITIES =====
+node "Utilities & Helpers" {
+  component "Common Utilities" as UTILS
+  component "License Loader" as LOADER
+  note top of UTILS : common.py\nFact conversion\nData loading
+}
+
+' ===== EXTERNAL DATA =====
+database "License Data Sources" {
+  file "SPDX JSON" as SPDX
+  file "Families/" as FAMILIES
+  file "licenses.json" as MERGED
+  note bottom : families_merger.py\nMerges family files
+}
+
+' ===== CONNECTIONS =====
+CLI --> UTILS : uses
+WEBUI --> UTILS : uses
+CLI --> FC : calls
+CLI --> BC : calls
+WEBUI --> FC : calls
+WEBUI --> BC : calls
+
+FC --> RULES : reads
+FC --> LICDB : references
+FC --> WM : writes
+FC --> EE : passes trace
+
+BC --> FC : calls (as subroutine)
+BC --> LICDB : queries
+BC --> WM : reads
+
+EE --> WM : reads
+EE --> FC : receives trace
+
+UTILS --> LOADER : uses
+LOADER --> SPDX : loads
+LOADER --> FAMILIES : loads
+LOADER --> MERGED : loads
+
+@enduml

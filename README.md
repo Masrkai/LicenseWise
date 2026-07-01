@@ -1,459 +1,229 @@
-# LicenseWise – Intelligent Software License Selection & Compliance Analyzer
+# LicenseWise – KBS License Advisor
 
-> **A knowledge-based system that helps developers and organizations select the most appropriate open-source license and analyze license compatibility.**
-
----
-
-## ⚠️ DISCLAIMER
-
-This project was created by **CS students** as part of a Knowledge Base Systems course. **We are not lawyers**, and this tool has **not been reviewed by legal professionals**.
-
-Our goal is to **de-mystify software licensing** so developers can have informed conversations with legal teams. **Do not take the results as definitive legal advice.** We are **not responsible** for how anyone uses this software.
+**LicenseWise** is a knowledge‑based system (KBS) that helps developers and organizations choose the right open‑source license for their projects. It uses forward chaining to recommend licenses based on your project goals, and backward chaining to check if a specific license is compatible with your intended use.
 
 ---
 
-## 📋 Table of Contents
+## Features
 
-- [Overview](#overview)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Installation](#installation)
-- [Usage](#usage)
-  - [License Recommendation Mode](#license-recommendation-mode)
-  - [License Analysis Mode](#license-analysis-mode)
-- [Knowledge Base](#knowledge-base)
-  - [Facts (User Inputs)](#facts-user-inputs)
-  - [Rules](#rules)
-  - [Working Memory](#working-memory)
-- [Explanation Facility](#explanation-facility)
-- [Inference Engine](#inference-engine)
-- [Sample Scenarios](#sample-scenarios)
-- [Limitations](#limitations)
-- [Team & Course Info](#team--course-info)
+- **Forward Chaining (Recommendation Mode)**
+  Answer a set of questions about your project (distribution, SaaS, copyleft preferences, patent needs, etc.). The engine applies inference rules to suggest the most suitable licenses.
 
----
+- **Backward Chaining (Analysis Mode)**
+  Pick a license (e.g., `GPL-3.0`, `MIT`) and answer a few key questions. The engine verifies whether the license’s conditions are compatible with your usage.
 
-## 🎯 Overview
+- **Explanation Facility**
+  Every inference step is recorded. The system explains *why* a license was recommended, eliminated, or why a warning was issued – including the exact rule that fired.
 
-Choosing the right software license is complex. The wrong choice can:
-- Force you to open-source proprietary code
-- Expose you to patent litigation
-- Create legal conflicts with dependencies
-- Prevent commercial use
+- **Two Interfaces**
+  - **CLI** – Lightweight terminal wizard.
+  - **Slint GUI** – Native desktop interface (also supports WASM/web) with tabs for recommendation and analysis.
 
-**LicenseWise** solves this by encoding license properties into a rule-based expert system that:
-1. **Recommends** licenses based on your project goals
-2. **Warns** about hidden obligations and risks
-3. **Eliminates** incompatible options
-4. **Explains** every decision with traceable reasoning
+- **Rich License Knowledge Base**
+  Licenses are stored as JSON files grouped by family (GPL, BSD, Creative Commons, etc.). The system includes metadata such as conditions, permissions, and limitations, as well as popularity rankings.
 
 ---
 
-## ✨ Features
+## Installation
 
-| Feature | Description |
-|---------|-------------|
-| 🔍 **License Recommendation** | Forward-chaining rule engine narrows down licenses from 9+ options |
-| ⚠️ **Compliance Checking** | Backward-chaining verifies if a license fits your intended use |
-| 🧠 **Explanation Facility** | Every recommendation includes "Why?" and "How?" reasoning |
-| 📊 **Conflict Detection** | Identifies when user goals contradict license requirements |
-| 🏷️ **SPDX Integration** | Uses official SPDX license data for accuracy |
-| 🖥️ **CLI Interface** | Interactive command-line interface for quick use |
-
----
-
-## 🏗️ Architecture
-
-```
-LicenseWise/
-├── knowledge/
-│   ├── licenses.json          # SPDX-based license definitions (9 licenses)
-│   └── rules.py               # 57 IF-THEN rules covering all licenses
-├── inference/
-│   ├── engine.py              # Forward/backward chaining engine
-│   └── explanation.py         # Explanation trace generator
-├── interface/
-│   └── cli.py                 # Interactive CLI for user input
-├── tests/
-│   └── test_scenarios.py      # Unit tests for sample use cases
-├── README.md                  # This file
-└── main.py                    # Entry point
-```
-
-### Core Components
-
-1. **Knowledge Base**: License properties encoded from SPDX data
-2. **Rule Engine**: 57 rules covering recommendation, elimination, and warnings
-3. **Inference Engine**: Hybrid forward/backward chaining
-4. **Explanation Facility**: Step-by-step reasoning traces
-
----
-
-## 🚀 Installation
-
-### Requirements
-- Python 3.10+
-- No external dependencies (stdlib only)
-
-### Setup
+### Using `uv` (recommended)
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-team/licensewise.git
-cd licensewise
+git clone <repository-url>
+cd KBS/Project
 
-# Run the system
+# Create a virtual environment and install dependencies
+uv venv .venv --python python3.12
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
+
+> If you prefer `pip`, activate your virtual environment and run `pip install -r requirements.txt`.
+
+### Using Nix (NixOS / nix-shell)
+
+A `shell.nix` is provided that sets up Python 3.12, `uv`, and all necessary libraries (including CUDA support, though not required). Just run:
+
+```bash
+nix-shell
+```
+
+The shell hook will automatically create a `.venv` and activate it.
+
+---
+
+## Usage
+
+### Command‑Line Interface (CLI)
+
+Run the main entry point without any arguments:
+
+```bash
 python main.py
 ```
 
----
+You will see a menu:
 
-## 🎮 Usage
+```
+Select mode:
+[1] License Recommendation – Find the best license for your project
+[2] License Analysis – Check if a specific license fits your needs
+[3] Exit
+```
 
-### License Recommendation Mode
+- **Mode 1** asks a series of questions and produces a report with recommended licenses, eliminated ones, warnings, and a complete inference trace.
+- **Mode 2** asks for a license identifier (e.g., `MIT`, `Apache-2.0`, `GPL-3.0`) and a few follow‑up questions, then tells you whether it is compatible.
 
-The system asks you a series of questions about your project, then recommends licenses with full explanations.
+### Slint GUI Interface
+
+Launch the GUI with the `--gui` flag:
 
 ```bash
-$ python main.py --recommend
-
-🔹 LicenseWise – License Recommendation
-─────────────────────────────────────────
-
-Will you distribute your software to others? (yes/no): no
-Will the software be used over a network (SaaS)? (yes/no): yes
-Is commercial use intended? (yes/no): yes
-Do you need patent protection? (yes/no): yes
-Do you want derivatives to remain open source? (yes/no): no
-What type of project is this? (software/library/content): software
-
-✅ Recommended Licenses:
-   1. Apache-2.0
-      • Allows commercial use ✅
-      • Explicit patent grant ✅
-      • No source disclosure required ✅
-      • Network-safe (no copyleft trigger) ✅
-
-   2. MIT
-      • Simple and widely adopted ✅
-      • No source disclosure required ✅
-      • Network-safe ✅
-      ⚠️ No explicit patent grant
-
-⚠️ Avoid:
-   • GPL-3.0: Requires source disclosure of derivatives
-   • AGPL-3.0: Network use triggers source disclosure
-
-🔍 Explanation:
-   1. You indicated closed-source distribution → Eliminated all strong copyleft licenses
-   2. You need patent protection → Prioritized Apache-2.0 (has patent grant)
-   3. SaaS deployment confirmed → Verified no network copyleft requirements
-   4. Commercial use confirmed → All recommended licenses permit this
+python main.py --gui
 ```
 
-### License Analysis Mode
+A native desktop window will open. The interface has two tabs:
 
-Check if a specific license is compatible with your intended use.
+- **License Recommendation** – all the questions from the CLI presented as combo box selectors.
+- **License Analysis** – enter a license ID and answer five key questions.
 
-```bash
-$ python main.py --analyze
+The UI is defined in `.slint` files under `interface/ui/`.
 
-🔹 LicenseWise – License Analysis
-──────────────────────────────────
+---
 
-Enter license name or SPDX ID: GPL-3.0
+## How It Works
 
-What is your intended use?
-  [1] Use in commercial closed-source application
-  [2] Use in open-source project with different license
-  [3] Modify and distribute without sharing source
-  [4] Use in SaaS without sharing source
+### Forward Chaining (Recommendation)
 
-Choice: 3
+1. **Facts** are gathered from the user (e.g., `closed_source = True`, `want_copyleft = True`, `project_type = "library"`).
+2. The `Rules/rules.py` file defines **rules** – each rule has a **condition** (checks facts and/or license data) and an **action** (adds a license to `recommended`, `eliminated`, or appends a `warning`).
+3. The engine iterates through all rules, evaluates conditions, and applies actions.
+4. Finally, eliminated licenses are removed from the recommended set, and a report is generated using `explanation_engine.py`.
 
-❌ NOT COMPATIBLE
+### Backward Chaining (Compatibility Check)
 
-GPL-3.0 requires:
-  • disclose_source = true
-  • same_license = true
+Given a license ID and a subset of facts (distribution, SaaS, commercial use, patent need, desire to relicense), the engine:
 
-Your intended use violates:
-  • Source disclosure obligation
-  • Same-license requirement for derivatives
+1. Looks up the license in the knowledge base.
+2. Checks each critical condition of the license against the facts:
+   - `disclose_source` vs `closed_source`
+   - `same_license` vs `wants_relicense`
+   - `net_copyleft` vs `saas` + `closed_source`
+   - `commercial_use` permission vs `commercial_use` fact
+3. Returns a verdict (`compatible` / `not compatible`), a list of violations, and a step‑by‑step explanation.
 
-💡 Recommendation: Consider MIT or Apache-2.0 if you need to distribute
-   without sharing source code.
+### Explanation Engine
+
+- `explain_question(fact_name)` provides human‑readable explanations for why a particular question matters.
+- `format_trace(trace)` and `generate_final_report(...)` produce detailed logs of which rules fired and why.
+
+---
+
+## License Data
+
+All license information is stored in the `Licenses/` directory. The folder contains:
+
+- `Families/` – one JSON file per license family (e.g., `GPL.json`, `BSD.json`, `creative_commons.json`). Each file lists licenses belonging to that family, including fields like:
+  - `id`, `spdx_id`, `name`
+  - `conditions`: `disclose_source`, `same_license`, `net_copyleft`, …
+  - `permissions`: `commercial_use`
+  - `limitations`: `patent_use`
+  - `metadata`: `popularity_rank`, `description`, `url`
+- `families_merger.py` – merges all family files into a single in‑memory structure for use by the inference engine.
+- `families_deduplicate.py` – a utility to check for duplicate license entries.
+
+> **Note:** The system does **not** require a single monolithic `licenses.json`. The merger is called dynamically by the CLI/Slint at startup.
+
+---
+
+## Project Structure
+
+```
+.
+├── Inference/                # Inference engine modules
+│   ├── forward_chain.py
+│   ├── backward_chain.py
+│   └── explanation_engine.py
+├── interface/                # User interfaces
+│   ├── cli.py
+│   ├── slint_app.py
+│   ├── common.py
+│   └── ui/
+│       ├── main.slint
+│       ├── recommendation.slint
+│       ├── analysis.slint
+│       └── styles.slint
+├── Licenses/                 # License knowledge base
+│   ├── Families/             # JSON files grouped by family
+│   ├── families_merger.py
+│   └── families_deduplicate.py
+├── Rules/
+│   └── license_rules.pl      # Forward‑chaining rule definitions
+├── Tests/                    # (optional) test files
+├── Docs/                     # Documentation and case studies
+├── main.py                   # Main entry point (CLI + --gui)
+├── requirements.txt          # Python dependencies (slint)
+├── shell.nix                 # Nix development environment
+└── README.md                 # This file
 ```
 
 ---
 
-## 🧠 Knowledge Base
+## Adding or Modifying Licenses
 
-### Facts (User Inputs)
+1. Place a new JSON file in `Licenses/Families/` or edit an existing one.
+   Use the same schema as the existing files (see `licenses_template.jsonl`).
+2. The merger script (`families_merger.py`) will automatically combine all families when the CLI/Slint loads.
+3. If you introduce a new condition or permission, update the backward chaining logic in `backward_chain.py` and the relevant rules in `rules.py`.
 
-The system collects the following facts from the user:
+---
 
-| Fact | Type | Description |
-|------|------|-------------|
-| `closed_source` | bool | Won't distribute source code |
-| `saas` | bool | Software used over a network |
-| `commercial_use` | bool | Commercial purpose intended |
-| `need_patent_protection` | bool | Need explicit patent grant |
-| `want_copyleft` | bool | Want strong copyleft (all derivatives open) |
-| `want_weak_copyleft` | bool | Want library-level copyleft only |
-| `want_file_copyleft` | bool | Want file-level copyleft only |
-| `wants_relicense` | bool | Want freedom to relicense derivatives |
-| `project_type` | str | `"software"`, `"library"`, or `"content"` |
-| `want_public_domain` | bool | Want public domain dedication |
-| `want_simple_permissive` | bool | Want a simple permissive license |
-| `academic_project` | bool | Academic or research project |
-| `mixed_open_proprietary` | bool | Mixed open/proprietary codebase |
-| `linking_type` | str | `"dynamic"` or `"static"` (for libraries) |
-| `modify_library` | bool | Will modify the library |
-| `concerned_about_legal_recognition` | bool | Concerned about legal jurisdiction issues |
+## Extending the Rule Base
 
-### Rules
+Add new rules to `Rules/rules.py`. Each rule is a dictionary with:
 
-The system contains **57 rules** organized by license:
+- `id` – unique identifier
+- `name` – human‑readable name
+- `condition` – function `(facts, licenses_data) -> bool`
+- `action` – function `(working_memory) -> None` that modifies `recommended`, `eliminated`, or `warnings`
+- `explanation` – string shown in the trace
+- `action_type` – one of `"RECOMMEND"`, `"ELIMINATE"`, `"WARN"`
 
-| License | Recommend | Eliminate | Warn | Total |
-|---------|-----------|-----------|------|-------|
-| MIT | 5 | 0 | 3 | 8 |
-| Apache-2.0 | 5 | 0 | 2 | 7 |
-| GPL-3.0 | 2 | 2 | 2 | 6 |
-| AGPL-3.0 | 2 | 3 | 2 | 7 |
-| LGPL-2.1 | 3 | 1 | 2 | 6 |
-| MPL-2.0 | 3 | 1 | 1 | 5 |
-| BSD-2-Clause | 5 | 0 | 2 | 7 |
-| CC-BY-NC-4.0 | 1 | 2 | 2 | 5 |
-| Unlicense | 4 | 0 | 3 | 7 |
-
-**Rule Types:**
-- **Recommendation Rules**: `IF condition THEN add_to_recommended`
-- **Elimination Rules**: `IF condition THEN add_to_eliminated`
-- **Warning Rules**: `IF condition THEN append_warning`
-
-### Working Memory
-
-During inference, the working memory tracks:
+Example rule:
 
 ```python
 {
-    "recommended": set(),      # Licenses that match user needs
-    "eliminated": set(),       # Licenses incompatible with user needs
-    "warnings": list(),        # Cautions about recommended/eliminated licenses
-    "reasoning_trace": list()  # Step-by-step explanation of each fired rule
+    "id": "A01",
+    "name": "recommend_MIT_if_closed_source",
+    "condition": lambda f, _: f.get("closed_source") is True,
+    "action": lambda wm: wm["recommended"].add("MIT"),
+    "explanation": "MIT does not require source disclosure.",
+    "action_type": "RECOMMEND"
 }
 ```
 
 ---
 
-## 💬 Explanation Facility
+## Disclaimer
 
-Every recommendation includes a **reasoning trace** showing:
-
-### 1. Why Was This Question Asked?
-
-```
-Q: "Will users interact with your software over a network?"
-A: We asked this because AGPL-3.0 triggers source-sharing requirements
-   for network/SaaS deployments. Your answer helps us determine if
-   strong copyleft licenses are compatible with your goals.
-```
-
-### 2. How Was the Conclusion Reached?
-
-```
-Conclusion: Apache-2.0 recommended
-
-Reasoning Path:
-1. User wants closed-source distribution
-   → Rule: eliminate_GPL_if_closed_source fired
-   → Rule: eliminate_AGPL_if_closed_source fired
-   → Result: Removed GPL-3.0, AGPL-3.0 from consideration
-
-2. User needs patent protection
-   → Rule: recommend_Apache_if_patent_protection fired
-   → Result: Added Apache-2.0 to recommended set
-
-3. User confirmed SaaS deployment
-   → Rule: recommend_Apache_if_saas fired
-   → Result: Confirmed Apache-2.0 has no network copyleft
-
-4. No conflicts detected
-   → Final recommendation: Apache-2.0 (best match)
-```
-
-### 3. Confidence & Uncertainty
-
-```
-Confidence: HIGH
-All user goals are fully compatible with Apache-2.0 properties.
-No conflicting requirements detected.
-```
-
-Or:
-
-```
-Confidence: MEDIUM
-LGPL-2.1 compatibility depends on dynamic vs. static linking.
-You selected "static linking" which may require additional care.
-Consult a lawyer for production use.
-```
+**This tool is for educational and informational purposes only.**
+It does **not** constitute legal advice. License selection involves legal consequences; always consult a qualified lawyer for your specific use case.
 
 ---
 
-## ⚙️ Inference Engine
+## Requirements
 
-### Forward Chaining (Recommendation Mode)
+- Python 3.12+
+- `slint` (for the GUI interface)
+- (Optional) `uv` for fast environment management
 
-```
-Facts → Match Rules → Fire Actions → Update Working Memory → Repeat → Output
-```
+All required packages are listed in `requirements.txt`.
 
-1. Collect user facts
-2. Iterate through all rules
-3. For each matching rule, fire its action
-4. Update working memory (recommended/eliminated/warnings)
-5. Present results with explanations
-
-### Backward Chaining (Analysis Mode)
-
-```
-Goal (Can I use X?) → Check Required Facts → Ask User → Verify → Output
-```
-
-1. User asks: "Can I use GPL-3.0 in a closed-source app?"
-2. System checks GPL-3.0 conditions: `disclose_source = true`
-3. User fact: `closed_source = true`
-4. Conflict detected: closed_source contradicts disclose_source
-5. Output: Not compatible + explanation
-
----
-
-## 🧪 Sample Scenarios
-
-### Scenario A: New Open-Source Library
-
-**User Profile:**
-- Building a Python library
-- Want it widely adopted
-- Don't mind if proprietary apps use it
-- Need to modify it over time
-
-**Input Facts:**
-```python
-{
-    "project_type": "library",
-    "want_weak_copyleft": True,
-    "linking_type": "dynamic",
-    "modify_library": True,
-    "commercial_use": True
-}
-```
-
-**Result:**
-```
-✅ Recommended: LGPL-2.1
-   • Weak copyleft: library stays open, linking apps stay free
-   • Dynamic linking is safe
-   • Allows commercial use
-
-⚠️ Warning: If you later switch to static linking, consult a lawyer.
-```
-
-### Scenario B: SaaS Startup (Closed Source)
-
-**User Profile:**
-- Building a SaaS product
-- Keeping code private
-- Need patent protection
-- Commercial use
-
-**Input Facts:**
-```python
-{
-    "saas": True,
-    "closed_source": True,
-    "need_patent_protection": True,
-    "commercial_use": True
-}
-```
-
-**Result:**
-```
-✅ Recommended: Apache-2.0
-   • No source disclosure required
-   • Explicit patent grant
-   • Network-safe (no copyleft trigger)
-   • Permits commercial use
-
-⚠️ Avoid:
-   • AGPL-3.0: Network use triggers source disclosure
-   • GPL-3.0: Requires source disclosure on distribution
-```
-
-### Scenario C: Public Domain Dedication
-
-**User Profile:**
-- Small utility script
-- Don't care about attribution
-- Want maximum freedom for users
-
-**Input Facts:**
-```python
-{
-    "want_public_domain": True,
-    "no_attribution_needed": True,
-    "want_maximum_freedom": True
-}
-```
-
-**Result:**
-```
-✅ Recommended: Unlicense
-   • No restrictions whatsoever
-   • No attribution required
-   • Maximum freedom for users
-
-⚠️ Warning: Public domain dedication not recognized in all jurisdictions.
-   Consider adding a fallback permissive license if this is a concern.
-```
-
----
-
-## ⚠️ Limitations
-
-1. **Not Legal Advice**: This system encodes general license properties but cannot account for:
-   - Jurisdictional variations in law
-   - Evolving license interpretations
-   - Custom or enterprise licenses
-   - Specific contractual obligations
-
-2. **Scope**: Focuses on 9 popular OSI-approved/commonly-used licenses:
-   MIT, Apache-2.0, GPL-3.0, AGPL-3.0, LGPL-2.1, MPL-2.0, BSD-2-Clause, CC-BY-NC-4.0, Unlicense
-
-3. **Dual Licensing**: Does not handle dual-licensing scenarios
-
-4. **Dependency Analysis**: Basic compatibility checking only; does not parse `package.json` or `requirements.txt`
-
-5. **Static vs. Dynamic Linking**: LGPL-2.1 rules distinguish these, but real-world cases may be more nuanced
-
----
-
-## 👥 Team & Course Info
-
-**Course:** Knowledge Base Systems  
-**Institution:** [Your University]  
-**Semester:** Spring 2026  
-
-**Team Members:**
-- [Member 1] – Knowledge Engineer & Rule Developer
-- [Member 2] – Inference Engine & Explanation Facility
-- [Member 3] – User Interface & Testing
-- [Member 4] – Documentation & Validation
+## Sources
 
 **Data Sources:**
+
 - [SPDX License List](https://spdx.org/licenses/)
 - [Open Source Initiative](https://opensource.org/licenses)
 - [GNU License Summaries](https://www.gnu.org/licenses/license-list.html)
@@ -464,5 +234,3 @@ Goal (Can I use X?) → Check Required Facts → Ask User → Verify → Output
 ## 📄 License
 
 This project itself is licensed under [MIT License](LICENSE).
-
-> **Irony noted** 😄

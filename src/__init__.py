@@ -1,0 +1,1 @@
+"""LicenseWise source package."""

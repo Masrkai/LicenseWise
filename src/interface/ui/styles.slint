@@ -36,9 +36,11 @@ export component LinkingCombo inherits ComboBox {
 
 export component ActionButton inherits Button {
     primary: true;
-    height: 40px;
-    min-width: 200px;
+    // Removed fixed height/width to allow standard sizing
 }
 
 export component OutputScrollView inherits ScrollView {
+    // Ensuring it can expand
+    vertical-stretch: 1;
+    horizontal-stretch: 1;
 }

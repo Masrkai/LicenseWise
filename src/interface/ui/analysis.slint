@@ -134,6 +134,7 @@ export component AnalysisTab inherits VerticalLayout {
         border-width: 1px;
         border-color: Theme.border;
         clip: true;
+        vertical-stretch: 1; // Added this to take available space
         drop-shadow-offset-x: 0px;
         drop-shadow-offset-y: 1px;
         drop-shadow-blur: 4px;
@@ -151,7 +152,7 @@ export component AnalysisTab inherits VerticalLayout {
 
             OutputScrollView {
                 vertical-stretch: 1;
-                min-height: 120px;
+                // Removed min-height to allow flexibility
 
                 Text {
                     text: root.output-text;

@@ -1,9 +1,10 @@
-networkx
-matplotlib
-
 # Datawork
-numpy
 pyswip
 
 # UI
 slint == 1.17.0b2
+
+# Graphs (Not yet implemented)
+numpy
+networkx
+matplotlib

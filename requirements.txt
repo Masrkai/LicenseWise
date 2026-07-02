@@ -5,6 +5,6 @@ pyswip
 slint == 1.17.0b2
 
 # Graphs (Not yet implemented)
-numpy
-networkx
-matplotlib
+# numpy
+# networkx
+# matplotlib

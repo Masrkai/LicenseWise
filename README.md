@@ -97,7 +97,7 @@ The UI is defined in `.slint` files under `interface/ui/`.
 ### Forward Chaining (Recommendation)
 
 1. **Facts** are gathered from the user (e.g., `closed_source = True`, `want_copyleft = True`, `project_type = "library"`).
-2. The `Rules/rules.py` file defines **rules** – each rule has a **condition** (checks facts and/or license data) and an **action** (adds a license to `recommended`, `eliminated`, or appends a `warning`).
+2. The `src/Rules/license_rules.pl` file defines **rules** – each rule has a **condition** (checks facts) and an **action** (adds a license to `recommended`, `eliminated`, or appends a `warning`).
 3. The engine iterates through all rules, evaluates conditions, and applies actions.
 4. Finally, eliminated licenses are removed from the recommended set, and a report is generated using `explanation_engine.py`.
 
@@ -175,33 +175,20 @@ All license information is stored in the `Licenses/` directory. The folder conta
 1. Place a new JSON file in `Licenses/Families/` or edit an existing one.
    Use the same schema as the existing files (see `licenses_template.jsonl`).
 2. The merger script (`families_merger.py`) will automatically combine all families when the CLI/Slint loads.
-3. If you introduce a new condition or permission, update the backward chaining logic in `backward_chain.py` and the relevant rules in `rules.py`.
+3. If you introduce a new condition or permission, update the backward chaining logic in `backward_chain.py` and the relevant rules in `src/Rules/license_rules.pl`.
 
 ---
 
 ## Extending the Rule Base
 
-Add new rules to `Rules/rules.py`. Each rule is a dictionary with:
+Add new rules to `src/Rules/license_rules.pl` using Prolog syntax. 
 
-- `id` – unique identifier
-- `name` – human‑readable name
-- `condition` – function `(facts, licenses_data) -> bool`
-- `action` – function `(working_memory) -> None` that modifies `recommended`, `eliminated`, or `warnings`
-- `explanation` – string shown in the trace
-- `action_type` – one of `"RECOMMEND"`, `"ELIMINATE"`, `"WARN"`
+Each rule should define:
+- `recommend(License)`: Predicate to recommend a license based on facts.
+- `eliminate(License)`: Predicate to eliminate a license based on facts.
+- `warning(License, Message)`: Predicate to issue warnings.
 
-Example rule:
-
-```python
-{
-    "id": "A01",
-    "name": "recommend_MIT_if_closed_source",
-    "condition": lambda f, _: f.get("closed_source") is True,
-    "action": lambda wm: wm["recommended"].add("MIT"),
-    "explanation": "MIT does not require source disclosure.",
-    "action_type": "RECOMMEND"
-}
-```
+The Prolog engine utilizes `assert_step` to log trace information for the explanation facility. For a detailed reference on rule structure, check the existing rules in `src/Rules/license_rules.pl`.
 
 ---
 

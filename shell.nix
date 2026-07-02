@@ -2,7 +2,6 @@
   pkgs ? import <nixpkgs> {
     config = {
       allowUnfree = true;
-      cudaSupport = true;
     };
   },
 }:
@@ -17,17 +16,14 @@ let
     stdenv.cc.cc.lib
 
     # Slint native dependencies
-    glib          # <-- add this, provides libgobject-2.0.so.0, libglib-2.0.so.0, libgio-2.0.so.0, etc.
-    glibc
+    glib           # glib provides libgobject, libglib and libgio .
+    glibc            #
     expat
-    fontconfig.lib   # .lib output is required to get the actual .so files
+    fontconfig.lib # .lib output is required to get the actual .so files
 
-    # Graphics / input (needed off NixOS, where these fall back to /usr paths)
+    # Graphics / input
     mesa
     libinput
-
-    # CUDA
-    cudaPackages.cudatoolkit.lib
 
     wayland
     libxkbcommon
@@ -40,34 +36,29 @@ let
     "/run/opengl-driver/lib"
   ];
 
-  fullLibPath = pkgs.lib.concatStringsSep ":" (
-    extraLibPaths ++ [ runtimeLibPath ]
-  );
+  fullLibPath = pkgs.lib.concatStringsSep ":" (extraLibPaths ++ [ runtimeLibPath ]);
 in
 pkgs.mkShell {
   name = "LicenseWise";
 
-  buildInputs = with pkgs; [
-    uv
-    python313
-    python313Packages.pip
+  buildInputs =
+    with pkgs;
+    [
+      uv
+      python313
+      python313Packages.pip
 
-    cudaPackages.cudatoolkit
-
-    gcc
-    ninja
-    glibc.bin
-  ] ++ runtimeLibs;
+      gcc
+      ninja
+      glibc.bin
+    ]
+    ++ runtimeLibs;
 
   shellHook = ''
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "  uv        : $(uv --version)"
     echo "  Python    : $(python --version)"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-    # CUDA
-    export CUDA_HOME="${pkgs.cudaPackages.cudatoolkit}"
-    export PATH="$CUDA_HOME/bin:$PATH"
 
     # Native runtime libraries (Slint, OpenGL, CUDA, etc.)
     export LD_LIBRARY_PATH="${fullLibPath}''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"

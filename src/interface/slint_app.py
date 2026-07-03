@@ -6,7 +6,6 @@ from Inference.backward_chain import backward_chain
 from Inference.forward_chain import forward_chain
 from Inference.explanation_engine import (
     generate_final_report,
-    generate_summary,
 )
 from config import UI_DIR
 from interface.common import (
@@ -106,9 +105,7 @@ def _build_recommendation_output_dict(answers) -> str:
 
         trace = []
         wm = forward_chain(facts, [], LICENSES_DATA, trace)
-        report = generate_final_report(wm, facts, trace)
-        summary = generate_summary(wm, facts, trace)
-        return report + "\n\n" + summary
+        return generate_final_report(wm, facts, trace, include_trace=False)
     except Exception as e:
         return f"Error: An unexpected error occurred.\n\n{str(e)}"
 

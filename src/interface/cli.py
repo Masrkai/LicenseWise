@@ -1,12 +1,11 @@
 import sys
-from pathlib import Path
 
 from Inference.backward_chain import backward_chain
 from Inference.explanation_engine import (
+    DISCLAIMER,
     explain_question,
     generate_final_report,
     generate_summary,
-    DISCLAIMER,
 )
 from Inference.forward_chain import forward_chain
 from interface.common import (
@@ -14,7 +13,6 @@ from interface.common import (
     get_licenses_data,
     load_questions,
     suggest_alternatives,
-    build_analysis_facts,
 )
 
 
@@ -95,10 +93,6 @@ def run_recommendation(licenses_data: list, verbose: bool = False) -> None:
         # Handle distribute -> closed_source conversion
         if fact_name == "distribute":
             apply_closed_source_derivation(facts)
-
-    print("\n" + "=" * 60)
-    print("Analyzing your requirements...")
-    print("=" * 60)
 
     trace = []
     wm = forward_chain(facts, [], licenses_data, trace)

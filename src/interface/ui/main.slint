@@ -1,9 +1,19 @@
 import { Button } from "std-widgets.slint";
 import { Theme, ActionButton } from "styles.slint";
+import { Question } from "types.slint"; // Import Question
 import { RecommendationTab } from "recommendation.slint";
 import { AnalysisTab } from "analysis.slint";
 
 export component LicenseWiseApp inherits Window {
+    // ...
+    // Add these properties
+    in-out property <[Question]> visible_questions;
+    in-out property <int> current_question_index: 0;
+    in-out property <int> total_visible_questions: 0;
+    callback on_answer_changed(string, string);
+    callback on_go_to_previous();
+    callback on_go_to_next();
+    // ...
     title: "LicenseWise - KBS License Advisor";
     preferred-width: 1000px;
     preferred-height: 800px;
@@ -188,22 +198,12 @@ export component LicenseWiseApp inherits Window {
         if root.current-tab == 0: RecommendationTab {
             vertical-stretch: 1;
 
-            distribute <=> root.distribute;
-            saas <=> root.saas;
-            commercial_use <=> root.commercial_use;
-            need_patent <=> root.need_patent;
-            want_copyleft <=> root.want_copyleft;
-            want_weak_copyleft <=> root.want_weak_copyleft;
-            want_file_copyleft <=> root.want_file_copyleft;
-            wants_relicense <=> root.wants_relicense;
-            project_type <=> root.project_type;
-            linking_type <=> root.linking_type;
-            modify_library <=> root.modify_library;
-            want_public_domain <=> root.want_public_domain;
-            want_simple_permissive <=> root.want_simple_permissive;
-            academic <=> root.academic;
-            mixed_codebase <=> root.mixed_codebase;
-            legal_recognition <=> root.legal_recognition;
+            visible_questions <=> root.visible_questions;
+            current_question_index <=> root.current_question_index;
+            total_visible_questions <=> root.total_visible_questions;
+            on_answer_changed(fact, val) => { root.on_answer_changed(fact, val); }
+            go-to-previous => { root.on_go_to_previous(); }
+            go-to-next => { root.on_go_to_next(); }
             output-text <=> root.recommend_output;
 
             get-recommendation => { root.get-recommendation(); }

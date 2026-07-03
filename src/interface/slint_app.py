@@ -2,6 +2,7 @@
 
 import os
 import sys
+import json
 from pathlib import Path
 
 from Inference.backward_chain import backward_chain
@@ -28,37 +29,39 @@ except FileNotFoundError as e:
     LICENSES_LOADED = 0
     LOAD_ERROR = str(e)
 
+# Load questions
+def _load_questions():
+    questions_path = Path(__file__).parent.parent / "Licenses" / "questions.json"
+    with open(questions_path, 'r') as f:
+        return json.load(f)
 
-def _build_recommendation_output(
-    distribute, saas, commercial_use, need_patent,
-    want_copyleft, want_weak_copyleft, want_file_copyleft,
-    wants_relicense, project_type, linking_type,
-    modify_library, want_public_domain, want_simple_permissive,
-    academic, mixed_codebase, legal_recognition,
-) -> str:
-    """Handle license recommendation request."""
+QUESTIONS = _load_questions()
+
+
+def _build_recommendation_output_dict(answers) -> str:
+    """Handle license recommendation request using a dictionary of answers."""
     if LOAD_ERROR:
         return f"Error: Cannot load license data.\n\n{LOAD_ERROR}\n\nPlease ensure licenses.json exists in your project root or Licenses/ directory."
 
     try:
         facts = {
-            "saas": yes_no_to_bool(saas),
-            "commercial_use": yes_no_to_bool(commercial_use),
-            "need_patent_protection": yes_no_to_bool(need_patent),
-            "want_copyleft": yes_no_to_bool(want_copyleft),
-            "want_weak_copyleft": yes_no_to_bool(want_weak_copyleft),
-            "want_file_copyleft": yes_no_to_bool(want_file_copyleft),
-            "wants_relicense": yes_no_to_bool(wants_relicense),
-            "project_type": project_type.lower() if project_type != "skip" else None,
-            "linking_type": linking_type.lower() if linking_type != "skip" else None,
-            "modify_library": yes_no_to_bool(modify_library),
-            "want_public_domain": yes_no_to_bool(want_public_domain),
-            "want_simple_permissive": yes_no_to_bool(want_simple_permissive),
-            "academic_project": yes_no_to_bool(academic),
-            "mixed_open_proprietary": yes_no_to_bool(mixed_codebase),
-            "concerned_about_legal_recognition": yes_no_to_bool(legal_recognition),
+            "saas": yes_no_to_bool(answers.get("saas", "skip")),
+            "commercial_use": yes_no_to_bool(answers.get("commercial_use", "skip")),
+            "need_patent_protection": yes_no_to_bool(answers.get("need_patent_protection", "skip")),
+            "want_copyleft": yes_no_to_bool(answers.get("want_copyleft", "skip")),
+            "want_weak_copyleft": yes_no_to_bool(answers.get("want_weak_copyleft", "skip")),
+            "want_file_copyleft": yes_no_to_bool(answers.get("want_file_copyleft", "skip")),
+            "wants_relicense": yes_no_to_bool(answers.get("wants_relicense", "skip")),
+            "project_type": answers.get("project_type").lower() if answers.get("project_type", "skip") != "skip" else None,
+            "linking_type": answers.get("linking_type").lower() if answers.get("linking_type", "skip") != "skip" else None,
+            "modify_library": yes_no_to_bool(answers.get("modify_library", "skip")),
+            "want_public_domain": yes_no_to_bool(answers.get("want_public_domain", "skip")),
+            "want_simple_permissive": yes_no_to_bool(answers.get("want_simple_permissive", "skip")),
+            "academic_project": yes_no_to_bool(answers.get("academic_project", "skip")),
+            "mixed_open_proprietary": yes_no_to_bool(answers.get("mixed_open_proprietary", "skip")),
+            "concerned_about_legal_recognition": yes_no_to_bool(answers.get("concerned_about_legal_recognition", "skip")),
         }
-        dist_bool = yes_no_to_bool(distribute)
+        dist_bool = yes_no_to_bool(answers.get("distribute", "skip"))
         facts["closed_source"] = distribute_to_closed_source(dist_bool)
 
         trace = []
@@ -212,6 +215,8 @@ def launch_gui():
     except Exception as e:
         print(f"Error loading Slint UI: {e}")
         sys.exit(1)
+    # ...
+
 
     window = ui.LicenseWiseApp()
 
@@ -222,26 +227,93 @@ def launch_gui():
 
     window.license_count = str(LICENSES_LOADED)
 
+    # State for dynamic questions
+    current_answers = {q['fact_name']: "skip" for q in QUESTIONS['recommendation']}
+    current_question_index = 0
+    
+    def get_visible_questions():
+        """Get all questions whose requires conditions are met."""
+        visible = []
+        for q in QUESTIONS['recommendation']:
+            if is_visible(q, current_answers):
+                visible.append(q)
+        return visible
+    
+    def is_visible(q, answers):
+        if "requires" not in q:
+            return True
+        req = q["requires"]
+        fact = req["fact"]
+        val = req["value"]
+        
+        # Check 'unless'
+        if "unless" in req:
+            un = req["unless"]
+            if answers.get(un["fact"]) == str(un["value"]):
+                return False
+                
+        return answers.get(fact) == str(val)
+
+    def update_visible_questions(ui_window):
+        nonlocal current_question_index
+        visible_qs = get_visible_questions()
+        
+        # Clamp index to valid range
+        if current_question_index >= len(visible_qs):
+            current_question_index = max(0, len(visible_qs) - 1)
+        
+        # Update total count on the UI
+        ui_window.total_visible_questions = len(visible_qs)
+        ui_window.current_question_index = current_question_index
+        
+        # Only show the current question
+        visible = []
+        if visible_qs and current_question_index < len(visible_qs):
+            q = visible_qs[current_question_index]
+            q_struct = ui.Question()
+            q_struct.fact_name = str(q.get('fact_name', ''))
+            q_struct.question = str(q.get('question', ''))
+            q_struct.type = str(q.get('type', ''))
+            q_struct.info = str(q.get('info', ''))
+            q_struct.current_answer = str(current_answers.get(q.get('fact_name', ''), 'skip'))
+            choices = q.get('choices', [])
+            if choices:
+                q_struct.choices = slint.ListModel([str(c) for c in choices])
+            visible.append(q_struct)
+        
+        ui_window.visible_questions = slint.ListModel(visible)
+
+    def on_answer_changed(fact_name, value):
+        nonlocal current_question_index
+        current_answers[fact_name] = value
+        # Advance to next question
+        visible_qs = get_visible_questions()
+        if current_question_index < len(visible_qs) - 1:
+            current_question_index += 1
+        update_visible_questions(window)
+
+    def go_to_previous():
+        nonlocal current_question_index
+        if current_question_index > 0:
+            current_question_index -= 1
+            update_visible_questions(window)
+
+    def go_to_next():
+        nonlocal current_question_index
+        visible_qs = get_visible_questions()
+        if current_question_index < len(visible_qs) - 1:
+            current_question_index += 1
+            update_visible_questions(window)
+
+    window.on_answer_changed = on_answer_changed
+    window.on_go_to_previous = go_to_previous
+    window.on_go_to_next = go_to_next
+    update_visible_questions(window)
+
     def on_get_recommendation():
         try:
-            output = _build_recommendation_output(
-                window.distribute,
-                window.saas,
-                window.commercial_use,
-                window.need_patent,
-                window.want_copyleft,
-                window.want_weak_copyleft,
-                window.want_file_copyleft,
-                window.wants_relicense,
-                window.project_type,
-                window.linking_type,
-                window.modify_library,
-                window.want_public_domain,
-                window.want_simple_permissive,
-                window.academic,
-                window.mixed_codebase,
-                window.legal_recognition,
-            )
+            # Pass the current answers dictionary directly
+            output = _build_recommendation_output_dict(current_answers)
             window.recommend_output = output
         except Exception as e:
             window.recommend_output = f"Error: {str(e)}"

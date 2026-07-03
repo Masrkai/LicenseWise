@@ -22,16 +22,23 @@ export global Theme {
 export component YesNoSkipCombo inherits ComboBox {
     model: ["skip", "yes", "no"];
     current-value: "skip";
+    // Callback to trigger when value changes
+    callback changed(string);
+    selected(v) => { root.changed(v); }
 }
 
 export component RecommendationCombo inherits ComboBox {
     model: ["skip", "Software", "Library", "Content"];
     current-value: "skip";
+    callback changed(string);
+    selected(v) => { root.changed(v); }
 }
 
 export component LinkingCombo inherits ComboBox {
     model: ["skip", "Dynamic", "Static"];
     current-value: "skip";
+    callback changed(string);
+    selected(v) => { root.changed(v); }
 }
 
 export component ActionButton inherits Button {

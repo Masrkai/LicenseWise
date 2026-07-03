@@ -45,10 +45,10 @@ class PrologEngine:
         """
         self.fact_manager.load_facts(facts)
 
-        recommended = {sol["L"] for sol in self.prolog.query("recommend(L)")}
-        eliminated = {sol["L"] for sol in self.prolog.query("eliminate(L)")}
+        recommended = {str(sol["L"]) for sol in self.prolog.query("recommend(L)")}
+        eliminated = {str(sol["L"]) for sol in self.prolog.query("eliminate(L)")}
         warnings = [
-            f"{sol['L']}: {sol['Msg']}" for sol in self.prolog.query("warning(L, Msg)")
+            f"{str(sol['L'])}: {str(sol['Msg'])}" for sol in self.prolog.query("warning(L, Msg)")
         ]
 
         # Elimination wins

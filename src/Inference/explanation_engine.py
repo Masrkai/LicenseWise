@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from Inference import get_engine
 from Inference.prolog_engine import PrologEngine
-from Licenses.report_templates import (
+from Data.report_templates import (
     REPORT_HEADER,
     SECTION_RECOMMENDED,
     SECTION_ELIMINATED,
@@ -60,14 +60,14 @@ def generate_final_report(
 
     if wm["recommended"]:
         lines.append(f"\n{SECTION_RECOMMENDED}")
-        for lic in sorted(wm["recommended"]):
+        for lic in sorted(wm["recommended"], key=str):
             lines.append(f"   * {lic}")
     else:
         lines.append(NO_LICENSES_RECOMMENDED)
 
     if wm["eliminated"]:
         lines.append(f"\n{SECTION_ELIMINATED}")
-        for lic in sorted(wm["eliminated"]):
+        for lic in sorted(wm["eliminated"], key=str):
             lines.append(f"   * {lic}")
 
     if wm["warnings"]:

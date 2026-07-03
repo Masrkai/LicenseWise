@@ -53,7 +53,8 @@ def format_trace(trace: List[Dict]) -> str:
 
 
 def generate_final_report(
-    wm: Dict[str, Any], facts: Dict[str, Any], trace: List[Dict]
+    wm: Dict[str, Any], facts: Dict[str, Any], trace: List[Dict],
+    include_trace: bool = True,
 ) -> str:
     """Generate the complete final report including reasoning trace."""
     lines = [SEP, REPORT_HEADER, SEP]
@@ -84,8 +85,12 @@ def generate_final_report(
         else "LOW"
     )
     lines.append(f"\n{SECTION_CONFIDENCE} {confidence} (provided {provided}/{total} facts)")
-    lines.append("\n" + format_trace(trace))
-    lines.extend(["\n" + SEP, DISCLAIMER, SEP])
+
+    if include_trace:
+        lines.append("\n" + format_trace(trace))
+        lines.extend(["\n" + SEP, DISCLAIMER, SEP])
+    else:
+        lines.append("\n" + DISCLAIMER)
     return "\n".join(lines)
 
 

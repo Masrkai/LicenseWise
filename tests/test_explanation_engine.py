@@ -69,6 +69,24 @@ class TestGenerateFinalReport:
         report = generate_final_report(wm, facts, trace)
         assert NO_LICENSES_RECOMMENDED in report
 
+    def test_with_trace_excluded(self):
+        wm = {"recommended": {"MIT"}, "eliminated": set(), "warnings": []}
+        facts = {"saas": True}
+        trace = [{"step": 1, "rule_name": "r1", "action": "RECOMMEND",
+                  "explanation": "test explanation", "matched_facts": {}}]
+        report = generate_final_report(wm, facts, trace, include_trace=False)
+        assert "MIT" in report
+        assert "HOW THE ENGINE REACHED" not in report
+
+    def test_with_trace_included_by_default(self):
+        wm = {"recommended": {"MIT"}, "eliminated": set(), "warnings": []}
+        facts = {"saas": True}
+        trace = [{"step": 1, "rule_name": "r1", "action": "RECOMMEND",
+                  "explanation": "test explanation", "matched_facts": {}}]
+        report = generate_final_report(wm, facts, trace)
+        assert "MIT" in report
+        assert "HOW THE ENGINE REACHED" in report
+
 
 class TestFormatTrace:
     def test_empty_trace(self):

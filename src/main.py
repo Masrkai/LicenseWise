@@ -3,8 +3,9 @@ import argparse
 
 
 def main():
-    parser = argparse.ArgumentParser(description="LicenseWise \u2013 KBS License Advisor")
+    parser = argparse.ArgumentParser(description="LicenseWise - KBS License Advisor")
     parser.add_argument("--gui", action="store_true", help="Launch Slint GUI interface")
+    parser.add_argument("--verbose", action="store_true", help="Show detailed reasoning trace")
     args = parser.parse_args()
 
     if args.gui:
@@ -17,7 +18,7 @@ def main():
             sys.exit(1)
     else:
         from interface.cli import main_cli
-        main_cli()
+        main_cli(verbose=args.verbose)
 
 
 if __name__ == "__main__":

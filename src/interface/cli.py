@@ -6,6 +6,7 @@ from Inference.explanation_engine import (
     explain_question,
     generate_final_report,
     generate_summary,
+    DISCLAIMER,
 )
 from Inference.forward_chain import forward_chain
 from interface.common import (
@@ -22,8 +23,8 @@ from interface.common import (
 # ----------------------------------------------------------------------
 def ask_yes_no(question: str, fact_name: str, facts: dict) -> None:
     """Ask a yes/no question, store answer, and show explanation."""
-    print(f"\n\u2753 {question}")
-    print(f"   \U0001f4a1 Why we ask: {explain_question(fact_name)}")
+    print(f"\n? {question}")
+    print(f"   Why: {explain_question(fact_name)}")
     while True:
         ans = input("   Answer (yes/no/skip): ").strip().lower()
         if ans in ("yes", "y"):
@@ -40,9 +41,9 @@ def ask_yes_no(question: str, fact_name: str, facts: dict) -> None:
 
 
 def ask_choice(question: str, fact_name: str, choices: list, facts: dict) -> None:
-    """Ask a multiple\u2011choice question."""
-    print(f"\n\u2753 {question}")
-    print(f"   \U0001f4a1 Why we ask: {explain_question(fact_name)}")
+    """Ask a multiple-choice question."""
+    print(f"\n? {question}")
+    print(f"   Why: {explain_question(fact_name)}")
     for i, choice in enumerate(choices, 1):
         print(f"   [{i}] {choice}")
     while True:
@@ -64,12 +65,12 @@ def ask_choice(question: str, fact_name: str, choices: list, facts: dict) -> Non
 # ----------------------------------------------------------------------
 # Recommendation mode
 # ----------------------------------------------------------------------
-def run_recommendation(licenses_data: list) -> None:
+def run_recommendation(licenses_data: list, verbose: bool = False) -> None:
     """Run the license recommendation wizard."""
     questions = load_questions()["recommendation"]
 
     print("=" * 60)
-    print("\U0001f539 LicenseWise \u2013 License Recommendation Wizard")
+    print("LicenseWise - License Recommendation Wizard")
     print("=" * 60)
     print("\nAnswer the following questions about your project.")
     print("Type 'skip' or press Enter to skip any question.\n")
@@ -96,16 +97,18 @@ def run_recommendation(licenses_data: list) -> None:
             apply_closed_source_derivation(facts)
 
     print("\n" + "=" * 60)
-    print("\U0001f9e0 Analyzing your requirements...")
+    print("Analyzing your requirements...")
     print("=" * 60)
 
     trace = []
     wm = forward_chain(facts, [], licenses_data, trace)
 
-    report = generate_final_report(wm, facts, trace)
+    report = generate_final_report(wm, facts, trace, include_trace=verbose)
     print(report)
-    summary = generate_summary(wm, facts, trace)
-    print(summary)
+
+    if verbose:
+        summary = generate_summary(wm, facts, trace)
+        print(summary)
 
 
 # ----------------------------------------------------------------------
@@ -114,7 +117,7 @@ def run_recommendation(licenses_data: list) -> None:
 def run_analysis(licenses_data: list) -> None:
     """Check compatibility of a specific license."""
     print("=" * 60)
-    print("\U0001f539 LicenseWise \u2013 License Analysis")
+    print("LicenseWise - License Analysis")
     print("=" * 60)
 
     license_id = input("\nEnter license name or SPDX ID (e.g., GPL-3.0, MIT): ").strip()
@@ -147,95 +150,95 @@ def run_analysis(licenses_data: list) -> None:
 
     print("\n" + "=" * 60)
     if result["compatible"] is True:
-        print(f"\u2705 {license_id} is COMPATIBLE with your intended use.")
+        print(f"{license_id} is COMPATIBLE with your intended use.")
     elif result["compatible"] is False:
-        print(f"\u274c {license_id} is NOT COMPATIBLE with your intended use.")
+        print(f"{license_id} is NOT COMPATIBLE with your intended use.")
     else:
-        print(f"\u2753 {license_id} compatibility unclear. See explanation below.")
+        print(f"{license_id} compatibility unclear. See explanation below.")
 
     # Show violations
     if result.get("violations"):
-        print("\n\u26a0\ufe0f  Violations found:")
+        print("\nViolations found:")
         for v in result["violations"]:
-            print(f"   \u2022 {v}")
+            print(f"   - {v}")
 
     # Show explanation
-    print("\n\U0001f4a1 Analysis:")
+    print("\nAnalysis:")
     for line in result["explanation"].split("\n"):
         if line.strip():
             print(f"   {line}")
 
     # Show how the decision was made
     if result.get("how"):
-        print("\n\U0001f50d Reasoning:")
+        print("\nReasoning:")
         for line in result["how"].split("\n"):
             if line.strip():
                 print(f"   {line}")
 
     # Show warnings
     if result.get("warnings"):
-        print("\n\u26a0\ufe0f  Warnings:")
+        print("\nWarnings:")
         for w in result["warnings"]:
-            print(f"   \u2022 {w}")
+            print(f"   - {w}")
 
     # Show license info if available
     if result.get("license_info"):
         lic = result["license_info"]
-        print(f"\n\U0001f4c4 License Info: {lic.get('name', license_id)}")
+        print(f"\nLicense Info: {lic.get('name', license_id)}")
         print(f"   Type: {lic.get('type', 'unknown')}")
         if lic.get("description"):
             print(f"   Description: {lic['description']}")
 
     # Suggest alternatives if incompatible
     if not result["compatible"] and result["violations"]:
-        print("\n\U0001f4a1 Alternative licenses to consider:")
+        print("\nAlternative licenses to consider:")
         all_text = (
             " ".join(result["violations"]).lower()
             + " "
             + result.get("explanation", "").lower()
         )
         for sugg in suggest_alternatives(all_text, format="plain"):
-            print(f"   \u2022 {sugg}")
+            print(f"   - {sugg}")
 
     print("\n" + "=" * 60)
-    print("\u26a0\ufe0f  DISCLAIMER: This is not legal advice. Consult a lawyer.")
+    print(DISCLAIMER)
     print("=" * 60)
 
 
 # ----------------------------------------------------------------------
 # Main CLI entry
 # ----------------------------------------------------------------------
-def main_cli():
+def main_cli(verbose: bool = False) -> None:
     try:
         licenses_data = get_licenses_data()
-        print(f"\u2713 Loaded {len(licenses_data)} licenses from JSON files.")
+        print(f"Loaded {len(licenses_data)} licenses from JSON files.")
     except FileNotFoundError as e:
         print(f"ERROR: {e}", file=sys.stderr)
-        print("\n\U0001f4a1 Make sure you have one of the following:", file=sys.stderr)
-        print("   \u2022 licenses.json in your project root", file=sys.stderr)
-        print("   \u2022 licenses.json in Licenses/ directory", file=sys.stderr)
-        print("   \u2022 *.json files in Licenses/ directory", file=sys.stderr)
+        print("\nMake sure you have one of the following:", file=sys.stderr)
+        print("   - licenses.json in your project root", file=sys.stderr)
+        print("   - licenses.json in Licenses/ directory", file=sys.stderr)
+        print("   - *.json files in Licenses/ directory", file=sys.stderr)
         sys.exit(1)
 
-    print("\n")
-    print("\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557")
-    print("\u2551         LICENSEWISE \u2013 Knowledge-Based System                 \u2551")
-    print("\u2551         Intelligent Software License Selection               \u2551")
-    print("\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d")
+    print()
+    print("============================================================")
+    print("  LICENSEWISE - Knowledge-Based System")
+    print("  Intelligent Software License Selection")
+    print("============================================================")
 
     while True:
         print("\nSelect mode:")
-        print("[1] License Recommendation \u2013 Find the best license for your project")
-        print("[2] License Analysis \u2013 Check if a specific license fits your needs")
+        print("[1] License Recommendation - Find the best license for your project")
+        print("[2] License Analysis - Check if a specific license fits your needs")
         print("[3] Exit")
 
         choice = input("\nChoice: ").strip()
         if choice == "1":
-            run_recommendation(licenses_data)
+            run_recommendation(licenses_data, verbose=verbose)
         elif choice == "2":
             run_analysis(licenses_data)
         elif choice == "3":
-            print("\nGoodbye! \U0001f44b")
+            print("\nGoodbye!")
             sys.exit(0)
         else:
             print("Invalid choice. Please enter 1, 2, or 3.")

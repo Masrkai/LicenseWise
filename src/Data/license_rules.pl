@@ -118,12 +118,17 @@ warning('BSD-2-Clause', 'No patent grant. Consider Apache-2.0.') :-
     assert_step('A11', 'warn_BSD_no_patent_grant', 'WARN',
                 ['BSD-2-Clause'], 'BSD licenses offer no patent protection.').
 
-% --- Unlicense / CC0 ---
-recommend(License) :-
-    member(License, ['Unlicense', 'CC0-1.0']),
+% --- Unlicense ---
+recommend('Unlicense') :-
     fact(want_public_domain),
-    assert_step('A12', 'recommend_public_domain', 'RECOMMEND',
-                ['Unlicense', 'CC0-1.0'], 'Unlicense and CC0 dedicate work to the public domain with no restrictions.').
+    assert_step('A12a', 'recommend_Unlicense', 'RECOMMEND',
+                ['Unlicense'], 'Unlicense dedicates work to the public domain with no restrictions.').
+
+% --- CC0-1.0 ---
+recommend('CC0-1.0') :-
+    fact(want_public_domain),
+    assert_step('A12b', 'recommend_CC0', 'RECOMMEND',
+                ['CC0-1.0'], 'CC0 dedicates work to the public domain with no restrictions.').
 
 warning('Unlicense', 'Public domain dedication may not be recognized everywhere. Consider CC0.') :-
     fact(concerned_about_legal_recognition),
@@ -184,14 +189,14 @@ warning('AGPL-3.0', 'Strongest copyleft. Applies to distribution AND network use
 recommend('LGPL-2.1') :-
     fact(project_type(library)),
     fact(want_weak_copyleft),
-    assert_step('C01', 'recommend_LGPL_for_library', 'RECOMMEND',
-                ['LGPL-2.1', 'LGPL-3.0'], 'LGPL keeps the library open but allows proprietary linking.').
+    assert_step('C01a', 'recommend_LGPL21_for_library', 'RECOMMEND',
+                ['LGPL-2.1'], 'LGPL-2.1 keeps the library open but allows proprietary linking.').
 
 recommend('LGPL-3.0') :-
     fact(project_type(library)),
     fact(want_weak_copyleft),
-    assert_step('C01', 'recommend_LGPL_for_library', 'RECOMMEND',
-                ['LGPL-2.1', 'LGPL-3.0'], 'LGPL keeps the library open but allows proprietary linking.').
+    assert_step('C01b', 'recommend_LGPL30_for_library', 'RECOMMEND',
+                ['LGPL-3.0'], 'LGPL-3.0 keeps the library open but allows proprietary linking.').
 
 warning('LGPL-2.1', 'Static linking may require the combined work to be LGPL.') :-
     fact(linking_type(static)),

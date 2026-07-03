@@ -9,7 +9,7 @@ from Inference.explanation_engine import (
 )
 from Inference.forward_chain import forward_chain
 from interface.common import (
-    distribute_to_closed_source,
+    apply_closed_source_derivation,
     get_licenses_data,
     load_questions,
     suggest_alternatives,
@@ -77,14 +77,11 @@ def run_recommendation(licenses_data: list) -> None:
     facts = {}
 
     for q in questions:
-        # Check if this question has a requirement
         req = q.get("requires")
         if req:
-            # Handle "unless" condition
             unless = req.get("unless")
-            if unless and facts.get(unless["fact"]) == unless["value"]:
-                continue
-            if facts.get(req["fact"]) != req["value"]:
+            if (unless and facts.get(unless["fact"]) == unless["value"]) \
+               or facts.get(req["fact"]) != req["value"]:
                 continue
 
         fact_name = q["fact_name"]
@@ -96,8 +93,7 @@ def run_recommendation(licenses_data: list) -> None:
 
         # Handle distribute -> closed_source conversion
         if fact_name == "distribute":
-            facts["closed_source"] = distribute_to_closed_source(facts.get("distribute"))
-            facts.pop("distribute", None)
+            apply_closed_source_derivation(facts)
 
     print("\n" + "=" * 60)
     print("\U0001f9e0 Analyzing your requirements...")
@@ -139,8 +135,7 @@ def run_analysis(licenses_data: list) -> None:
     facts = {}
 
     ask_yes_no("Will you distribute the software?", "distribute", facts)
-    facts["closed_source"] = distribute_to_closed_source(facts.get("distribute"))
-    facts.pop("distribute", None)
+    apply_closed_source_derivation(facts)
 
     ask_yes_no("Will it be used over a network (SaaS)?", "saas", facts)
     ask_yes_no("Is commercial use intended?", "commercial_use", facts)

@@ -8,11 +8,12 @@ writing it to a new file.
 Usage:
     python merge_families.py
 """
-import os
 import json
 from pathlib import Path
 
-FAMILIES_DIR = Path(__file__).parent / "Families"
+from config import LICENSES_DIR
+
+FAMILIES_DIR = LICENSES_DIR / "Families"
 
 
 def load_families(families_dir: Path) -> dict[str, list]:

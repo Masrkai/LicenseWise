@@ -51,6 +51,11 @@ clear_facts :-
 clear_trace :-
     retractall(step(_, _, _, _, _, _)).
 
+clear_metadata :-
+    retractall(license_condition(_, _)),
+    retractall(license_permission(_, _)),
+    retractall(license_limitation(_, _)).
+
 % ============================================================
 % A. Permissive licenses
 % ============================================================
@@ -233,6 +238,49 @@ eliminate(License) :-
     private_mods,
     assert_step('E01', 'exclude_copyleft_if_private_mods', 'ELIMINATE',
                 ['GPL-2.0', 'GPL-3.0', 'AGPL-3.0'], 'GPL and AGPL require source sharing of derivatives.').
+
+% ============================================================
+% F. Generic metadata-based rules
+% ============================================================
+% These rules check license metadata (conditions, permissions, limitations)
+% that are asserted dynamically by Python for any license.
+
+:- dynamic license_condition/2.
+:- dynamic license_permission/2.
+:- dynamic license_limitation/2.
+
+% Elimination rules based on metadata
+eliminate(License) :-
+    license_condition(License, disclose_source),
+    fact(closed_source),
+    assert_step('F01', 'metadata_disclose_source_vs_closed', 'ELIMINATE',
+                [License], 'License requires source disclosure but project is closed-source.').
+
+eliminate(License) :-
+    license_condition(License, same_license),
+    fact(wants_relicense),
+    assert_step('F02', 'metadata_same_license_vs_relicense', 'ELIMINATE',
+                [License], 'License requires same-license derivatives but user wants to relicense.').
+
+eliminate(License) :-
+    license_condition(License, net_copyleft),
+    fact(saas),
+    fact(closed_source),
+    assert_step('F03', 'metadata_net_copyleft_saas', 'ELIMINATE',
+                [License], 'License has network copyleft incompatible with closed-source SaaS.').
+
+eliminate(License) :-
+    \+ license_permission(License, commercial_use),
+    fact(commercial_use),
+    assert_step('F04', 'metadata_no_commercial', 'ELIMINATE',
+                [License], 'License does not grant commercial use permission.').
+
+% Warning rules based on metadata
+warning(License, 'No patent grant - consider Apache-2.0.') :-
+    license_limitation(License, patent_use),
+    fact(need_patent_protection),
+    assert_step('F05', 'metadata_no_patent', 'WARN',
+                [License], 'License offers no patent protection.').
 
 % ============================================================
 % Utility predicates

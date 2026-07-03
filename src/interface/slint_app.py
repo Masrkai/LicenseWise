@@ -1,9 +1,6 @@
 """Slint GUI interface for LicenseWise."""
 
-import os
 import sys
-import json
-from pathlib import Path
 
 from Inference.backward_chain import backward_chain
 from Inference.forward_chain import forward_chain
@@ -11,13 +8,15 @@ from Inference.explanation_engine import (
     generate_final_report,
     generate_summary,
 )
+from config import UI_DIR
 from interface.common import (
     get_licenses_data,
+    load_questions,
     yes_no_to_bool,
-    distribute_to_closed_source,
-    suggest_alternatives,
+    apply_closed_source_derivation,
     build_analysis_facts,
 )
+from interface.formatting import format_compatibility_result
 
 # Load licenses with proper error handling
 try:
@@ -29,19 +28,60 @@ except FileNotFoundError as e:
     LICENSES_LOADED = 0
     LOAD_ERROR = str(e)
 
-# Load questions
-def _load_questions():
-    questions_path = Path(__file__).parent.parent / "Licenses" / "questions.json"
-    with open(questions_path, 'r') as f:
-        return json.load(f)
+QUESTIONS = load_questions()
 
-QUESTIONS = _load_questions()
+LICENSES_ERROR_TEMPLATE = (
+    "Error: Cannot load license data.\n\n{error}\n\n"
+    "Please ensure licenses.json exists in your project root or Licenses/ directory."
+)
+
+
+class QuestionNavigator:
+    """Manages question visibility, navigation, and answer state for the GUI."""
+
+    def __init__(self, questions):
+        self.questions = questions
+        self.answers = {q["fact_name"]: "skip" for q in questions}
+        self.current_index = 0
+
+    def is_visible(self, q):
+        """Check if a question should be displayed given current answers."""
+        if "requires" not in q:
+            return True
+        req = q["requires"]
+        if "unless" in req:
+            un = req["unless"]
+            if self.answers.get(un["fact"]) == str(un["value"]):
+                return False
+        return self.answers.get(req["fact"]) == str(req["value"])
+
+    def get_visible_questions(self):
+        """Get all questions whose requires conditions are met."""
+        return [q for q in self.questions if self.is_visible(q)]
+
+    def on_answer_changed(self, fact_name, value):
+        """Handle an answer change and advance to next question."""
+        self.answers[fact_name] = value
+        visible = self.get_visible_questions()
+        if self.current_index < len(visible) - 1:
+            self.current_index += 1
+
+    def go_to_previous(self):
+        """Move to previous question if possible."""
+        if self.current_index > 0:
+            self.current_index -= 1
+
+    def go_to_next(self):
+        """Move to next question if possible."""
+        visible = self.get_visible_questions()
+        if self.current_index < len(visible) - 1:
+            self.current_index += 1
 
 
 def _build_recommendation_output_dict(answers) -> str:
     """Handle license recommendation request using a dictionary of answers."""
     if LOAD_ERROR:
-        return f"Error: Cannot load license data.\n\n{LOAD_ERROR}\n\nPlease ensure licenses.json exists in your project root or Licenses/ directory."
+        return LICENSES_ERROR_TEMPLATE.format(error=LOAD_ERROR)
 
     try:
         facts = {
@@ -61,8 +101,8 @@ def _build_recommendation_output_dict(answers) -> str:
             "mixed_open_proprietary": yes_no_to_bool(answers.get("mixed_open_proprietary", "skip")),
             "concerned_about_legal_recognition": yes_no_to_bool(answers.get("concerned_about_legal_recognition", "skip")),
         }
-        dist_bool = yes_no_to_bool(answers.get("distribute", "skip"))
-        facts["closed_source"] = distribute_to_closed_source(dist_bool)
+        facts["distribute"] = yes_no_to_bool(answers.get("distribute", "skip"))
+        apply_closed_source_derivation(facts)
 
         trace = []
         wm = forward_chain(facts, [], LICENSES_DATA, trace)
@@ -76,7 +116,7 @@ def _build_recommendation_output_dict(answers) -> str:
 def _build_analysis_output(license_id, distribute, saas, commercial_use, need_patent, wants_relicense) -> str:
     """Handle license compatibility analysis with enhanced output."""
     if LOAD_ERROR:
-        return f"Error: Cannot load license data.\n\n{LOAD_ERROR}\n\nPlease ensure licenses.json exists in your project root or Licenses/ directory."
+        return LICENSES_ERROR_TEMPLATE.format(error=LOAD_ERROR)
 
     if not license_id or not license_id.strip():
         return "Please enter a license SPDX ID (e.g., MIT, GPL-3.0, Apache-2.0)"
@@ -90,108 +130,7 @@ def _build_analysis_output(license_id, distribute, saas, commercial_use, need_pa
             wants_relicense=wants_relicense,
         )
         result = backward_chain(license_id.strip(), facts, LICENSES_DATA)
-
-        output = f"Compatibility Check: {license_id}\n\n"
-
-        if result["compatible"] is True:
-            output += f"COMPATIBLE\n\n{license_id} is compatible with your intended use.\n\n"
-        elif result["compatible"] is False:
-            output += f"NOT COMPATIBLE\n\n{license_id} is not compatible with your intended use.\n\n"
-        else:
-            output += f"UNCLEAR\n\nCompatibility could not be determined for {license_id}.\n\n"
-
-        if result.get("violations"):
-            output += "Violations Found\n\n"
-            for v in result["violations"]:
-                output += f"  - {v}\n"
-            output += "\n"
-
-        if result.get("explanation"):
-            output += f"Analysis\n\n{result['explanation']}\n\n"
-
-        if result.get("how"):
-            output += "Reasoning\n\n"
-            for line in result["how"].split("\n"):
-                if line.strip():
-                    output += f"  {line}\n"
-            output += "\n"
-
-        if result.get("warnings"):
-            output += "Warnings\n\n"
-            for w in result["warnings"]:
-                output += f"  - {w}\n"
-            output += "\n"
-
-        if result.get("license_info"):
-            lic = result["license_info"]
-            output += "License Information\n\n"
-            output += f"  Name: {lic.get('name', 'unknown')}\n"
-            output += f"  Type: {lic.get('type', 'unknown').title()}\n"
-            if lic.get("description"):
-                output += f"  Description: {lic['description']}\n"
-
-            if lic.get("permissions"):
-                perms = lic["permissions"]
-                output += "\n  Permissions:\n"
-                for key, label in [
-                    ("commercial_use", "Commercial use"),
-                    ("modification", "Modification"),
-                    ("distribution", "Distribution"),
-                    ("private_use", "Private use"),
-                ]:
-                    if perms.get(key):
-                        output += f"    + {label}\n"
-
-            if lic.get("conditions"):
-                conds = lic["conditions"]
-                condition_map = [
-                    ("include_copyright", "Include copyright notice"),
-                    ("include_license", "Include license text"),
-                    ("disclose_source", "Disclose source code"),
-                    ("same_license", "Use same license for derivatives"),
-                    ("document_changes", "Document changes"),
-                    ("net_copyleft", "Network copyleft (AGPL-style)"),
-                ]
-                conditions_list = [label for key, label in condition_map if conds.get(key)]
-                if conditions_list:
-                    output += "\n  Conditions:\n"
-                    for cond in conditions_list:
-                        output += f"    - {cond}\n"
-
-            if lic.get("limitations"):
-                lims = lic["limitations"]
-                output += "\n  Limitations:\n"
-                for key, label in [
-                    ("liability", "No liability warranty"),
-                    ("warranty", "No warranty"),
-                ]:
-                    if lims.get(key):
-                        output += f"    ! {label}\n"
-                if not lims.get("patent_use"):
-                    output += "    ! No patent grant\n"
-                if not lims.get("trademark_use"):
-                    output += "    ! No trademark rights\n"
-
-            output += "\n"
-
-        if not result["compatible"] and result.get("violations"):
-            all_text = (
-                " ".join(result["violations"]).lower()
-                + " "
-                + result.get("explanation", "").lower()
-            )
-            suggestions = suggest_alternatives(all_text, format="plain")
-            if suggestions:
-                output += "Alternative Licenses to Consider\n\n"
-                for sugg in suggestions:
-                    output += f"  - {sugg}\n"
-                output += "\n"
-
-        output += "---\n\n"
-        output += "Disclaimer: This analysis is for educational purposes only and does not constitute legal advice. "
-        output += "Consult a qualified intellectual property lawyer for production use.\n"
-
-        return output
+        return f"Compatibility Check: {license_id}\n\n{format_compatibility_result(result, license_id)}"
     except Exception as e:
         return f"Error: An unexpected error occurred during analysis.\n\n{str(e)}"
 
@@ -200,8 +139,7 @@ def launch_gui():
     """Launch the Slint GUI interface."""
     import slint
 
-    ui_dir = Path(__file__).parent / "ui"
-    main_slint = ui_dir / "main.slint"
+    main_slint = UI_DIR / "main.slint"
 
     if not main_slint.exists():
         print(f"Error: UI file not found at {main_slint}")
@@ -210,13 +148,11 @@ def launch_gui():
     try:
         ui = slint.load_file(
             str(main_slint),
-            include_paths=[str(ui_dir)],
+            include_paths=[str(UI_DIR)],
         )
     except Exception as e:
         print(f"Error loading Slint UI: {e}")
         sys.exit(1)
-    # ...
-
 
     window = ui.LicenseWiseApp()
 
@@ -227,93 +163,54 @@ def launch_gui():
 
     window.license_count = str(LICENSES_LOADED)
 
-    # State for dynamic questions
-    current_answers = {q['fact_name']: "skip" for q in QUESTIONS['recommendation']}
-    current_question_index = 0
-    
-    def get_visible_questions():
-        """Get all questions whose requires conditions are met."""
-        visible = []
-        for q in QUESTIONS['recommendation']:
-            if is_visible(q, current_answers):
-                visible.append(q)
-        return visible
-    
-    def is_visible(q, answers):
-        if "requires" not in q:
-            return True
-        req = q["requires"]
-        fact = req["fact"]
-        val = req["value"]
-        
-        # Check 'unless'
-        if "unless" in req:
-            un = req["unless"]
-            if answers.get(un["fact"]) == str(un["value"]):
-                return False
-                
-        return answers.get(fact) == str(val)
+    # Initialize question navigator
+    navigator = QuestionNavigator(QUESTIONS["recommendation"])
 
-    def update_visible_questions(ui_window):
-        nonlocal current_question_index
-        visible_qs = get_visible_questions()
-        
-        # Clamp index to valid range
-        if current_question_index >= len(visible_qs):
-            current_question_index = max(0, len(visible_qs) - 1)
-        
-        # Update total count on the UI
-        ui_window.total_visible_questions = len(visible_qs)
-        ui_window.current_question_index = current_question_index
-        
-        # Only show the current question
+    def update_ui():
+        """Update the UI to reflect current navigator state."""
+        visible_qs = navigator.get_visible_questions()
+        if navigator.current_index >= len(visible_qs):
+            navigator.current_index = max(0, len(visible_qs) - 1)
+
+        window.total_visible_questions = len(visible_qs)
+        window.current_question_index = navigator.current_index
+
         visible = []
-        if visible_qs and current_question_index < len(visible_qs):
-            q = visible_qs[current_question_index]
+        if visible_qs and navigator.current_index < len(visible_qs):
+            q = visible_qs[navigator.current_index]
             q_struct = ui.Question()
-            q_struct.fact_name = str(q.get('fact_name', ''))
-            q_struct.question = str(q.get('question', ''))
-            q_struct.type = str(q.get('type', ''))
-            q_struct.info = str(q.get('info', ''))
-            q_struct.current_answer = str(current_answers.get(q.get('fact_name', ''), 'skip'))
-            choices = q.get('choices', [])
+            q_struct.fact_name = str(q.get("fact_name", ""))
+            q_struct.question = str(q.get("question", ""))
+            q_struct.type = str(q.get("type", ""))
+            q_struct.info = str(q.get("info", ""))
+            q_struct.current_answer = str(navigator.answers.get(q.get("fact_name", ""), "skip"))
+            choices = q.get("choices", [])
             if choices:
                 q_struct.choices = slint.ListModel([str(c) for c in choices])
             visible.append(q_struct)
-        
-        ui_window.visible_questions = slint.ListModel(visible)
+
+        window.visible_questions = slint.ListModel(visible)
 
     def on_answer_changed(fact_name, value):
-        nonlocal current_question_index
-        current_answers[fact_name] = value
-        # Advance to next question
-        visible_qs = get_visible_questions()
-        if current_question_index < len(visible_qs) - 1:
-            current_question_index += 1
-        update_visible_questions(window)
+        navigator.on_answer_changed(fact_name, value)
+        update_ui()
 
-    def go_to_previous():
-        nonlocal current_question_index
-        if current_question_index > 0:
-            current_question_index -= 1
-            update_visible_questions(window)
+    def on_go_to_previous():
+        navigator.go_to_previous()
+        update_ui()
 
-    def go_to_next():
-        nonlocal current_question_index
-        visible_qs = get_visible_questions()
-        if current_question_index < len(visible_qs) - 1:
-            current_question_index += 1
-            update_visible_questions(window)
+    def on_go_to_next():
+        navigator.go_to_next()
+        update_ui()
 
     window.on_answer_changed = on_answer_changed
-    window.on_go_to_previous = go_to_previous
-    window.on_go_to_next = go_to_next
-    update_visible_questions(window)
+    window.on_go_to_previous = on_go_to_previous
+    window.on_go_to_next = on_go_to_next
+    update_ui()
 
     def on_get_recommendation():
         try:
-            # Pass the current answers dictionary directly
-            output = _build_recommendation_output_dict(current_answers)
+            output = _build_recommendation_output_dict(navigator.answers)
             window.recommend_output = output
         except Exception as e:
             window.recommend_output = f"Error: {str(e)}"

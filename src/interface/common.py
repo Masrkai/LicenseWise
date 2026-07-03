@@ -4,11 +4,7 @@ import json
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 
-# ----------------------------------------------------------------------
-# Constants for UI consistency
-# ----------------------------------------------------------------------
-YES_NO_SKIP_CHOICES = ["yes", "no", "skip"]
-SKIP_VALUE = "skip"
+from config import QUESTIONS_PATH, SUGGESTIONS_PATH, LICENSES_DIR
 
 
 def yes_no_to_bool(value: str) -> Optional[bool]:
@@ -36,6 +32,12 @@ def distribute_to_closed_source(distribute: Optional[bool]) -> Optional[bool]:
     return not distribute
 
 
+def apply_closed_source_derivation(facts: Dict[str, Any]) -> None:
+    """Derive closed_source from distribute and remove the raw distribute key."""
+    facts["closed_source"] = distribute_to_closed_source(facts.get("distribute"))
+    facts.pop("distribute", None)
+
+
 # ----------------------------------------------------------------------
 # Questions loader
 # ----------------------------------------------------------------------
@@ -47,8 +49,7 @@ def load_questions() -> Dict[str, List[Dict]]:
     """Load questions from questions.json. Returns dict with 'recommendation' and 'analysis' keys."""
     global _QUESTIONS_CACHE
     if _QUESTIONS_CACHE is None:
-        q_path = Path(__file__).parent.parent / "Licenses" / "questions.json"
-        with open(q_path, "r", encoding="utf-8") as f:
+        with open(QUESTIONS_PATH, "r", encoding="utf-8") as f:
             _QUESTIONS_CACHE = json.load(f)
     return _QUESTIONS_CACHE
 
@@ -56,18 +57,6 @@ def load_questions() -> Dict[str, List[Dict]]:
 # ----------------------------------------------------------------------
 # Suggestion engine
 # ----------------------------------------------------------------------
-
-_SUGGESTIONS_CACHE = None
-
-
-def _load_suggestions() -> List[Dict]:
-    global _SUGGESTIONS_CACHE
-    if _SUGGESTIONS_CACHE is None:
-        s_path = Path(__file__).parent.parent / "Licenses" / "suggestions.json"
-        with open(s_path, "r", encoding="utf-8") as f:
-            _SUGGESTIONS_CACHE = json.load(f)
-    return _SUGGESTIONS_CACHE
-
 
 def suggest_alternatives(
     violation_text: str, format: str = "plain"
@@ -82,7 +71,9 @@ def suggest_alternatives(
     Returns:
         Deduplicated list of suggestion strings.
     """
-    rules = _load_suggestions()
+    rules = []
+    with open(SUGGESTIONS_PATH, "r", encoding="utf-8") as f:
+        rules = json.load(f)
     suggestions = []
     seen = set()
 
@@ -163,43 +154,31 @@ def load_all_licenses(licenses_dir: Path) -> List[Dict[str, Any]]:
 def get_licenses_data() -> List[Dict[str, Any]]:
     """
     Load all license data. Tries multiple strategies:
-    1. Look for licenses.json in project root
-    2. Look for licenses.json in Licenses/ directory
-    3. Load all *.json files from Licenses/ directory
+    1. Look for licenses.json in Licenses/ directory
+    2. Load all *.json files from Licenses/ directory
 
     Results are cached after the first call.
     Raises FileNotFoundError if no license data can be found.
     """
     global _LICENSES_DATA_CACHE
     if _LICENSES_DATA_CACHE is None:
-        # This file is in interface/ -> parent.parent = project root
-        project_root = Path(__file__).parent.parent
-
-        # Strategy 1: Check for licenses.json in project root
-        root_licenses_json = project_root / "licenses.json"
-        if root_licenses_json.exists():
-            _LICENSES_DATA_CACHE = load_licenses_from_json(root_licenses_json)
-            return _LICENSES_DATA_CACHE
-
-        # Strategy 2: Check for licenses.json in Licenses/ directory
-        licenses_dir = project_root / "Licenses"
-        licenses_json = licenses_dir / "licenses.json"
+        # Strategy 1: Check for licenses.json in Licenses/ directory
+        licenses_json = LICENSES_DIR / "licenses.json"
         if licenses_json.exists():
             _LICENSES_DATA_CACHE = load_licenses_from_json(licenses_json)
             return _LICENSES_DATA_CACHE
 
-        # Strategy 3: Load all *.json files from Licenses/ directory
-        if licenses_dir.exists():
-            _LICENSES_DATA_CACHE = load_all_licenses(licenses_dir)
+        # Strategy 2: Load all *.json files from Licenses/ directory
+        if LICENSES_DIR.exists():
+            _LICENSES_DATA_CACHE = load_all_licenses(LICENSES_DIR)
             if _LICENSES_DATA_CACHE:
                 return _LICENSES_DATA_CACHE
 
         # No license data found
         raise FileNotFoundError(
             f"No license data found. Tried:\n"
-            f"  1. {root_licenses_json}\n"
-            f"  2. {licenses_json}\n"
-            f"  3. *.json files in {licenses_dir}\n"
+            f"  1. {licenses_json}\n"
+            f"  2. *.json files in {LICENSES_DIR}\n"
             "Make sure at least one of these exists."
         )
 

@@ -1,6 +1,9 @@
-from typing import Any, Dict, List
+"""Explanation and report generation for LicenseWise inference results."""
+
+from typing import Any, Dict, List, Optional
 
 from Inference import get_engine
+from Inference.prolog_engine import PrologEngine
 from Licenses.report_templates import (
     REPORT_HEADER,
     SECTION_RECOMMENDED,
@@ -22,9 +25,9 @@ from Licenses.report_templates import (
 )
 
 
-def explain_question(fact_name: str) -> str:
+def explain_question(fact_name: str, engine: Optional[PrologEngine] = None) -> str:
     """Return an explanation why a particular question is asked (from Prolog KB)."""
-    engine = get_engine()
+    engine = engine or get_engine()
     return engine.get_question_explanation(fact_name)
 
 
@@ -33,9 +36,7 @@ def format_trace(trace: List[Dict]) -> str:
     if not trace:
         return NO_RULES_FIRED
 
-    lines = []
-    lines.append(TRACE_HEADER)
-    lines.append(SEP)
+    lines = [TRACE_HEADER, SEP]
 
     for entry in trace:
         icon = TRACE_ACTION_ICONS.get(entry.get("action", "OTHER"), "*")
@@ -45,9 +46,7 @@ def format_trace(trace: List[Dict]) -> str:
             lines.append("   Because you answered:")
             for fact, value in entry["matched_facts"].items():
                 fact_display = fact.replace("_", " ").title()
-                value_display = (
-                    "Yes" if value is True else "No" if value is False else str(value)
-                )
+                value_display = "Yes" if value is True else "No" if value is False else str(value)
                 lines.append(f"      - {fact_display}: {value_display}")
         lines.append(f"   Why: {entry['explanation']}")
     return "\n".join(lines)
@@ -57,10 +56,7 @@ def generate_final_report(
     wm: Dict[str, Any], facts: Dict[str, Any], trace: List[Dict]
 ) -> str:
     """Generate the complete final report including reasoning trace."""
-    lines = []
-    lines.append(SEP)
-    lines.append(REPORT_HEADER)
-    lines.append(SEP)
+    lines = [SEP, REPORT_HEADER, SEP]
 
     if wm["recommended"]:
         lines.append(f"\n{SECTION_RECOMMENDED}")
@@ -79,23 +75,17 @@ def generate_final_report(
         for warn in wm["warnings"]:
             lines.append(f"   * {warn}")
 
-    # Confidence calculation (simple heuristic)
+    # Confidence calculation
     provided = sum(1 for v in facts.values() if v is not None)
     total = len(facts)
     confidence = (
-        "HIGH"
-        if provided >= 8 and len(wm["recommended"]) >= 1
-        else "MEDIUM"
-        if provided >= 4
+        "HIGH" if provided >= 8 and len(wm["recommended"]) >= 1
+        else "MEDIUM" if provided >= 4
         else "LOW"
     )
     lines.append(f"\n{SECTION_CONFIDENCE} {confidence} (provided {provided}/{total} facts)")
-
     lines.append("\n" + format_trace(trace))
-
-    lines.append("\n" + SEP)
-    lines.append(DISCLAIMER)
-    lines.append(SEP)
+    lines.extend(["\n" + SEP, DISCLAIMER, SEP])
     return "\n".join(lines)
 
 
@@ -103,9 +93,7 @@ def generate_summary(
     wm: Dict[str, Any], facts: Dict[str, Any], trace: List[Dict]
 ) -> str:
     """Concise summary of how the conclusion was reached."""
-    lines = []
-    lines.append(f"\n{SUMMARY_HEADER}")
-    lines.append(SEP_SHORT)
+    lines = [f"\n{SUMMARY_HEADER}", SEP_SHORT]
 
     recommend_steps = [e for e in trace if "RECOMMEND" in e.get("action", "")]
     eliminate_steps = [e for e in trace if "ELIMINATE" in e.get("action", "")]
@@ -126,6 +114,5 @@ def generate_summary(
         for step in warn_steps:
             lines.append(f"  {step['step']}. {step['explanation']}")
 
-    lines.append("\n" + SEP_SHORT)
-    lines.append(SUMMARY_FOOTER)
+    lines.extend(["\n" + SEP_SHORT, SUMMARY_FOOTER])
     return "\n".join(lines)

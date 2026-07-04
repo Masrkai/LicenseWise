@@ -39,11 +39,6 @@ private_mods :-
 private_mods :-
     fact(wants_to_keep_modifications_private).
 
-% closed_source derives from the distribute question: if user won't
-% distribute, modifications stay private.
-closed_source :-
-    \+ fact(distribute).
-
 % ============================================================
 % Trace infrastructure
 % ============================================================
@@ -163,8 +158,13 @@ recommend('LGPL-3.0') :-
 
 warning('LGPL-2.1', 'Static linking may require the combined work to be LGPL.') :-
     fact(linking_type(static)),
-    assert_step('C02', 'warn_LGPL_static_linking', 'WARN',
+    assert_step('C02a', 'warn_LGPL21_static_linking', 'WARN',
                 ['LGPL-2.1'], 'Dynamic linking is safer for proprietary apps.').
+
+warning('LGPL-3.0', 'Static linking may require the combined work to be LGPL.') :-
+    fact(linking_type(static)),
+    assert_step('C02b', 'warn_LGPL30_static_linking', 'WARN',
+                ['LGPL-3.0'], 'Dynamic linking is safer for proprietary apps.').
 
 % --- MPL-2.0 ---
 recommend('MPL-2.0') :-

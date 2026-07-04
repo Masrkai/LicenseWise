@@ -1,6 +1,6 @@
 """Tests for interface.slint_app.QuestionNavigator."""
 
-from interface.slint_app import QuestionNavigator
+from src.interface.slint_app import QuestionNavigator
 
 
 class TestQuestionNavigator:

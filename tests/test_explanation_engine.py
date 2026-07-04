@@ -2,12 +2,12 @@
 
 from unittest.mock import MagicMock
 
-from Inference.explanation_engine import (
+from src.Inference.explanation_engine import (
     format_trace,
     generate_final_report,
     generate_summary,
 )
-from Data.report_templates import (
+from src.Data.report_templates import (
     NO_LICENSES_RECOMMENDED,
     NO_RULES_FIRED,
     REPORT_HEADER,

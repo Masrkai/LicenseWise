@@ -1,6 +1,6 @@
 """Tests for Inference.license_lookup utilities."""
 
-from Inference.license_lookup import find_license, get_possible_ids
+from src.Inference.license_lookup import find_license, get_possible_ids
 
 
 class TestFindLicense:

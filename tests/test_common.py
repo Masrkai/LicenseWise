@@ -1,6 +1,6 @@
 """Tests for interface.common utilities."""
 
-from interface.common import (
+from src.interface.common import (
     yes_no_to_bool,
     distribute_to_closed_source,
     apply_closed_source_derivation,

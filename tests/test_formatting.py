@@ -1,6 +1,6 @@
 """Tests for interface.formatting utilities."""
 
-from interface.formatting import format_compatibility_result, _format_license_info
+from src.interface.formatting import format_compatibility_result, _format_license_info
 
 
 class TestFormatCompatibilityResult:

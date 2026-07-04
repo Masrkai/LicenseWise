@@ -182,6 +182,51 @@
         },
         "explanation_hint": "Perl/Raku ecosystem license. Allows proprietary distribution but modified standard versions must stay Artistic-2.0. Consider MIT for simpler permissive terms."
       }
+    },
+    {
+      "id": "MPL-2.0",
+      "spdx_id": "MPL-2.0",
+      "name": "Mozilla Public License 2.0",
+      "type": "weak_copyleft",
+      "description": "File-level copyleft: modified MPL files must remain open, but can be combined with proprietary code.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true,
+        "patent_grant": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false,
+        "copyleft_scope": "file"
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": true,
+        "warranty": true,
+        "patent_use": true,
+        "patent_retaliation": true
+      },
+      "compatibility": {
+        "compatible_with": ["GPL-2.0-only", "GPL-3.0-only", "LGPL-2.1-only", "LGPL-3.0-only", "AGPL-3.0-only"],
+        "incompatible_with": ["BSD-2-Clause", "BSD-3-Clause", "MIT", "Apache-2.0", "ISC"],
+        "notes": "File-level copyleft. Modified MPL files must stay MPL, but can link with proprietary code. Compatible with GPL. Incompatible with permissive licenses due to copyleft."
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
+        "explanation_hint": "Used by Firefox, Thunderbird, and many Mozilla projects. Ideal for mixed open/proprietary codebases where you want file-level copyleft."
+      }
     }
   ]
 }

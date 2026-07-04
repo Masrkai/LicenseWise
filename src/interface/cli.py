@@ -126,8 +126,6 @@ def run_analysis(licenses_data: list) -> None:
     print("[4] Use in SaaS without sharing source")
     print("[5] Other (describe below)")
 
-    choice = input("\nChoice: ").strip()
-
     print("\nPlease answer a few quick questions:")
     facts = {}
 
@@ -208,10 +206,7 @@ def main_cli(verbose: bool = False) -> None:
         print(f"Loaded {len(licenses_data)} licenses from JSON files.")
     except FileNotFoundError as e:
         print(f"ERROR: {e}", file=sys.stderr)
-        print("\nMake sure you have one of the following:", file=sys.stderr)
-        print("   - licenses.json in your project root", file=sys.stderr)
-        print("   - licenses.json in Licenses/ directory", file=sys.stderr)
-        print("   - *.json files in Licenses/ directory", file=sys.stderr)
+        print("\nMake sure the Licenses/Families/ directory exists and contains *.json files.", file=sys.stderr)
         sys.exit(1)
 
     print()

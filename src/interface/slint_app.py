@@ -31,7 +31,7 @@ QUESTIONS = load_questions()
 
 LICENSES_ERROR_TEMPLATE = (
     "Error: Cannot load license data.\n\n{error}\n\n"
-    "Please ensure licenses.json exists in your project root or Licenses/ directory."
+    "Please ensure Licenses/Families/ exists and contains *.json files."
 )
 
 

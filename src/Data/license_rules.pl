@@ -2,7 +2,7 @@
 % LicenseWise Expert System - Prolog Knowledge Base
 % ============================================================
 % All rules, helpers, and trace infrastructure.
-% License metadata lives in licenses.json (loaded by Python).
+% License metadata lives in Licenses/Families/*.json (loaded by Python).
 % ============================================================
 
 :- dynamic fact/1.

@@ -1,12 +1,12 @@
 """
-merge_families.py
------------------
+families_merger
+---------------
 Reads every JSON file in the Families/ folder and merges them into a single
-licenses JSON object in-memory, then prints the final result instead of
-writing it to a new file.
+licenses JSON object in-memory.  Can be used as a library or run as a CLI
+tool to dump the merged result for debugging.
 
 Usage:
-    python merge_families.py
+    python -m Data.families_merger
 """
 import json
 from pathlib import Path
@@ -59,7 +59,7 @@ def merge(families: dict[str, list]) -> list[dict]:
     merged = list(seen.values())
 
     # Sort by popularity_rank; entries without it sort last
-    merged.sort(key=lambda l: l.get("metadata", {}).get("popularity_rank") or 9999)
+    merged.sort(key=lambda lic: lic.get("metadata", {}).get("popularity_rank") or 9999)
     return merged
 
 
@@ -74,6 +74,63 @@ def build_output(merged: list[dict], families: dict[str, list]) -> dict:
     }
 
 
+# ----------------------------------------------------------------------
+# Public API
+# ----------------------------------------------------------------------
+
+
+def get_all_licenses(families_dir: Path | None = None) -> list[dict]:
+    """
+    Merge all family files and return the flat list of license dicts.
+    This is the primary entry point for other modules that need
+    the combined license dataset.
+    """
+    d = families_dir or FAMILIES_DIR
+    if not d.is_dir():
+        raise FileNotFoundError(f"Families directory not found: {d}")
+
+    families = load_families(d)
+    if not families:
+        return []
+
+    return merge(families)
+
+
+def get_merged_output(families_dir: Path | None = None) -> dict:
+    """
+    Return the full merged output dict (with schema metadata wrapping the
+    license list).  Useful for debugging / dump.
+    """
+    d = families_dir or FAMILIES_DIR
+    if not d.is_dir():
+        raise FileNotFoundError(f"Families directory not found: {d}")
+
+    families = load_families(d)
+    if not families:
+        return {"licenses": [], "total_licenses": 0}
+
+    merged = merge(families)
+    return build_output(merged, families)
+
+
+def dump_merged_json(
+    output_path: str | Path,
+    families_dir: Path | None = None,
+) -> None:
+    """
+    Write the fully merged license JSON to *output_path* for inspection.
+    """
+    data = get_merged_output(families_dir)
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+# ----------------------------------------------------------------------
+# CLI entry point
+# ----------------------------------------------------------------------
+
+
 def main():
     if not FAMILIES_DIR.is_dir():
         raise FileNotFoundError(f"Families directory not found: {FAMILIES_DIR}")
@@ -83,11 +140,9 @@ def main():
     if not families:
         return
 
-    merged  = merge(families)
-    output  = build_output(merged, families)
+    merged = merge(families)
+    output = build_output(merged, families)
 
-    # Instead of writing to an OUTPUT_FILE, we convert the final object
-    # to a string and print it out directly.
     final_json_string = json.dumps(output, indent=2, ensure_ascii=False)
     print(final_json_string)
 

@@ -272,6 +272,51 @@
         },
         "explanation_hint": "Widely used for educational materials and course content. Maximum control for non-commercial creators. Incompatible with most software licenses."
       }
+    },
+    {
+      "id": "ODbL",
+      "spdx_id": "ODbL-1.0",
+      "name": "Open Database License 1.0",
+      "type": "other",
+      "description": "Copyleft license for databases and datasets, requiring derivative databases to remain open under the same terms.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true,
+        "patent_grant": false
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": true,
+        "copyleft_scope": null
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["GPL-3.0-only", "CC-BY-SA-4.0"],
+        "incompatible_with": ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause"],
+        "notes": "Designed for databases, not software. ShareAlike means derivative databases must use ODbL. Used by OpenStreetMap. Not compatible with permissive software licenses."
+      },
+      "metadata": {
+        "osi_approved": false,
+        "fsf_free": true,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
+        "explanation_hint": "Standard license for open geographic data (OpenStreetMap). Requires attribution and derivative databases to stay open under ODbL. Not for software."
+      }
     }
   ]
 }

@@ -137,6 +137,51 @@
         },
         "explanation_hint": "Essentially MIT-equivalent. Used only by PostgreSQL. No practical reason to use it for new projects — choose MIT or BSD-2 instead."
       }
+    },
+    {
+      "id": "Artistic-2.0",
+      "spdx_id": "Artistic-2.0",
+      "name": "Artistic License 2.0",
+      "type": "permissive",
+      "description": "Permissive license with an optional copyleft clause for modified standard versions, used by Perl and Raku.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true,
+        "patent_grant": false
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": true,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false,
+        "copyleft_scope": null
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause"],
+        "incompatible_with": [],
+        "notes": "Used by Perl 5 and Raku. Allows distribution under modified terms but modified standard versions must be distributed under Artistic-2.0."
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
+        "explanation_hint": "Perl/Raku ecosystem license. Allows proprietary distribution but modified standard versions must stay Artistic-2.0. Consider MIT for simpler permissive terms."
+      }
     }
   ]
 }

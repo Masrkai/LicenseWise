@@ -182,6 +182,51 @@
         },
         "explanation_hint": "Maximum freedom — no attribution required. Not valid in jurisdictions without a public domain concept. Consider CC0 as a safer alternative for cross-jurisdictional use."
       }
+    },
+    {
+      "id": "MIT-0",
+      "spdx_id": "MIT-0",
+      "name": "MIT No Attribution License",
+      "type": "permissive",
+      "description": "MIT license variant that removes the attribution requirement, enabling maximal reuse without attribution.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true,
+        "patent_grant": false
+      },
+      "conditions": {
+        "include_copyright": false,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": false,
+        "net_copyleft": false,
+        "same_license": false,
+        "copyleft_scope": null
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unlicense", "CC0-1.0"],
+        "incompatible_with": [],
+        "notes": "Same as MIT but without attribution. Compatible with all MIT-compatible licenses. For when you want zero attribution overhead."
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
+        "explanation_hint": "Use when you want MIT-level freedom but need to remove attribution entirely (e.g., for embedded systems or generated code)."
+      }
     }
   ]
 }

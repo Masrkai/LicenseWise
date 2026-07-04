@@ -23,6 +23,9 @@ class FactManager:
     def assert_license_metadata(self, license_id: str, lic: dict[str, Any]) -> None:
         """Assert license conditions, permissions, and limitations as Prolog facts."""
         self.prolog.assertz(f"license_id('{license_id}')")
+        lic_type = lic.get("type")
+        if lic_type:
+            self.prolog.assertz(f"license_type('{license_id}', '{lic_type}')")
         for cond, val in lic.get("conditions", {}).items():
             if val:
                 self.prolog.assertz(f"license_condition('{license_id}', '{cond}')")

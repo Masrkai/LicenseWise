@@ -16,4 +16,4 @@ QUESTIONS_PATH = PROJECT_ROOT / "common" / "questions.json"
 SUGGESTIONS_PATH = PROJECT_ROOT / "common" / "suggestions.json"
 
 # Interface
-UI_DIR = SRC_DIR / "interface" / "ui"
+UI_DIR = PROJECT_ROOT / "ui"

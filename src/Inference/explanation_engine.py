@@ -44,6 +44,8 @@ def format_trace(trace: list[dict[str, Any]]) -> str:
         icon = TRACE_ACTION_ICONS.get(entry.get("action", "OTHER"), "*")
         lines.append(f"\nStep {entry['step']}: [{icon}] {entry['rule_name']}")
         lines.append(f"   Action: {entry.get('action', 'UNKNOWN')}")
+        if entry.get("licenses_affected"):
+            lines.append(f"   Affects: {', '.join(entry['licenses_affected'])}")
         if entry.get("matched_facts"):
             lines.append("   Because you answered:")
             for fact, value in entry["matched_facts"].items():
@@ -109,17 +111,23 @@ def generate_summary(
     if recommend_steps:
         lines.append(f"\n{SUMMARY_RECOMMENDED}")
         for step in recommend_steps:
-            lines.append(f"  {step['step']}. {step['explanation']}")
+            affected = step.get("licenses_affected", [])
+            prefix = f"{', '.join(affected)}: " if affected else ""
+            lines.append(f"  {step['step']}. {prefix}{step['explanation']}")
 
     if eliminate_steps:
         lines.append(f"\n{SUMMARY_ELIMINATED}")
         for step in eliminate_steps:
-            lines.append(f"  {step['step']}. {step['explanation']}")
+            affected = step.get("licenses_affected", [])
+            prefix = f"{', '.join(affected)}: " if affected else ""
+            lines.append(f"  {step['step']}. {prefix}{step['explanation']}")
 
     if warn_steps:
         lines.append(f"\n{SUMMARY_WARNED}")
         for step in warn_steps:
-            lines.append(f"  {step['step']}. {step['explanation']}")
+            affected = step.get("licenses_affected", [])
+            prefix = f"{', '.join(affected)}: " if affected else ""
+            lines.append(f"  {step['step']}. {prefix}{step['explanation']}")
 
     lines.extend(["\n" + SEP_SHORT, SUMMARY_FOOTER])
     return "\n".join(lines)

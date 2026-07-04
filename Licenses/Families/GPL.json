@@ -1,9 +1,8 @@
 {
-  "schema_version": "1.5",
-  "last_updated": "2026-04-22",
-  "source": "https://spdx.org/licenses/ ",
+  "schema_version": "2.0",
+  "last_updated": "2026-07-04",
+  "source": "https://spdx.org/licenses/",
   "licenses": [
-
     {
       "id": "GPL-2.0",
       "spdx_id": "GPL-2.0-only",
@@ -14,7 +13,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -22,22 +22,32 @@
         "disclose_source": true,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": true
+        "same_license": true,
+        "copyleft_scope": "project"
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "BSD-2-Clause", "BSD-3-Clause", "ISC", "LGPL-2.1-only"],
+        "incompatible_with": ["Apache-2.0", "GPL-3.0-only", "AGPL-3.0-only"],
+        "notes": "Historically significant (Linux kernel). Incompatible with Apache-2.0 and GPL-3.0 unless 'or later' clause is present. Use GPL-3.0 for new projects."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 5,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Historically significant (Linux kernel). Incompatible with Apache-2.0 and GPL-3.0 unless 'or later' clause is present. Use GPL-3.0 for new projects."
       }
     },
-
     {
       "id": "GPL-3.0",
       "spdx_id": "GPL-3.0-only",
@@ -48,7 +58,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": true
       },
       "conditions": {
         "include_copyright": true,
@@ -56,23 +67,32 @@
         "disclose_source": true,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": true
+        "same_license": true,
+        "copyleft_scope": "project"
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": true
+        "patent_use": true,
+        "patent_retaliation": true
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "LGPL-3.0-only", "AGPL-3.0-only"],
+        "incompatible_with": [],
+        "notes": "Strongest copyleft for general software. Compatible with Apache-2.0 (via one-way compatibility). Includes anti-tivoization and patent protections."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 3,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Use when you want to guarantee all downstream modifications stay open."
       }
     },
-
-
     {
       "id": "LGPL-2.1",
       "spdx_id": "LGPL-2.1-only",
@@ -83,7 +103,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -91,22 +112,32 @@
         "disclose_source": true,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": "library"
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["GPL-2.0-only", "GPL-3.0-only", "MIT", "BSD-2-Clause", "BSD-3-Clause"],
+        "incompatible_with": ["Apache-2.0"],
+        "notes": "Library-level copyleft. Proprietary software can link dynamically without triggering copyleft. Static linking may trigger copyleft depending on interpretation."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 7,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Key nuance: dynamic linking is generally safe for proprietary apps; static linking may trigger copyleft depending on interpretation. Always clarify linking type."
       }
     },
-
     {
       "id": "LGPL-3.0",
       "spdx_id": "LGPL-3.0-only",
@@ -117,7 +148,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": true
       },
       "conditions": {
         "include_copyright": true,
@@ -125,22 +157,32 @@
         "disclose_source": true,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": "library"
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": true
+        "patent_use": true,
+        "patent_retaliation": true
+      },
+      "compatibility": {
+        "compatible_with": ["GPL-3.0-only", "AGPL-3.0-only", "MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause"],
+        "incompatible_with": [],
+        "notes": "Library-level copyleft with GPL-3.0 protections. Preferred over LGPL-2.1 for new libraries. Compatible with GPL-3.0 and AGPL-3.0."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 9,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Superset of LGPL-2.1 with GPL-3.0 protections. Use for libraries where you want wide adoption but still require library modifications to be shared."
       }
     },
-
     {
       "id": "AGPL-3.0",
       "spdx_id": "AGPL-3.0-only",
@@ -151,7 +193,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": true
       },
       "conditions": {
         "include_copyright": true,
@@ -159,21 +202,31 @@
         "disclose_source": true,
         "include_license": true,
         "net_copyleft": true,
-        "same_license": true
+        "same_license": true,
+        "copyleft_scope": "project"
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": true
+        "patent_use": true,
+        "patent_retaliation": true
+      },
+      "compatibility": {
+        "compatible_with": ["GPL-3.0-only", "MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause"],
+        "incompatible_with": ["GPL-2.0-only"],
+        "notes": "GPL-3.0 with network copyleft (SaaS). Compatible with GPL-3.0. Businesses often avoid it for internal tools due to network disclosure requirement."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 6,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "The 'viral SaaS' license. If you run AGPL software as a web service, you must offer users the source. Ideal for open-core business models. Businesses often avoid it for internal tools."
       }
     }
-
   ]
 }

@@ -41,6 +41,103 @@ def apply_closed_source_derivation(facts: dict[str, Any]) -> None:
 
 
 # ----------------------------------------------------------------------
+# Quick-test answer string parser
+# ----------------------------------------------------------------------
+
+
+def parse_answers_string(answer_string: str, questions: list[dict[str, Any]]) -> dict[str, Any]:
+    """
+    Parse a compact answer string against a question list.
+
+    Walks questions in order, consuming one character per asked question.
+    Skips conditional questions whose ``requires``/``unless`` is not met.
+
+    Mapping (yes_no_skip):
+        y → True, n → False, s/. → None
+
+    Mapping (choice):
+        1-9 → choice index (1-based, value lowercased)
+        anything else → None
+
+    Returns a facts dict ready for forward_chain().
+    """
+    facts: dict[str, Any] = {}
+    idx = 0
+
+    for q in questions:
+        req = q.get("requires")
+        if req:
+            unless = req.get("unless")
+            if (unless and facts.get(unless["fact"]) == unless["value"]) \
+               or facts.get(req["fact"]) != req["value"]:
+                continue
+
+        if idx >= len(answer_string):
+            break
+
+        char = answer_string[idx]
+        idx += 1
+        fact_name = q["fact_name"]
+
+        if q["type"] == "yes_no_skip":
+            if char == "y":
+                facts[fact_name] = True
+            elif char == "n":
+                facts[fact_name] = False
+            else:  # s, ., or anything else
+                facts[fact_name] = None
+        elif q["type"] == "choice":
+            if char.isdigit():
+                choice_idx = int(char) - 1
+                choices = q.get("choices", [])
+                if 0 <= choice_idx < len(choices):
+                    facts[fact_name] = choices[choice_idx].lower()
+                else:
+                    facts[fact_name] = None
+            else:
+                facts[fact_name] = None
+
+        if fact_name == "distribute":
+            apply_closed_source_derivation(facts)
+
+    return facts
+
+
+def parse_analysis_answers(answer_string: str) -> dict[str, Any]:
+    """
+    Parse a compact answer string for analysis mode.
+
+    Analysis mode always asks 5 yes_no_skip questions in this order:
+        distribute, saas, commercial_use, need_patent_protection, wants_relicense
+
+    Returns a facts dict ready for backward_chain().
+    """
+    from ..Data.families_merger import get_all_licenses
+
+    analysis_questions = [
+        {"fact_name": "distribute", "type": "yes_no_skip"},
+        {"fact_name": "saas", "type": "yes_no_skip"},
+        {"fact_name": "commercial_use", "type": "yes_no_skip"},
+        {"fact_name": "need_patent_protection", "type": "yes_no_skip"},
+        {"fact_name": "wants_relicense", "type": "yes_no_skip"},
+    ]
+
+    facts: dict[str, Any] = {}
+    for i, q in enumerate(analysis_questions):
+        char = answer_string[i] if i < len(answer_string) else "s"
+        if char == "y":
+            facts[q["fact_name"]] = True
+        elif char == "n":
+            facts[q["fact_name"]] = False
+        else:
+            facts[q["fact_name"]] = None
+
+    facts["closed_source"] = distribute_to_closed_source(facts.get("distribute"))
+    facts.pop("distribute", None)
+    return facts
+
+
+# ----------------------------------------------------------------------
 # Questions loader
 # ----------------------------------------------------------------------
 

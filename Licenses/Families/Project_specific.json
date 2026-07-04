@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.5",
-  "last_updated": "2026-04-22",
-  "source": "https://spdx.org/licenses/ ",
+  "schema_version": "2.0",
+  "last_updated": "2026-07-04",
+  "source": "https://spdx.org/licenses/",
   "licenses": [
     {
       "id": "EPL-2.0",
@@ -13,7 +13,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": true
       },
       "conditions": {
         "include_copyright": true,
@@ -21,18 +22,29 @@
         "disclose_source": true,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": "file"
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": true
+        "patent_use": true,
+        "patent_retaliation": true
+      },
+      "compatibility": {
+        "compatible_with": ["GPL-2.0-only", "GPL-3.0-only", "MPL-2.0"],
+        "incompatible_with": [],
+        "notes": "Can be combined with GPL-2.0+ via secondary license provision. File-level copyleft similar to MPL. Includes explicit patent grant and patent termination clause."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 15,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Used by Eclipse IDE, Jakarta EE, and many Java projects. Includes an explicit patent grant and a patent termination clause. Copyleft is per 'module', not per file."
       }
     },
@@ -46,7 +58,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -54,18 +67,29 @@
         "disclose_source": false,
         "include_license": false,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause"],
+        "incompatible_with": [],
+        "notes": "Highly permissive. Modified versions must be marked as changed but no copyleft or attribution required in binaries. Compatible with most licenses."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 22,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Used by zlib, libpng, SDL. Unlike MIT, you must mark modified sources as changed. No attribution required in binaries — common in game engines and embedded systems."
       }
     },
@@ -79,7 +103,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -87,18 +112,29 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause", "ISC"],
+        "incompatible_with": [],
+        "notes": "Functionally identical to MIT. Compatible with virtually all licenses. Used exclusively by PostgreSQL — no practical reason to use it for new projects."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 23,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Essentially MIT-equivalent. Used only by PostgreSQL. No practical reason to use it for new projects — choose MIT or BSD-2 instead."
       }
     }

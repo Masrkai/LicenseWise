@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.5",
-  "last_updated": "2026-04-22",
-  "source": "https://spdx.org/licenses/ ",
+  "schema_version": "2.0",
+  "last_updated": "2026-07-04",
+  "source": "https://spdx.org/licenses/",
   "licenses": [
     {
       "id": "EUPL-1.2",
@@ -13,7 +13,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": true
       },
       "conditions": {
         "include_copyright": true,
@@ -21,18 +22,29 @@
         "disclose_source": true,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": "file"
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": true
+        "patent_use": true,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["GPL-2.0-only", "GPL-3.0-only", "AGPL-3.0-only", "LGPL-2.1-only", "LGPL-3.0-only", "MPL-2.0", "CDDL-1.0", "EPL-2.0"],
+        "incompatible_with": [],
+        "notes": "Specifically designed for EU law. Compatible (at distribution) with GPL-2.0, GPL-3.0, AGPL-3.0, LGPL, MPL, CDDL, EPL. Good for government and public sector projects in Europe."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 18,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Specifically designed for EU law. Compatible (at distribution) with GPL-2.0, GPL-3.0, AGPL-3.0, LGPL, MPL, CDDL, EPL. Good for government and public sector projects in Europe."
       }
     }

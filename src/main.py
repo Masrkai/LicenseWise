@@ -7,6 +7,11 @@ def main() -> None:
     parser.add_argument("--gui", action="store_true", help="Launch Slint GUI interface")
     parser.add_argument("--verbose", action="store_true", help="Show detailed reasoning trace")
     parser.add_argument(
+        "-a", "--answers",
+        type=str,
+        help="Compact answer string for quick testing (skips interactive prompts)",
+    )
+    parser.add_argument(
         "--dump-merged-licenses",
         metavar="PATH",
         nargs="?",
@@ -33,7 +38,7 @@ def main() -> None:
             sys.exit(1)
     else:
         from src.interface.cli import main_cli
-        main_cli(verbose=args.verbose)
+        main_cli(verbose=args.verbose, answers=args.answers)
 
 
 if __name__ == "__main__":

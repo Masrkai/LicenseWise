@@ -18,7 +18,7 @@ class FactManager:
             if value is True:
                 self.prolog.assertz(f"fact({key})")
             elif isinstance(value, str):
-                self.prolog.assertz(f"fact({key}({value}))")
+                self.prolog.assertz(f"fact({key}({value.lower()}))")
 
     def assert_license_metadata(self, license_id: str, lic: dict[str, Any]) -> None:
         """Assert license conditions, permissions, and limitations as Prolog facts."""

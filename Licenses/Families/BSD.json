@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.5",
-  "last_updated": "2026-04-22",
-  "source": "https://spdx.org/licenses/ ",
+  "schema_version": "2.0",
+  "last_updated": "2026-07-04",
+  "source": "https://spdx.org/licenses/",
   "licenses": [
     {
       "id": "BSD-2-Clause",
@@ -13,7 +13,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -21,18 +22,29 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-3-Clause"],
+        "incompatible_with": [],
+        "notes": "Highly permissive; compatible with nearly all other licenses, including copyleft, when incorporated into a larger work."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 4,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Functionally near-identical to MIT. FreeBSD uses this. Slightly more formal phrasing. No patent grant."
       }
     },
@@ -47,7 +59,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -55,18 +68,29 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": true,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause"],
+        "incompatible_with": [],
+        "notes": "Highly permissive; compatible with nearly all other licenses, including copyleft, when incorporated into a larger work."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 4,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Adds a non-endorsement clause vs BSD-2. Used by Django and many academic/research projects. No patent grant — consider Apache-2.0 for that."
       }
     }

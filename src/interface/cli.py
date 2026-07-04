@@ -14,6 +14,8 @@ from .common import (
     apply_closed_source_derivation,
     get_licenses_data,
     load_questions,
+    parse_answers_string,
+    parse_analysis_answers,
     suggest_alternatives,
 )
 
@@ -65,36 +67,41 @@ def ask_choice(question: str, fact_name: str, choices: list[str], facts: dict[st
 # ----------------------------------------------------------------------
 # Recommendation mode
 # ----------------------------------------------------------------------
-def run_recommendation(licenses_data: list[dict[str, object]], verbose: bool = False) -> None:
+def run_recommendation(licenses_data: list[dict[str, object]], verbose: bool = False, answers: str | None = None) -> None:
     """Run the license recommendation wizard."""
     questions = load_questions()["recommendation"]
 
     print("=" * 60)
     print("LicenseWise - License Recommendation Wizard")
     print("=" * 60)
-    print("\nAnswer the following questions about your project.")
-    print("Type 'skip' or press Enter to skip any question.\n")
 
-    facts: dict[str, bool | None] = {}
+    if answers:
+        facts = parse_answers_string(answers, questions)
+        print(f"Parsed answers string: {answers}")
+    else:
+        print("\nAnswer the following questions about your project.")
+        print("Type 'skip' or press Enter to skip any question.\n")
 
-    for q in questions:
-        req = q.get("requires")
-        if req:
-            unless = req.get("unless")
-            if (unless and facts.get(unless["fact"]) == unless["value"]) \
-               or facts.get(req["fact"]) != req["value"]:
-                continue
+        facts: dict[str, bool | None] = {}
 
-        fact_name = q["fact_name"]
+        for q in questions:
+            req = q.get("requires")
+            if req:
+                unless = req.get("unless")
+                if (unless and facts.get(unless["fact"]) == unless["value"]) \
+                   or facts.get(req["fact"]) != req["value"]:
+                    continue
 
-        if q["type"] == "yes_no_skip":
-            ask_yes_no(q["question"], fact_name, facts)
-        elif q["type"] == "choice":
-            ask_choice(q["question"], fact_name, q["choices"], facts)
+            fact_name = q["fact_name"]
 
-        # Handle distribute -> closed_source conversion
-        if fact_name == "distribute":
-            apply_closed_source_derivation(facts)
+            if q["type"] == "yes_no_skip":
+                ask_yes_no(q["question"], fact_name, facts)
+            elif q["type"] == "choice":
+                ask_choice(q["question"], fact_name, q["choices"], facts)
+
+            # Handle distribute -> closed_source conversion
+            if fact_name == "distribute":
+                apply_closed_source_derivation(facts)
 
     trace: list[dict[str, object]] = []
     wm = forward_chain(facts, [], licenses_data, trace)
@@ -110,7 +117,7 @@ def run_recommendation(licenses_data: list[dict[str, object]], verbose: bool = F
 # ----------------------------------------------------------------------
 # Analysis mode
 # ----------------------------------------------------------------------
-def run_analysis(licenses_data: list[dict[str, object]]) -> None:
+def run_analysis(licenses_data: list[dict[str, object]], answers: str | None = None) -> None:
     """Check compatibility of a specific license."""
     print("=" * 60)
     print("LicenseWise - License Analysis")
@@ -129,15 +136,20 @@ def run_analysis(licenses_data: list[dict[str, object]]) -> None:
     print("[5] Other (describe below)")
 
     print("\nPlease answer a few quick questions:")
-    facts: dict[str, bool | None] = {}
 
-    ask_yes_no("Will you distribute the software?", "distribute", facts)
-    apply_closed_source_derivation(facts)
+    if answers:
+        facts = parse_analysis_answers(answers)
+        print(f"Parsed answers string: {answers}")
+    else:
+        facts: dict[str, bool | None] = {}
 
-    ask_yes_no("Will it be used over a network (SaaS)?", "saas", facts)
-    ask_yes_no("Is commercial use intended?", "commercial_use", facts)
-    ask_yes_no("Do you need patent protection?", "need_patent_protection", facts)
-    ask_yes_no("Do you want to relicense derivatives?", "wants_relicense", facts)
+        ask_yes_no("Will you distribute the software?", "distribute", facts)
+        apply_closed_source_derivation(facts)
+
+        ask_yes_no("Will it be used over a network (SaaS)?", "saas", facts)
+        ask_yes_no("Is commercial use intended?", "commercial_use", facts)
+        ask_yes_no("Do you need patent protection?", "need_patent_protection", facts)
+        ask_yes_no("Do you want to relicense derivatives?", "wants_relicense", facts)
 
     # Run the backward chain
     result = backward_chain(license_id, facts, licenses_data)
@@ -202,7 +214,7 @@ def run_analysis(licenses_data: list[dict[str, object]]) -> None:
 # ----------------------------------------------------------------------
 # Main CLI entry
 # ----------------------------------------------------------------------
-def main_cli(verbose: bool = False) -> None:
+def main_cli(verbose: bool = False, answers: str | None = None) -> None:
     try:
         licenses_data = get_licenses_data()
         print(f"Loaded {len(licenses_data)} licenses from JSON files.")
@@ -225,9 +237,9 @@ def main_cli(verbose: bool = False) -> None:
 
         choice = input("\nChoice: ").strip()
         if choice == "1":
-            run_recommendation(licenses_data, verbose=verbose)
+            run_recommendation(licenses_data, verbose=verbose, answers=answers)
         elif choice == "2":
-            run_analysis(licenses_data)
+            run_analysis(licenses_data, answers=answers)
         elif choice == "3":
             print("\nGoodbye!")
             sys.exit(0)

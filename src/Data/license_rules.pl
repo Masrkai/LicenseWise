@@ -38,6 +38,11 @@ private_mods :-
 private_mods :-
     fact(wants_to_keep_modifications_private).
 
+% closed_source derives from the distribute question: if user won't
+% distribute, modifications stay private.
+closed_source :-
+    \+ fact(distribute).
+
 % ============================================================
 % Trace infrastructure
 % ============================================================
@@ -53,6 +58,7 @@ clear_trace :-
     retractall(step(_, _, _, _, _, _)).
 
 clear_metadata :-
+    retractall(license_id(_)),
     retractall(license_condition(_, _)),
     retractall(license_permission(_, _)),
     retractall(license_limitation(_, _)).
@@ -76,11 +82,6 @@ recommend('MIT') :-
     fact(want_simple_permissive),
     assert_step('A03', 'recommend_MIT_if_simple_permissive', 'RECOMMEND',
                 ['MIT'], 'MIT is the simplest and most widely adopted permissive license.').
-
-warning('MIT', 'No explicit patent grant. Consider Apache-2.0.') :-
-    patent,
-    assert_step('A04', 'warn_MIT_no_patent_grant', 'WARN',
-                ['MIT'], 'MIT does not grant patent rights.').
 
 % --- Apache-2.0 ---
 recommend('Apache-2.0') :-
@@ -114,11 +115,6 @@ recommend('BSD-2-Clause') :-
     assert_step('A10', 'recommend_BSD_if_simple_permissive', 'RECOMMEND',
                 ['BSD-2-Clause'], 'BSD-2-Clause is a simple permissive license similar to MIT.').
 
-warning('BSD-2-Clause', 'No patent grant. Consider Apache-2.0.') :-
-    patent,
-    assert_step('A11', 'warn_BSD_no_patent_grant', 'WARN',
-                ['BSD-2-Clause'], 'BSD licenses offer no patent protection.').
-
 % --- BSD-3-Clause ---
 recommend('BSD-3-Clause') :-
     fact(closed_source),
@@ -128,11 +124,6 @@ recommend('BSD-3-Clause') :-
     fact(want_simple_permissive),
     assert_step('A15', 'recommend_BSD3_if_simple_permissive', 'RECOMMEND',
                 ['BSD-3-Clause'], 'BSD-3-Clause is simple permissive with a non-endorsement clause.').
-warning('BSD-3-Clause', 'No patent grant. Consider Apache-2.0.') :-
-    patent,
-    assert_step('A16', 'warn_BSD3_no_patent_grant', 'WARN',
-                ['BSD-3-Clause'], 'BSD-3-Clause offers no patent protection.').
-
 % --- ISC ---
 recommend('ISC') :-
     fact(closed_source),
@@ -142,11 +133,6 @@ recommend('ISC') :-
     fact(want_simple_permissive),
     assert_step('A18', 'recommend_ISC_if_simple_permissive', 'RECOMMEND',
                 ['ISC'], 'ISC is a simple permissive license popular in the OpenBSD ecosystem.').
-warning('ISC', 'No patent grant. Consider Apache-2.0.') :-
-    patent,
-    assert_step('A19', 'warn_ISC_no_patent_grant', 'WARN',
-                ['ISC'], 'ISC offers no patent protection.').
-
 % --- Zlib ---
 recommend('Zlib') :-
     fact(closed_source),
@@ -449,7 +435,8 @@ eliminate(License) :-
 
 % Warning rules based on metadata
 warning(License, 'No patent grant - consider Apache-2.0.') :-
-    license_limitation(License, patent_use),
+    license_id(License),
+    \+ license_permission(License, patent_grant),
     fact(need_patent_protection),
     assert_step('F05', 'metadata_no_patent', 'WARN',
                 [License], 'License offers no patent protection.').

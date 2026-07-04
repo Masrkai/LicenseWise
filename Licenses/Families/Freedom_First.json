@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.5",
-  "last_updated": "2026-04-22",
-  "source": "https://spdx.org/licenses/ ",
+  "schema_version": "2.0",
+  "last_updated": "2026-07-04",
+  "source": "https://spdx.org/licenses/",
   "licenses": [
     {
       "id": "MIT",
@@ -13,7 +13,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -21,18 +22,29 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unlicense", "CC0-1.0", "Zlib", "PostgreSQL"],
+        "incompatible_with": [],
+        "notes": "Extremely permissive. Compatible with virtually every other license. No patent grant — consider Apache-2.0 for patent protection."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 1,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Best for maximum adoption with minimal legal overhead."
       }
     },
@@ -46,7 +58,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": true
       },
       "conditions": {
         "include_copyright": true,
@@ -54,18 +67,29 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": true,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": true
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause", "ISC"],
+        "incompatible_with": ["GPL-2.0-only"],
+        "notes": "Incompatible with GPL-2.0-only due to patent retaliation clause. Compatible with GPL-3.0 (GPL-3.0 added explicit Apache-2.0 compatibility). Patent grant is a key advantage over MIT/BSD."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 2,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Best permissive choice when patent protection matters, e.g. corporate or hardware-adjacent projects."
       }
     },
@@ -79,7 +103,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -87,22 +112,32 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause", "Unlicense"],
+        "incompatible_with": [],
+        "notes": "Functionally identical to MIT. Compatible with all major licenses. Preferred by OpenBSD and many Node.js projects."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 6,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Preferred by OpenBSD; common in Node.js ecosystem. Legally equivalent to MIT — choose whichever your ecosystem prefers."
       }
     },
-
     {
       "id": "Unlicense",
       "spdx_id": "Unlicense",
@@ -113,7 +148,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": false,
@@ -121,18 +157,29 @@
         "disclose_source": false,
         "include_license": false,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause", "ISC", "CC0-1.0"],
+        "incompatible_with": [],
+        "notes": "Public domain dedication. Compatible with everything by design. May not be legally robust in all jurisdictions — CC0 is safer for cross-jurisdictional use."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 11,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Maximum freedom — no attribution required. Not valid in jurisdictions without a public domain concept. Consider CC0 as a safer alternative for cross-jurisdictional use."
       }
     }

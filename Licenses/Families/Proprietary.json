@@ -1,9 +1,8 @@
 {
-  "schema_version": "1.5",
-  "last_updated": "2026-04-22",
-  "source": "https://spdx.org/licenses/ ",
+  "schema_version": "2.0",
+  "last_updated": "2026-07-04",
+  "source": "https://spdx.org/licenses/",
   "licenses": [
-
     {
       "id": "BSL-1.0",
       "spdx_id": "BSL-1.0",
@@ -14,7 +13,8 @@
         "commercial_use": false,
         "distribution": false,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -22,22 +22,32 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": [],
+        "incompatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only"],
+        "notes": "NOT open source — source-available. Converts to an open-source license (e.g., Apache-2.0) after the Change Date. Commercial production use requires a commercial license."
       },
       "metadata": {
         "osi_approved": false,
         "fsf_free": false,
-        "popularity_rank": 17,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Used by MariaDB, HashiCorp (Terraform), CockroachDB. NOT open source — it is 'source available'. Converts to an open-source license (e.g., Apache-2.0) after the Change Date (usually 4 years). Commercial production use requires a commercial license before that date."
       }
     },
-
     {
       "id": "Elastic-2.0",
       "spdx_id": "Elastic-2.0",
@@ -48,7 +58,8 @@
         "commercial_use": false,
         "distribution": false,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -56,22 +67,32 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": true,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": [],
+        "incompatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only"],
+        "notes": "NOT open source by OSI definition. Allows internal and commercial use, but you CANNOT offer it as a SaaS/cloud service or circumvent license key restrictions."
       },
       "metadata": {
         "osi_approved": false,
         "fsf_free": false,
-        "popularity_rank": 19,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Used by Elasticsearch 7.11+ and Kibana. Allows internal and commercial use, but you CANNOT offer it as a SaaS/cloud service. Created in response to AWS re-licensing concerns. NOT open source by OSI definition."
       }
     },
-
     {
       "id": "Proprietary",
       "spdx_id": null,
@@ -82,7 +103,8 @@
         "commercial_use": false,
         "distribution": false,
         "modification": false,
-        "private_use": false
+        "private_use": false,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -90,18 +112,29 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": true,
         "warranty": true,
-        "patent_use": true
+        "patent_use": true,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": [],
+        "incompatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause"],
+        "notes": "No compatibility — all rights reserved. Others cannot legally use, copy, modify, or distribute without explicit permission."
       },
       "metadata": {
         "osi_approved": false,
         "fsf_free": false,
-        "popularity_rank": null,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Default when no license is specified — all rights reserved by the author. Others cannot legally use, copy, modify, or distribute. Add a license file to allow any use."
       }
     }

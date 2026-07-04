@@ -48,9 +48,11 @@ class PrologEngine:
         self.fact_manager.load_facts(facts)
 
         # Load license metadata so metadata-based rules can fire
+        # Use only the canonical id to avoid duplicate facts for spdx variants
         for lic in licenses_data:
-            for pid in get_possible_ids(lic.get("id", ""), lic):
-                self.fact_manager.assert_license_metadata(pid, lic)
+            lid = lic.get("id")
+            if lid:
+                self.fact_manager.assert_license_metadata(lid, lic)
 
         recommended = {str(sol["L"]) for sol in self.prolog.query("recommend(L)")}
         eliminated = {str(sol["L"]) for sol in self.prolog.query("eliminate(L)")}

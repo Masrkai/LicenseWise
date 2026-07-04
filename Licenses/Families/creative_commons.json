@@ -1,39 +1,51 @@
 {
-  "schema_version": "1.5",
-  "last_updated": "2026-04-22",
-  "source": "https://spdx.org/licenses/ ",
+  "schema_version": "2.0",
+  "last_updated": "2026-07-04",
+  "source": "https://spdx.org/licenses/",
   "licenses": [
     {
       "id": "CC-BY-NC-4.0",
       "spdx_id": "CC-BY-NC-4.0",
-      "name": "Creative Commons Attribution-NonCommercial 4.0",
+      "name": "Creative Commons Attribution-NonCommercial 4.0 International",
       "type": "other",
-      "description": "Allows sharing and adaptation for non-commercial purposes only.",
+      "description": "Allows sharing and adaptation for non-commercial purposes only with attribution.",
       "permissions": {
         "commercial_use": false,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
         "document_changes": false,
         "disclose_source": false,
-        "include_license": false,
+        "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": [],
+        "incompatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause"],
+        "notes": "Non-commercial clause makes it incompatible with virtually all software licenses. Designed for creative content, not software."
       },
       "metadata": {
         "osi_approved": false,
         "fsf_free": false,
-        "popularity_rank": 12,
-        "explanation_hint": "Designed for creative content, not software. Prohibits commercial use."
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
+        "explanation_hint": "For academic/creative work you want freely shared but not monetized. 'Commercial' is broadly interpreted — even indirect revenue can count. Not for software."
       }
     },
     {
@@ -46,7 +58,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": false,
@@ -54,18 +67,29 @@
         "disclose_source": false,
         "include_license": false,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unlicense"],
+        "incompatible_with": [],
+        "notes": "Public domain equivalent. Compatible with everything by design. More legally robust than Unlicense internationally."
       },
       "metadata": {
         "osi_approved": false,
         "fsf_free": true,
-        "popularity_rank": 13,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Preferred public domain tool for datasets and creative works. More legally robust than Unlicense internationally. Not OSI-approved (CC licenses are not designed for software)."
       }
     },
@@ -79,7 +103,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": true
       },
       "conditions": {
         "include_copyright": true,
@@ -87,18 +112,29 @@
         "disclose_source": true,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": "file"
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": true
+        "patent_use": true,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MPL-2.0", "EPL-2.0"],
+        "incompatible_with": ["GPL-2.0-only", "GPL-3.0-only"],
+        "notes": "INCOMPATIBLE with GPL (FSF says so explicitly). File-level copyleft similar to MPL. Historically significant for ZFS but a major source of controversy."
       },
       "metadata": {
         "osi_approved": true,
         "fsf_free": true,
-        "popularity_rank": 20,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Historically used by Sun/Oracle for ZFS and NetBeans. INCOMPATIBLE with GPL (FSF says so explicitly) — major source of controversy when Linux wanted ZFS. Not recommended for new projects."
       }
     },
@@ -112,7 +148,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -120,22 +157,32 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": false
+        "same_license": false,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": [],
+        "incompatible_with": ["GPL-2.0-only", "GPL-3.0-only"],
+        "notes": "Designed for content, not software. Attribution-only terms are permissive in spirit but CC licenses are not recommended for source code by OSI."
       },
       "metadata": {
         "osi_approved": false,
         "fsf_free": false,
-        "popularity_rank": 10,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "For documentation, datasets, media assets. NOT recommended for source code. OSI explicitly states CC licenses are not suitable for software."
       }
     },
-
     {
       "id": "CC-BY-SA-4.0",
       "spdx_id": "CC-BY-SA-4.0",
@@ -146,7 +193,8 @@
         "commercial_use": true,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -154,56 +202,32 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": true
+        "same_license": true,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["GPL-3.0-only"],
+        "incompatible_with": ["GPL-2.0-only"],
+        "notes": "Wikipedia's license. 'Copyleft for content' — derivatives must also be CC-BY-SA. Compatible with GPL-3.0 per Creative Commons. Not for software."
       },
       "metadata": {
         "osi_approved": false,
         "fsf_free": false,
-        "popularity_rank": 11,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Wikipedia's license. 'Copyleft for content' — derivatives must also be CC-BY-SA. Not for software. Compatible with GPL-3.0 per Creative Commons."
       }
     },
-
-    {
-      "id": "CC-BY-NC-4.0",
-      "spdx_id": "CC-BY-NC-4.0",
-      "name": "Creative Commons Attribution-NonCommercial 4.0 International",
-      "type": "other",
-      "description": "Allows sharing and adaptation for non-commercial purposes only with attribution.",
-      "permissions": {
-        "commercial_use": false,
-        "distribution": true,
-        "modification": true,
-        "private_use": true
-      },
-      "conditions": {
-        "include_copyright": true,
-        "document_changes": false,
-        "disclose_source": false,
-        "include_license": true,
-        "net_copyleft": false,
-        "same_license": false
-      },
-      "limitations": {
-        "liability": true,
-        "trademark_use": false,
-        "warranty": true,
-        "patent_use": false
-      },
-      "metadata": {
-        "osi_approved": false,
-        "fsf_free": false,
-        "popularity_rank": 12,
-        "explanation_hint": "For academic/creative work you want freely shared but not monetized. 'Commercial' is broadly interpreted — even indirect revenue can count. Not for software."
-      }
-    },
-
     {
       "id": "CC-BY-NC-SA-4.0",
       "spdx_id": "CC-BY-NC-SA-4.0",
@@ -214,7 +238,8 @@
         "commercial_use": false,
         "distribution": true,
         "modification": true,
-        "private_use": true
+        "private_use": true,
+        "patent_grant": false
       },
       "conditions": {
         "include_copyright": true,
@@ -222,21 +247,31 @@
         "disclose_source": false,
         "include_license": true,
         "net_copyleft": false,
-        "same_license": true
+        "same_license": true,
+        "copyleft_scope": null
       },
       "limitations": {
         "liability": true,
         "trademark_use": false,
         "warranty": true,
-        "patent_use": false
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": [],
+        "incompatible_with": ["GPL-2.0-only", "GPL-3.0-only", "MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause"],
+        "notes": "Non-commercial and ShareAlike make it incompatible with virtually all software licenses. Most restrictive standard CC license."
       },
       "metadata": {
         "osi_approved": false,
         "fsf_free": false,
-        "popularity_rank": 14,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
         "explanation_hint": "Widely used for educational materials and course content. Maximum control for non-commercial creators. Incompatible with most software licenses."
       }
     }
-
   ]
 }

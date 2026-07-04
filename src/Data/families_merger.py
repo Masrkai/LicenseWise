@@ -40,7 +40,7 @@ def merge(families: dict[str, list[dict[str, Any]]]) -> list[dict[str, Any]]:
     Flatten all family lists into one deduplicated list.
     Deduplication key: spdx_id (falls back to id).
     Each license gets a 'families' list showing which files it appeared in.
-    Sorted by popularity_rank ascending (unlisted ones go to the end).
+    Sorted by spdx_id alphabetically.
     """
     seen: dict[str, dict[str, Any]] = {}   # spdx_id -> license object
 
@@ -59,15 +59,15 @@ def merge(families: dict[str, list[dict[str, Any]]]) -> list[dict[str, Any]]:
 
     merged = list(seen.values())
 
-    # Sort by popularity_rank; entries without it sort last
-    merged.sort(key=lambda lic: lic.get("metadata", {}).get("popularity_rank") or 9999)
+    # Sort by spdx_id alphabetically for deterministic output
+    merged.sort(key=lambda lic: lic.get("spdx_id") or lic.get("id", ""))
     return merged
 
 
 def build_output(merged: list[dict[str, Any]], families: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
     return {
-        "schema_version": "1.5",
-        "last_updated": "2026-04-22",
+        "schema_version": "2.0",
+        "last_updated": "2026-07-04",
         "source": "https://spdx.org/licenses/",
         "family_files": sorted(families.keys()),
         "total_licenses": len(merged),

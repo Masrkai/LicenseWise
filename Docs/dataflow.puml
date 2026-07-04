@@ -4,9 +4,9 @@ skinparam sequence {
   ArrowColor #37474F
   LifeLineBorderColor #455A64
   participant "User" as User
-  participant "CLI/WebUI" as UI
+  participant "CLI/Slint GUI" as UI
   participant "Inference Engine" as Engine
-  participant "Rule Base" as Rules
+  participant "Prolog Rule Base" as Rules
   participant "License DB" as LicDB
   participant "Working Memory" as WM
 }

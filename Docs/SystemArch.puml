@@ -28,8 +28,8 @@ title LicenseWise - System Architecture (KBS)
 ' ===== USER INTERFACE LAYER =====
 node "User Interface Layer" {
   interface "CLI Interface" as CLI
-  interface "Gradio Web UI" as WEBUI
-  note right of WEBUI : gradio_app.py\nstyle.css
+  interface "Slint GUI" as WEBUI
+  note right of WEBUI : slint_app.py
   note right of CLI : cli.py
 }
 
@@ -38,17 +38,17 @@ node "Inference Engine" {
   component "Forward Chaining" as FC
   component "Backward Chaining" as BC
   component "Explanation Engine" as EE
-  note bottom of FC : forward_chain.py\nForward Rule Evaluation
-  note bottom of BC : backward_chain.py\nGoal-Driven Analysis
-  note bottom of EE : explanation_engine.py\nReport Generation
+  note bottom of FC : src/Inference/forward_chain.py\nForward Rule Evaluation
+  note bottom of BC : src/Inference/backward_chain.py\nGoal-Driven Analysis
+  note bottom of EE : src/Inference/explanation_engine.py\nReport Generation
 }
 
 ' ===== KNOWLEDGE BASE =====
 database "Knowledge Base" {
-  database "Rule Base" as RULES
+  database "Prolog Rule Base" as RULES
   database "License Database" as LICDB
   database "Working Memory" as WM
-  note right of RULES : rules.py\nProduction Rules
+  note right of RULES : src/Data/license_rules.pl\nProlog Rules
   note right of LICDB : JSON Files\nLicense Metadata
   note right of WM : Dynamic Facts\nInference Results
 }
@@ -57,7 +57,7 @@ database "Knowledge Base" {
 node "Utilities & Helpers" {
   component "Common Utilities" as UTILS
   component "License Loader" as LOADER
-  note top of UTILS : common.py\nFact conversion\nData loading
+  note top of UTILS : src/interface/common.py\nFact conversion\nData loading
 }
 
 ' ===== EXTERNAL DATA =====
@@ -65,7 +65,7 @@ database "License Data Sources" {
   file "SPDX JSON" as SPDX
   file "Families/" as FAMILIES
   file "licenses.json" as MERGED
-  note bottom : families_merger.py\nMerges family files
+  note bottom : src/Data/families_merger.py\nMerges family files
 }
 
 ' ===== CONNECTIONS =====

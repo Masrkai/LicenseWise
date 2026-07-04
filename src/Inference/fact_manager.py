@@ -17,9 +17,12 @@ class FactManager:
         for key, value in facts.items():
             if value is True:
                 self.prolog.assertz(f"fact({key})")
+            elif isinstance(value, str):
+                self.prolog.assertz(f"fact({key}({value}))")
 
     def assert_license_metadata(self, license_id: str, lic: dict[str, Any]) -> None:
         """Assert license conditions, permissions, and limitations as Prolog facts."""
+        self.prolog.assertz(f"license_id('{license_id}')")
         for cond, val in lic.get("conditions", {}).items():
             if val:
                 self.prolog.assertz(f"license_condition('{license_id}', '{cond}')")

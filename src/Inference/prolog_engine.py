@@ -13,8 +13,8 @@ from pyswip import Prolog
 
 from ..config import PROLOG_RULES_PATH
 from .fact_manager import FactManager
-from .trace_builder import TraceBuilder
 from .license_lookup import find_license, get_possible_ids
+from .trace_builder import TraceBuilder
 
 
 class PrologEngine:
@@ -46,6 +46,11 @@ class PrologEngine:
         Returns working memory: {recommended, eliminated, warnings}.
         """
         self.fact_manager.load_facts(facts)
+
+        # Load license metadata so metadata-based rules can fire
+        for lic in licenses_data:
+            for pid in get_possible_ids(lic.get("id", ""), lic):
+                self.fact_manager.assert_license_metadata(pid, lic)
 
         recommended = {str(sol["L"]) for sol in self.prolog.query("recommend(L)")}
         eliminated = {str(sol["L"]) for sol in self.prolog.query("eliminate(L)")}

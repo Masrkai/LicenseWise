@@ -7,6 +7,7 @@
 
 :- dynamic fact/1.
 :- dynamic step/6.
+:- dynamic license_id/1.
 :- discontiguous recommend/1.
 :- discontiguous eliminate/1.
 :- discontiguous warning/2.
@@ -440,6 +441,7 @@ eliminate(License) :-
                 [License], 'License has network copyleft incompatible with closed-source SaaS.').
 
 eliminate(License) :-
+    license_id(License),
     \+ license_permission(License, commercial_use),
     fact(commercial_use),
     assert_step('F04', 'metadata_no_commercial', 'ELIMINATE',

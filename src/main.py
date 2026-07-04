@@ -17,7 +17,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.dump_merged_licenses:
-        from Data.families_merger import dump_merged_json
+        from src.Data.families_merger import dump_merged_json
 
         dump_merged_json(args.dump_merged_licenses)
         print(f"Merged license data written to {args.dump_merged_licenses}")
@@ -25,14 +25,14 @@ def main() -> None:
 
     if args.gui:
         try:
-            from interface.slint_app import launch_gui
+            from src.interface.slint_app import launch_gui
             print("Starting Slint GUI interface...")
             launch_gui()
         except ImportError as e:
             print(e)
             sys.exit(1)
     else:
-        from interface.cli import main_cli
+        from src.interface.cli import main_cli
         main_cli(verbose=args.verbose)
 
 

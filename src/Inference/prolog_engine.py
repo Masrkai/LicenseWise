@@ -5,20 +5,22 @@ Bridges Python interface to SWI-Prolog knowledge base.
 All rules live in Rules/license_rules.pl.
 """
 
-from typing import Any, Dict, List
+from __future__ import annotations
+
+from typing import Any
 
 from pyswip import Prolog
 
-from config import PROLOG_RULES_PATH
-from Inference.fact_manager import FactManager
-from Inference.trace_builder import TraceBuilder
-from Inference.license_lookup import find_license, get_possible_ids
+from ..config import PROLOG_RULES_PATH
+from .fact_manager import FactManager
+from .trace_builder import TraceBuilder
+from .license_lookup import find_license, get_possible_ids
 
 
 class PrologEngine:
     """SWI-Prolog inference engine via pyswip."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.prolog = Prolog()
         if not PROLOG_RULES_PATH.exists():
             raise FileNotFoundError(f"Prolog knowledge base not found: {PROLOG_RULES_PATH}")
@@ -36,9 +38,9 @@ class PrologEngine:
 
     def forward_chain(
         self,
-        facts: Dict[str, Any],
-        licenses_data: List[Dict],
-    ) -> Dict[str, Any]:
+        facts: dict[str, Any],
+        licenses_data: list[dict[str, Any]],
+    ) -> dict[str, Any]:
         """
         Run all Prolog rules against user facts.
         Returns working memory: {recommended, eliminated, warnings}.
@@ -63,9 +65,9 @@ class PrologEngine:
     def backward_chain(
         self,
         license_id: str,
-        facts: Dict[str, Any],
-        licenses_data: List[Dict],
-    ) -> Dict[str, Any]:
+        facts: dict[str, Any],
+        licenses_data: list[dict[str, Any]],
+    ) -> dict[str, Any]:
         """
         Check compatibility of a specific license.
         1. Run forward rules via Prolog.
@@ -83,7 +85,7 @@ class PrologEngine:
                 self.fact_manager.assert_license_metadata(pid, lic)
 
         # Query Prolog for this license
-        prolog_status = {}
+        prolog_status: dict[str, str] = {}
         for pid in possible_ids:
             for sol in self.prolog.query(f"compatible('{pid}', R)"):
                 prolog_status[pid] = sol["R"]

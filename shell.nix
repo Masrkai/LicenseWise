@@ -16,8 +16,8 @@ let
     stdenv.cc.cc.lib
 
     # Slint native dependencies
-    glib           # glib provides libgobject, libglib and libgio .
-    glibc            #
+    glib # glib provides libgobject, libglib and libgio .
+    glibc
     expat
     fontconfig.lib # .lib output is required to get the actual .so files
 
@@ -44,9 +44,27 @@ pkgs.mkShell {
   buildInputs =
     with pkgs;
     [
-      uv
-      python313
-      python313Packages.pip
+      (python313.withPackages (
+        ps: with ps; [
+          #-> Basics for IDEs
+          uv
+          ruff # linter and code formatter
+          debugpy # Debugger
+          basedpyright # LSP server
+
+          #-> Basics for package installation / bundeling
+          uv # Package Manager & virtual environment manager (replaces pip while being better at everything)
+          setuptools # Utilities to facilitate the installation of Python packages
+          python-dotenv # Add .env support to your apps
+          pyinstaller # Tool to bundle a python application with dependencies into a single package
+          pyinstaller-versionfile # Create a windows version-file from a simple YAML file that can be used by PyInstaller
+
+          #-> testing
+          pytest
+          pytest-cov
+          pytest-aio
+        ]
+      ))
 
       gcc
       ninja

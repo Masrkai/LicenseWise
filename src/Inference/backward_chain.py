@@ -1,17 +1,19 @@
 """Backward chaining via Prolog: check compatibility of a specific license."""
 
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
 
-from Inference import get_engine
-from Inference.prolog_engine import PrologEngine
+from typing import Any
+
+from . import get_engine
+from .prolog_engine import PrologEngine
 
 
 def backward_chain(
     license_id: str,
-    facts: Dict[str, Any],
-    licenses_data: List[Dict],
-    engine: Optional[PrologEngine] = None,
-) -> Dict[str, Any]:
+    facts: dict[str, Any],
+    licenses_data: list[dict[str, Any]],
+    engine: PrologEngine | None = None,
+) -> dict[str, Any]:
     """
     Check compatibility of a specific licence using Prolog rules
     with a metadata fallback for licences not covered by rules.

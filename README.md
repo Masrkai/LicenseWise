@@ -30,11 +30,11 @@
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd KBS/Project
+git clone https://github.com/Masrkai/LicenseWise.git
+cd LicenseWise
 
 # Create a virtual environment and install dependencies
-uv venv .venv --python python3.12
+uv venv .venv
 source .venv/bin/activate
 uv pip install -r requirements.txt
 ```
@@ -60,7 +60,7 @@ The shell hook will automatically create a `.venv` and activate it.
 Run the main entry point without any arguments:
 
 ```bash
-python main.py
+python -m src.main
 ```
 
 You will see a menu:
@@ -80,7 +80,7 @@ Select mode:
 Launch the GUI with the `--gui` flag:
 
 ```bash
-python main.py --gui
+python -m src.main --gui
 ```
 
 A native desktop window will open. The interface has two tabs:
@@ -89,6 +89,24 @@ A native desktop window will open. The interface has two tabs:
 - **License Analysis** – enter a license ID and answer five key questions.
 
 The UI is defined in `.slint` files under `interface/ui/`.
+
+### Debug / Reasoning
+
+there are extra flags to check
+
+```bash
+➜  python -m src.main -h
+usage: main.py [-h] [--gui] [--verbose] [--dump-merged-licenses [PATH]]
+
+LicenseWise - KBS License Advisor
+
+options:
+  -h, --help            show this help message and exit
+  --gui                 Launch Slint GUI interface
+  --verbose             Show detailed reasoning trace
+  --dump-merged-licenses [PATH]
+                        Dump the merged license JSON to PATH for debugging (default: merged_licenses.json)
+```
 
 ---
 

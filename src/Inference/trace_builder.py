@@ -1,15 +1,17 @@
 """Trace building for Prolog inference steps."""
 
-from typing import Any, Dict, List
+from __future__ import annotations
+
+from typing import Any
 
 
 class TraceBuilder:
     """Builds reasoning traces from Prolog step facts."""
 
-    def __init__(self, prolog):
+    def __init__(self, prolog: Any) -> None:
         self.prolog = prolog
 
-    def build_trace(self) -> List[Dict]:
+    def build_trace(self) -> list[dict[str, Any]]:
         """Query step/6 facts and build trace preserving original format."""
         return [
             {

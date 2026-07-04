@@ -1,10 +1,12 @@
 """Explanation and report generation for LicenseWise inference results."""
 
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
 
-from Inference import get_engine
-from Inference.prolog_engine import PrologEngine
-from Data.report_templates import (
+from typing import Any
+
+from . import get_engine
+from .prolog_engine import PrologEngine
+from ..Data.report_templates import (
     REPORT_HEADER,
     SECTION_RECOMMENDED,
     SECTION_ELIMINATED,
@@ -25,18 +27,18 @@ from Data.report_templates import (
 )
 
 
-def explain_question(fact_name: str, engine: Optional[PrologEngine] = None) -> str:
+def explain_question(fact_name: str, engine: PrologEngine | None = None) -> str:
     """Return an explanation why a particular question is asked (from Prolog KB)."""
     engine = engine or get_engine()
     return engine.get_question_explanation(fact_name)
 
 
-def format_trace(trace: List[Dict]) -> str:
+def format_trace(trace: list[dict[str, Any]]) -> str:
     """Format the reasoning trace into a human-readable string."""
     if not trace:
         return NO_RULES_FIRED
 
-    lines = [TRACE_HEADER, SEP]
+    lines: list[str] = [TRACE_HEADER, SEP]
 
     for entry in trace:
         icon = TRACE_ACTION_ICONS.get(entry.get("action", "OTHER"), "*")
@@ -53,11 +55,11 @@ def format_trace(trace: List[Dict]) -> str:
 
 
 def generate_final_report(
-    wm: Dict[str, Any], facts: Dict[str, Any], trace: List[Dict],
+    wm: dict[str, Any], facts: dict[str, Any], trace: list[dict[str, Any]],
     include_trace: bool = True,
 ) -> str:
     """Generate the complete final report including reasoning trace."""
-    lines = [SEP, REPORT_HEADER, SEP]
+    lines: list[str] = [SEP, REPORT_HEADER, SEP]
 
     if wm["recommended"]:
         lines.append(f"\n{SECTION_RECOMMENDED}")
@@ -95,10 +97,10 @@ def generate_final_report(
 
 
 def generate_summary(
-    wm: Dict[str, Any], facts: Dict[str, Any], trace: List[Dict]
+    wm: dict[str, Any], facts: dict[str, Any], trace: list[dict[str, Any]]
 ) -> str:
     """Concise summary of how the conclusion was reached."""
-    lines = [f"\n{SUMMARY_HEADER}", SEP_SHORT]
+    lines: list[str] = [f"\n{SUMMARY_HEADER}", SEP_SHORT]
 
     recommend_steps = [e for e in trace if "RECOMMEND" in e.get("action", "")]
     eliminate_steps = [e for e in trace if "ELIMINATE" in e.get("action", "")]

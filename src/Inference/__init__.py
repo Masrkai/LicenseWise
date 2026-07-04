@@ -1,8 +1,8 @@
 """Inference engine package for LicenseWise."""
 
-from Inference.prolog_engine import PrologEngine
+from .prolog_engine import PrologEngine
 
-_engine = None
+_engine: PrologEngine | None = None
 
 
 def get_engine() -> PrologEngine:

@@ -1,18 +1,20 @@
 """Output formatting for LicenseWise results."""
 
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
 
-from interface.common import suggest_alternatives
+from typing import Any
+
+from .common import suggest_alternatives
 
 # Declarative label maps
-PERMISSION_LABELS = [
+PERMISSION_LABELS: list[tuple[str, str]] = [
     ("commercial_use", "Commercial use"),
     ("modification", "Modification"),
     ("distribution", "Distribution"),
     ("private_use", "Private use"),
 ]
 
-CONDITION_LABELS = [
+CONDITION_LABELS: list[tuple[str, str]] = [
     ("include_copyright", "Include copyright notice"),
     ("include_license", "Include license text"),
     ("disclose_source", "Disclose source code"),
@@ -21,15 +23,15 @@ CONDITION_LABELS = [
     ("net_copyleft", "Network copyleft (AGPL-style)"),
 ]
 
-LIMITATION_LABELS = [
+LIMITATION_LABELS: list[tuple[str, str]] = [
     ("liability", "No liability warranty"),
     ("warranty", "No warranty"),
 ]
 
 
-def format_compatibility_result(result: Dict[str, Any], license_id: str) -> str:
+def format_compatibility_result(result: dict[str, Any], license_id: str) -> str:
     """Format a backward_chain result into human-readable text."""
-    lines = []
+    lines: list[str] = []
 
     if result["compatible"] is True:
         lines.append(f"COMPATIBLE\n\n{license_id} is compatible with your intended use.\n")
@@ -78,9 +80,9 @@ def format_compatibility_result(result: Dict[str, Any], license_id: str) -> str:
     return "\n".join(lines)
 
 
-def _format_license_info(lic: Dict) -> List[str]:
+def _format_license_info(lic: dict[str, Any]) -> list[str]:
     """Format license metadata into text lines."""
-    lines = ["License Information\n"]
+    lines: list[str] = ["License Information\n"]
     lines.append(f"  Name: {lic.get('name', 'unknown')}")
     lines.append(f"  Type: {lic.get('type', 'unknown').title()}")
     if lic.get("description"):
@@ -115,7 +117,7 @@ def _format_license_info(lic: Dict) -> List[str]:
     return lines
 
 
-def _get_suggestions(result: Dict) -> List[str]:
+def _get_suggestions(result: dict[str, Any]) -> list[str]:
     """Get alternative license suggestions based on violations."""
     all_text = (
         " ".join(result["violations"]).lower()

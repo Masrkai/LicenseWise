@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 import sys
 
-from Inference.backward_chain import backward_chain
-from Inference.explanation_engine import (
+from ..Inference.backward_chain import backward_chain
+from ..Inference.explanation_engine import (
     DISCLAIMER,
     explain_question,
     generate_final_report,
     generate_summary,
 )
-from Inference.forward_chain import forward_chain
-from interface.common import (
+from ..Inference.forward_chain import forward_chain
+from .common import (
     apply_closed_source_derivation,
     get_licenses_data,
     load_questions,
@@ -19,7 +21,7 @@ from interface.common import (
 # ----------------------------------------------------------------------
 # Helper to ask questions
 # ----------------------------------------------------------------------
-def ask_yes_no(question: str, fact_name: str, facts: dict) -> None:
+def ask_yes_no(question: str, fact_name: str, facts: dict[str, bool | None]) -> None:
     """Ask a yes/no question, store answer, and show explanation."""
     print(f"\n? {question}")
     print(f"   Why: {explain_question(fact_name)}")
@@ -38,7 +40,7 @@ def ask_yes_no(question: str, fact_name: str, facts: dict) -> None:
             print("   Please answer 'yes', 'no', or 'skip'.")
 
 
-def ask_choice(question: str, fact_name: str, choices: list, facts: dict) -> None:
+def ask_choice(question: str, fact_name: str, choices: list[str], facts: dict[str, bool | None]) -> None:
     """Ask a multiple-choice question."""
     print(f"\n? {question}")
     print(f"   Why: {explain_question(fact_name)}")
@@ -63,7 +65,7 @@ def ask_choice(question: str, fact_name: str, choices: list, facts: dict) -> Non
 # ----------------------------------------------------------------------
 # Recommendation mode
 # ----------------------------------------------------------------------
-def run_recommendation(licenses_data: list, verbose: bool = False) -> None:
+def run_recommendation(licenses_data: list[dict[str, object]], verbose: bool = False) -> None:
     """Run the license recommendation wizard."""
     questions = load_questions()["recommendation"]
 
@@ -73,7 +75,7 @@ def run_recommendation(licenses_data: list, verbose: bool = False) -> None:
     print("\nAnswer the following questions about your project.")
     print("Type 'skip' or press Enter to skip any question.\n")
 
-    facts = {}
+    facts: dict[str, bool | None] = {}
 
     for q in questions:
         req = q.get("requires")
@@ -94,7 +96,7 @@ def run_recommendation(licenses_data: list, verbose: bool = False) -> None:
         if fact_name == "distribute":
             apply_closed_source_derivation(facts)
 
-    trace = []
+    trace: list[dict[str, object]] = []
     wm = forward_chain(facts, [], licenses_data, trace)
 
     report = generate_final_report(wm, facts, trace, include_trace=verbose)
@@ -108,7 +110,7 @@ def run_recommendation(licenses_data: list, verbose: bool = False) -> None:
 # ----------------------------------------------------------------------
 # Analysis mode
 # ----------------------------------------------------------------------
-def run_analysis(licenses_data: list) -> None:
+def run_analysis(licenses_data: list[dict[str, object]]) -> None:
     """Check compatibility of a specific license."""
     print("=" * 60)
     print("LicenseWise - License Analysis")
@@ -127,7 +129,7 @@ def run_analysis(licenses_data: list) -> None:
     print("[5] Other (describe below)")
 
     print("\nPlease answer a few quick questions:")
-    facts = {}
+    facts: dict[str, bool | None] = {}
 
     ask_yes_no("Will you distribute the software?", "distribute", facts)
     apply_closed_source_derivation(facts)

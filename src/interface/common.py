@@ -1,13 +1,15 @@
 """Shared utilities for LicenseWise interface modules."""
 
+from __future__ import annotations
+
 import json
-from typing import Optional, List, Dict, Any
+from typing import Any
 
-from config import QUESTIONS_PATH, SUGGESTIONS_PATH
-from Data.families_merger import get_all_licenses
+from ..config import QUESTIONS_PATH, SUGGESTIONS_PATH
+from ..Data.families_merger import get_all_licenses
 
 
-def yes_no_to_bool(value: str) -> Optional[bool]:
+def yes_no_to_bool(value: str) -> bool | None:
     """
     Convert 'yes'/'no' (or 'y'/'n') to boolean.
     Returns None for any other value (including 'skip').
@@ -22,7 +24,7 @@ def yes_no_to_bool(value: str) -> Optional[bool]:
     return None
 
 
-def distribute_to_closed_source(distribute: Optional[bool]) -> Optional[bool]:
+def distribute_to_closed_source(distribute: bool | None) -> bool | None:
     """
     Convert distribution answer to closed_source fact.
     closed_source = not distribute, with None propagation.
@@ -32,7 +34,7 @@ def distribute_to_closed_source(distribute: Optional[bool]) -> Optional[bool]:
     return not distribute
 
 
-def apply_closed_source_derivation(facts: Dict[str, Any]) -> None:
+def apply_closed_source_derivation(facts: dict[str, Any]) -> None:
     """Derive closed_source from distribute and remove the raw distribute key."""
     facts["closed_source"] = distribute_to_closed_source(facts.get("distribute"))
     facts.pop("distribute", None)
@@ -42,10 +44,10 @@ def apply_closed_source_derivation(facts: Dict[str, Any]) -> None:
 # Questions loader
 # ----------------------------------------------------------------------
 
-_QUESTIONS_CACHE = None
+_QUESTIONS_CACHE: dict[str, list[dict[str, Any]]] | None = None
 
 
-def load_questions() -> Dict[str, List[Dict]]:
+def load_questions() -> dict[str, list[dict[str, Any]]]:
     """Load questions from questions.json. Returns dict with 'recommendation' and 'analysis' keys."""
     global _QUESTIONS_CACHE
     if _QUESTIONS_CACHE is None:
@@ -60,7 +62,7 @@ def load_questions() -> Dict[str, List[Dict]]:
 
 def suggest_alternatives(
     violation_text: str, format: str = "plain"
-) -> List[str]:
+) -> list[str]:
     """
     Suggest alternative licenses based on violation/explanation text.
 
@@ -71,11 +73,11 @@ def suggest_alternatives(
     Returns:
         Deduplicated list of suggestion strings.
     """
-    rules = []
+    rules: list[dict[str, Any]] = []
     with open(SUGGESTIONS_PATH, "r", encoding="utf-8") as f:
         rules = json.load(f)
-    suggestions = []
-    seen = set()
+    suggestions: list[str] = []
+    seen: set[str] = set()
 
     for rule in rules:
         if any(kw in violation_text for kw in rule["keywords"]):
@@ -97,12 +99,12 @@ def suggest_alternatives(
 
 
 def build_analysis_facts(
-    distribute: Optional[str] = None,
-    saas: Optional[str] = None,
-    commercial_use: Optional[str] = None,
-    need_patent: Optional[str] = None,
-    wants_relicense: Optional[str] = None,
-) -> Dict[str, Any]:
+    distribute: str | None = None,
+    saas: str | None = None,
+    commercial_use: str | None = None,
+    need_patent: str | None = None,
+    wants_relicense: str | None = None,
+) -> dict[str, Any]:
     """
     Build a facts dict for backward-chain analysis mode.
 
@@ -116,7 +118,7 @@ def build_analysis_facts(
     Returns:
         facts dict ready for backward_chain()
     """
-    facts = {}
+    facts: dict[str, Any] = {}
     dist_bool = yes_no_to_bool(distribute)
     facts["closed_source"] = distribute_to_closed_source(dist_bool)
     facts["saas"] = yes_no_to_bool(saas)
@@ -130,10 +132,10 @@ def build_analysis_facts(
 # Centralized license dataset loader with caching
 # ----------------------------------------------------------------------
 
-_LICENSES_DATA_CACHE = None
+_LICENSES_DATA_CACHE: list[dict[str, Any]] | None = None
 
 
-def get_licenses_data() -> List[Dict[str, Any]]:
+def get_licenses_data() -> list[dict[str, Any]]:
     """
     Load all license data by merging the family JSON files in Licenses/Families/.
     Results are cached after the first call.

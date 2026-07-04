@@ -1,9 +1,11 @@
 """License metadata lookup utilities."""
 
-from typing import Any, Dict, List, Optional, Set
+from __future__ import annotations
+
+from typing import Any
 
 
-def find_license(license_id: str, licenses_data: List[Dict]) -> Optional[Dict]:
+def find_license(license_id: str, licenses_data: list[dict[str, Any]]) -> dict[str, Any] | None:
     """Find a license dict by id or spdx_id."""
     return next(
         (lic for lic in licenses_data
@@ -12,9 +14,9 @@ def find_license(license_id: str, licenses_data: List[Dict]) -> Optional[Dict]:
     )
 
 
-def get_possible_ids(license_id: str, lic: Optional[Dict]) -> Set[str]:
+def get_possible_ids(license_id: str, lic: dict[str, Any] | None) -> set[str]:
     """Build set of possible IDs to check (original + spdx variants)."""
-    ids = {license_id}
+    ids: set[str] = {license_id}
     if lic:
         if lic.get("id"):
             ids.add(lic["id"])

@@ -10,21 +10,22 @@ Usage:
 """
 import json
 from pathlib import Path
+from typing import Any
 
-from config import LICENSES_DIR
+from ..config import LICENSES_DIR
 
 FAMILIES_DIR = LICENSES_DIR / "Families"
 
 
-def load_families(families_dir: Path) -> dict[str, list]:
+def load_families(families_dir: Path) -> dict[str, list[dict[str, Any]]]:
     """
     Load every *.json file from Families/.
     Returns a dict:  { family_name: [license, ...] }
     """
-    families = {}
+    families: dict[str, list[dict[str, Any]]] = {}
     for path in sorted(families_dir.glob("*.json")):
         with open(path, encoding="utf-8") as f:
-            data = json.load(f)
+            data: dict[str, Any] = json.load(f)
 
         # Your provided JSON files use path.stem as the fallback family name
         family_name = data.get("family", path.stem)
@@ -34,20 +35,20 @@ def load_families(families_dir: Path) -> dict[str, list]:
     return families
 
 
-def merge(families: dict[str, list]) -> list[dict]:
+def merge(families: dict[str, list[dict[str, Any]]]) -> list[dict[str, Any]]:
     """
     Flatten all family lists into one deduplicated list.
     Deduplication key: spdx_id (falls back to id).
     Each license gets a 'families' list showing which files it appeared in.
     Sorted by popularity_rank ascending (unlisted ones go to the end).
     """
-    seen: dict[str, dict] = {}   # spdx_id -> license object
+    seen: dict[str, dict[str, Any]] = {}   # spdx_id -> license object
 
     for family_name, licenses in families.items():
         for lic in licenses:
             key = lic.get("spdx_id") or lic.get("id")
             if key in seen:
-                # Already present — just append this family to its list
+                # Already present -- just append this family to its list
                 seen[key].setdefault("families", [])
                 if family_name not in seen[key]["families"]:
                     seen[key]["families"].append(family_name)
@@ -63,7 +64,7 @@ def merge(families: dict[str, list]) -> list[dict]:
     return merged
 
 
-def build_output(merged: list[dict], families: dict[str, list]) -> dict:
+def build_output(merged: list[dict[str, Any]], families: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
     return {
         "schema_version": "1.5",
         "last_updated": "2026-04-22",
@@ -79,7 +80,7 @@ def build_output(merged: list[dict], families: dict[str, list]) -> dict:
 # ----------------------------------------------------------------------
 
 
-def get_all_licenses(families_dir: Path | None = None) -> list[dict]:
+def get_all_licenses(families_dir: Path | None = None) -> list[dict[str, Any]]:
     """
     Merge all family files and return the flat list of license dicts.
     This is the primary entry point for other modules that need
@@ -96,7 +97,7 @@ def get_all_licenses(families_dir: Path | None = None) -> list[dict]:
     return merge(families)
 
 
-def get_merged_output(families_dir: Path | None = None) -> dict:
+def get_merged_output(families_dir: Path | None = None) -> dict[str, Any]:
     """
     Return the full merged output dict (with schema metadata wrapping the
     license list).  Useful for debugging / dump.
@@ -131,7 +132,7 @@ def dump_merged_json(
 # ----------------------------------------------------------------------
 
 
-def main():
+def main() -> None:
     if not FAMILIES_DIR.is_dir():
         raise FileNotFoundError(f"Families directory not found: {FAMILIES_DIR}")
 

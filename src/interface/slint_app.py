@@ -1,35 +1,38 @@
 """Slint GUI interface for LicenseWise."""
 
-import sys
+from __future__ import annotations
 
-from Inference.backward_chain import backward_chain
-from Inference.forward_chain import forward_chain
-from Inference.explanation_engine import (
+import sys
+from typing import Any
+
+from ..Inference.backward_chain import backward_chain
+from ..Inference.forward_chain import forward_chain
+from ..Inference.explanation_engine import (
     generate_final_report,
 )
-from config import UI_DIR
-from interface.common import (
+from ..config import UI_DIR
+from .common import (
     get_licenses_data,
     load_questions,
     yes_no_to_bool,
     apply_closed_source_derivation,
     build_analysis_facts,
 )
-from interface.formatting import format_compatibility_result
+from .formatting import format_compatibility_result
 
 # Load licenses with proper error handling
 try:
-    LICENSES_DATA = get_licenses_data()
-    LICENSES_LOADED = len(LICENSES_DATA)
-    LOAD_ERROR = None
+    LICENSES_DATA: list[dict[str, Any]] = get_licenses_data()
+    LICENSES_LOADED: int = len(LICENSES_DATA)
+    LOAD_ERROR: str | None = None
 except FileNotFoundError as e:
     LICENSES_DATA = []
     LICENSES_LOADED = 0
     LOAD_ERROR = str(e)
 
-QUESTIONS = load_questions()
+QUESTIONS: dict[str, list[dict[str, Any]]] = load_questions()
 
-LICENSES_ERROR_TEMPLATE = (
+LICENSES_ERROR_TEMPLATE: str = (
     "Error: Cannot load license data.\n\n{error}\n\n"
     "Please ensure Licenses/Families/ exists and contains *.json files."
 )
@@ -38,12 +41,12 @@ LICENSES_ERROR_TEMPLATE = (
 class QuestionNavigator:
     """Manages question visibility, navigation, and answer state for the GUI."""
 
-    def __init__(self, questions):
+    def __init__(self, questions: list[dict[str, Any]]) -> None:
         self.questions = questions
-        self.answers = {q["fact_name"]: "skip" for q in questions}
-        self.current_index = 0
+        self.answers: dict[str, str] = {q["fact_name"]: "skip" for q in questions}
+        self.current_index: int = 0
 
-    def is_visible(self, q):
+    def is_visible(self, q: dict[str, Any]) -> bool:
         """Check if a question should be displayed given current answers."""
         if "requires" not in q:
             return True
@@ -54,36 +57,36 @@ class QuestionNavigator:
                 return False
         return self.answers.get(req["fact"]) == str(req["value"])
 
-    def get_visible_questions(self):
+    def get_visible_questions(self) -> list[dict[str, Any]]:
         """Get all questions whose requires conditions are met."""
         return [q for q in self.questions if self.is_visible(q)]
 
-    def on_answer_changed(self, fact_name, value):
+    def on_answer_changed(self, fact_name: str, value: str) -> None:
         """Handle an answer change and advance to next question."""
         self.answers[fact_name] = value
         visible = self.get_visible_questions()
         if self.current_index < len(visible) - 1:
             self.current_index += 1
 
-    def go_to_previous(self):
+    def go_to_previous(self) -> None:
         """Move to previous question if possible."""
         if self.current_index > 0:
             self.current_index -= 1
 
-    def go_to_next(self):
+    def go_to_next(self) -> None:
         """Move to next question if possible."""
         visible = self.get_visible_questions()
         if self.current_index < len(visible) - 1:
             self.current_index += 1
 
 
-def _build_recommendation_output_dict(answers) -> str:
+def _build_recommendation_output_dict(answers: dict[str, str]) -> str:
     """Handle license recommendation request using a dictionary of answers."""
     if LOAD_ERROR:
         return LICENSES_ERROR_TEMPLATE.format(error=LOAD_ERROR)
 
     try:
-        facts = {
+        facts: dict[str, Any] = {
             "saas": yes_no_to_bool(answers.get("saas", "skip")),
             "commercial_use": yes_no_to_bool(answers.get("commercial_use", "skip")),
             "need_patent_protection": yes_no_to_bool(answers.get("need_patent_protection", "skip")),
@@ -91,8 +94,8 @@ def _build_recommendation_output_dict(answers) -> str:
             "want_weak_copyleft": yes_no_to_bool(answers.get("want_weak_copyleft", "skip")),
             "want_file_copyleft": yes_no_to_bool(answers.get("want_file_copyleft", "skip")),
             "wants_relicense": yes_no_to_bool(answers.get("wants_relicense", "skip")),
-            "project_type": answers.get("project_type").lower() if answers.get("project_type", "skip") != "skip" else None,
-            "linking_type": answers.get("linking_type").lower() if answers.get("linking_type", "skip") != "skip" else None,
+            "project_type": answers.get("project_type", "skip").lower() if answers.get("project_type", "skip") != "skip" else None,
+            "linking_type": answers.get("linking_type", "skip").lower() if answers.get("linking_type", "skip") != "skip" else None,
             "modify_library": yes_no_to_bool(answers.get("modify_library", "skip")),
             "want_public_domain": yes_no_to_bool(answers.get("want_public_domain", "skip")),
             "want_simple_permissive": yes_no_to_bool(answers.get("want_simple_permissive", "skip")),
@@ -103,14 +106,21 @@ def _build_recommendation_output_dict(answers) -> str:
         facts["distribute"] = yes_no_to_bool(answers.get("distribute", "skip"))
         apply_closed_source_derivation(facts)
 
-        trace = []
+        trace: list[dict[str, Any]] = []
         wm = forward_chain(facts, [], LICENSES_DATA, trace)
         return generate_final_report(wm, facts, trace, include_trace=False)
     except Exception as e:
         return f"Error: An unexpected error occurred.\n\n{str(e)}"
 
 
-def _build_analysis_output(license_id, distribute, saas, commercial_use, need_patent, wants_relicense) -> str:
+def _build_analysis_output(
+    license_id: str,
+    distribute: str | None,
+    saas: str | None,
+    commercial_use: str | None,
+    need_patent: str | None,
+    wants_relicense: str | None,
+) -> str:
     """Handle license compatibility analysis with enhanced output."""
     if LOAD_ERROR:
         return LICENSES_ERROR_TEMPLATE.format(error=LOAD_ERROR)
@@ -132,7 +142,7 @@ def _build_analysis_output(license_id, distribute, saas, commercial_use, need_pa
         return f"Error: An unexpected error occurred during analysis.\n\n{str(e)}"
 
 
-def launch_gui():
+def launch_gui() -> None:
     """Launch the Slint GUI interface."""
     import slint
 
@@ -163,7 +173,7 @@ def launch_gui():
     # Initialize question navigator
     navigator = QuestionNavigator(QUESTIONS["recommendation"])
 
-    def update_ui():
+    def update_ui() -> None:
         """Update the UI to reflect current navigator state."""
         visible_qs = navigator.get_visible_questions()
         if navigator.current_index >= len(visible_qs):
@@ -172,7 +182,7 @@ def launch_gui():
         window.total_visible_questions = len(visible_qs)
         window.current_question_index = navigator.current_index
 
-        visible = []
+        visible: list[Any] = []
         if visible_qs and navigator.current_index < len(visible_qs):
             q = visible_qs[navigator.current_index]
             q_struct = ui.Question()
@@ -188,15 +198,15 @@ def launch_gui():
 
         window.visible_questions = slint.ListModel(visible)
 
-    def on_answer_changed(fact_name, value):
+    def on_answer_changed(fact_name: str, value: str) -> None:
         navigator.on_answer_changed(fact_name, value)
         update_ui()
 
-    def on_go_to_previous():
+    def on_go_to_previous() -> None:
         navigator.go_to_previous()
         update_ui()
 
-    def on_go_to_next():
+    def on_go_to_next() -> None:
         navigator.go_to_next()
         update_ui()
 
@@ -205,14 +215,14 @@ def launch_gui():
     window.on_go_to_next = on_go_to_next
     update_ui()
 
-    def on_get_recommendation():
+    def on_get_recommendation() -> None:
         try:
             output = _build_recommendation_output_dict(navigator.answers)
             window.recommend_output = output
         except Exception as e:
             window.recommend_output = f"Error: {str(e)}"
 
-    def on_check_compatibility():
+    def on_check_compatibility() -> None:
         try:
             output = _build_analysis_output(
                 window.license_id_input,

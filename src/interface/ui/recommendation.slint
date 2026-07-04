@@ -1,5 +1,6 @@
 import { Theme, YesNoSkipCombo, RecommendationCombo, LinkingCombo, ActionButton, OutputScrollView } from "styles.slint";
 import { Question } from "types.slint";
+import { ResultsPanel } from "results.slint";
 
 export component RecommendationTab inherits HorizontalLayout {
     spacing: 16px;
@@ -64,42 +65,9 @@ export component RecommendationTab inherits HorizontalLayout {
             clicked => { root.get-recommendation(); }
         }
     }
-
     // RIGHT COLUMN: Results
-    Rectangle {
-        background: Theme.surface;
-        border-radius: Theme.radius;
-        border-width: 1px;
-        border-color: Theme.border;
-        clip: true;
-        vertical-stretch: 1;
-        horizontal-stretch: 1;
-        drop-shadow-offset-x: 0px;
-        drop-shadow-offset-y: 1px;
-        drop-shadow-blur: 4px;
-        drop-shadow-color: rgba(0, 0, 0, 0.08);
-
-        VerticalLayout {
-            padding: 16px;
-            spacing: 8px;
-
-            Text {
-                text: "Results";
-                font-size: Theme.font-size-subheading;
-                color: Theme.text-color;
-            }
-
-            OutputScrollView {
-                vertical-stretch: 1;
-                // Important: Ensuring content scrolls
-                Text {
-                    text: root.output-text;
-                    font-size: Theme.font-size-label;
-                    color: Theme.text-color;
-                    wrap: word-wrap;
-                    width: parent.width - 20px;
-                }
-            }
-        }
+    ResultsPanel {
+        output-text: root.output-text;
     }
+
 }

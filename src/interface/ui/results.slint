@@ -1,0 +1,43 @@
+import { Theme, OutputScrollView } from "styles.slint";
+
+export component ResultsPanel {
+    in property <string> output-text;
+    in property <string> title: "Results";
+
+    Rectangle {
+        background: Theme.surface;
+        border-radius: Theme.radius;
+        border-width: 1px;
+        border-color: Theme.border;
+        clip: true;
+        vertical-stretch: 1;
+        horizontal-stretch: 1;
+        drop-shadow-offset-x: 0px;
+        drop-shadow-offset-y: 1px;
+        drop-shadow-blur: 4px;
+        drop-shadow-color: rgba(0, 0, 0, 0.08);
+
+        VerticalLayout {
+            padding: 16px;
+            spacing: 8px;
+
+            Text {
+                text: root.title;
+                font-size: Theme.font-size-subheading;
+                color: Theme.text-color;
+            }
+
+            OutputScrollView {
+                vertical-stretch: 1;
+
+                Text {
+                    text: root.output-text;
+                    font-size: Theme.font-size-label;
+                    color: Theme.text-color;
+                    wrap: word-wrap;
+                    width: parent.width - 20px;
+                }
+            }
+        }
+    }
+}

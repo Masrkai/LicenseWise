@@ -1,5 +1,6 @@
 import { LineEdit } from "std-widgets.slint";
 import { Theme, YesNoSkipCombo, ActionButton, OutputScrollView } from "styles.slint";
+import { ResultsPanel } from "results.slint";
 
 export component AnalysisTab inherits VerticalLayout {
     spacing: 16px;
@@ -128,41 +129,7 @@ export component AnalysisTab inherits VerticalLayout {
         clicked => { root.check-compatibility(); }
     }
 
-    Rectangle {
-        background: Theme.surface;
-        border-radius: Theme.radius;
-        border-width: 1px;
-        border-color: Theme.border;
-        clip: true;
-        vertical-stretch: 1; // Added this to take available space
-        drop-shadow-offset-x: 0px;
-        drop-shadow-offset-y: 1px;
-        drop-shadow-blur: 4px;
-        drop-shadow-color: rgba(0, 0, 0, 0.08);
-
-        VerticalLayout {
-            padding: 16px;
-            spacing: 8px;
-
-            Text {
-                text: "Results";
-                font-size: Theme.font-size-subheading;
-                color: Theme.text-color;
-            }
-
-            OutputScrollView {
-                vertical-stretch: 1;
-                // Removed min-height to allow flexibility
-
-                Text {
-                    text: root.output-text;
-                    font-size: Theme.font-size-label;
-                    color: Theme.text-color;
-                    wrap: word-wrap;
-                    width: parent.width - 20px;
-                    x: 10px;
-                }
-            }
-        }
+    ResultsPanel {
+        output-text: root.output-text;
     }
 }

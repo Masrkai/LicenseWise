@@ -227,6 +227,51 @@
         },
         "explanation_hint": "Use when you want MIT-level freedom but need to remove attribution entirely (e.g., for embedded systems or generated code)."
       }
+    },
+    {
+      "id": "BlueOak-1.0.0",
+      "spdx_id": "BlueOak-1.0.0",
+      "name": "Blue Oak Model License 1.0.0",
+      "type": "permissive",
+      "description": "Modern permissive license with patent grant, plain English, and no document changes requirement. OSI-approved in 2024.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true,
+        "patent_grant": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": false,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false,
+        "copyleft_scope": null
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": false,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MIT", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unlicense", "CC0-1.0", "Zlib", "PostgreSQL"],
+        "incompatible_with": [],
+        "notes": "Best of both worlds: Apache-2.0's patent grant without the document-changes requirement. Plain English. 30-day cure period for notice violations. Non-revocation clause means license cannot be terminated even if you sue for patent infringement."
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": false,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
+        "explanation_hint": "Ideal when you need patent protection without Apache-2.0's document-changes burden. Written in plain English. Used by projects wanting modern, developer-friendly licensing."
+      }
     }
   ]
 }

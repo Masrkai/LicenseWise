@@ -25,6 +25,7 @@ A comprehensive list of all software licenses supported by LicenseWise, with pla
 | **PostgreSQL** | PostgreSQL License | Short permissive license similar to MIT/BSD, used exclusively by the PostgreSQL project. |
 | **Artistic-2.0** | Artistic License 2.0 | Permissive with optional copyleft clause for modified standard versions. Used by Perl and Raku. |
 | **Zlib** | zlib License | Very permissive; modified versions must be marked as changed and cannot be misrepresented as original. Common in game development. |
+| **BlueOak-1.0.0** | Blue Oak Model License 1.0.0 | Modern permissive license with patent grant, plain English, and no document-changes requirement. OSI-approved 2024. |
 
 ## Weak Copyleft
 

@@ -46,6 +46,7 @@ Public Domain -> Permissive -> Weak Copyleft -> Strong Copyleft -> AGPL
 | Need | Recommended License |
 |------|---------------------|
 | Maximum adoption | MIT or Apache-2.0 |
+| Patent protection + no document changes | BlueOak-1.0.0 |
 | Keep contributions open | GPL-3.0 |
 | Prevent SaaS competition | AGPL-3.0 |
 | File-level control | MPL-2.0 |

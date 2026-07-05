@@ -102,6 +102,10 @@
       "type": "yes_no_skip",
       "group": "copyleft",
       "info": "Can derivatives use different licenses?",
+      "requires": {
+        "fact": "want_copyleft",
+        "value": true
+      },
       "choices": [
         "skip",
         "yes",
@@ -206,6 +210,58 @@
         "yes",
         "no"
       ]
+    },
+    {
+      "fact_name": "dual_licensing",
+      "question": "Would you consider dual licensing (open source + commercial)?",
+      "type": "yes_no_skip",
+      "group": "preference",
+      "info": "Offer the same software under two licenses",
+      "requires": {
+        "fact": "commercial_use",
+        "value": true,
+        "unless": {
+          "fact": "want_copyleft",
+          "value": false
+        }
+      },
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
+    },
+    {
+      "fact_name": "wants_attribution",
+      "question": "Do you require attribution notices from users?",
+      "type": "yes_no_skip",
+      "group": "distribution",
+      "info": "Must users credit your project when redistributing?",
+      "requires": {
+        "fact": "distribute",
+        "value": true
+      },
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
+    },
+    {
+      "fact_name": "wants_patent_retaliation",
+      "question": "Do you want patent retaliation clauses?",
+      "type": "yes_no_skip",
+      "group": "usage",
+      "info": "Patent grants terminate if the recipient sues for patent infringement",
+      "requires": {
+        "fact": "need_patent_protection",
+        "value": true
+      },
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     }
   ],
   "analysis": [
@@ -213,31 +269,36 @@
       "fact_name": "distribute",
       "question": "Will you distribute the software?",
       "type": "yes_no_skip",
-      "info": "Give copies to others?"
+      "info": "Give copies to others?",
+      "choices": ["skip", "yes", "no"]
     },
     {
       "fact_name": "saas",
       "question": "Will it be used over a network (SaaS)?",
       "type": "yes_no_skip",
-      "info": "Web service / API?"
+      "info": "Web service / API?",
+      "choices": ["skip", "yes", "no"]
     },
     {
       "fact_name": "commercial_use",
       "question": "Is commercial use intended?",
       "type": "yes_no_skip",
-      "info": "For profit?"
+      "info": "For profit?",
+      "choices": ["skip", "yes", "no"]
     },
     {
       "fact_name": "need_patent_protection",
       "question": "Do you need patent protection?",
       "type": "yes_no_skip",
-      "info": "Want patent grants?"
+      "info": "Want patent grants?",
+      "choices": ["skip", "yes", "no"]
     },
     {
       "fact_name": "wants_relicense",
       "question": "Do you want to relicense derivatives?",
       "type": "yes_no_skip",
-      "info": "Use different license?"
+      "info": "Use different license?",
+      "choices": ["skip", "yes", "no"]
     }
   ]
 }

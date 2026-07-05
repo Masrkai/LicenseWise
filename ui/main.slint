@@ -46,11 +46,12 @@ export component LicenseWiseApp inherits Window {
     in-out property <string> recommend_output: "Results will appear here after clicking the button above";
 
     in-out property <string> license_id_input: "";
-    in-out property <string> distribute_an: "skip";
-    in-out property <string> saas_an: "skip";
-    in-out property <string> commercial_an: "skip";
-    in-out property <string> patent_an: "skip";
-    in-out property <string> relicense_an: "skip";
+    in-out property <[Question]> analysis_visible_questions;
+    in-out property <int> analysis_current_question_index: 0;
+    in-out property <int> analysis_total_visible_questions: 0;
+    callback on_analysis_answer_changed(string, string);
+    callback on_analysis_go_to_previous();
+    callback on_analysis_go_to_next();
     in-out property <string> analyze_output: "Compatibility results will appear here after clicking the button above";
 
     VerticalLayout {
@@ -216,11 +217,12 @@ export component LicenseWiseApp inherits Window {
             vertical-stretch: 1;
 
             license-id-input <=> root.license_id_input;
-            distribute-an <=> root.distribute_an;
-            saas-an <=> root.saas_an;
-            commercial-an <=> root.commercial_an;
-            patent-an <=> root.patent_an;
-            relicense-an <=> root.relicense_an;
+            visible_questions <=> root.analysis_visible_questions;
+            current_question_index <=> root.analysis_current_question_index;
+            total_visible_questions <=> root.analysis_total_visible_questions;
+            on_answer_changed(fact, val) => { root.on_analysis_answer_changed(fact, val); }
+            go-to-previous => { root.on_analysis_go_to_previous(); }
+            go-to-next => { root.on_analysis_go_to_next(); }
             output-text <=> root.analyze_output;
 
             check-compatibility => { root.check-compatibility(); }

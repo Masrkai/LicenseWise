@@ -1,135 +1,133 @@
-import { LineEdit } from "std-widgets.slint";
-import { Theme, YesNoSkipCombo, ActionButton, OutputScrollView } from "styles.slint";
+import { LineEdit, ComboBox } from "std-widgets.slint";
+import { Theme, ActionButton } from "styles.slint";
+import { Question } from "types.slint";
 import { ResultsPanel } from "results.slint";
 
-export component AnalysisTab inherits VerticalLayout {
-    spacing: 20px;
+export component AnalysisTab inherits HorizontalLayout {
+    spacing: 16px;
     padding: 0px;
 
     in-out property <string> license-id-input: "";
-    in-out property <string> distribute-an: "skip";
-    in-out property <string> saas-an: "skip";
-    in-out property <string> commercial-an: "skip";
-    in-out property <string> patent-an: "skip";
-    in-out property <string> relicense-an: "skip";
+    in property <[Question]> visible_questions;
+    in-out property <int> current_question_index: 0;
+    in-out property <int> total_visible_questions: 0;
+    callback on_answer_changed(string, string);
+    callback go-to-previous();
+    callback go-to-next();
+    callback check-compatibility();
     in-out property <string> output-text: "Compatibility results will appear here after clicking the button above";
 
-    callback check-compatibility();
+    // LEFT COLUMN: Inputs
+    VerticalLayout {
+        spacing: 16px;
+        horizontal-stretch: 1;
+        vertical-stretch: 1;
+        alignment: start;
 
-    Text {
-        text: "Check License Compatibility";
-        font-size: Theme.font-size-heading;
-        color: Theme.text-color;
-    }
-
-    Text {
-        text: "Enter a license ID and answer questions about your use case to check compatibility.";
-        font-size: Theme.font-size-label;
-        color: Theme.text-muted;
-        wrap: word-wrap;
-    }
-
-    Rectangle {
-        background: Theme.surface;
-        border-radius: Theme.radius;
-        border-width: 1px;
-        border-color: Theme.border;
-        clip: true;
-        drop-shadow-offset-x: 0px;
-        drop-shadow-offset-y: 1px;
-        drop-shadow-blur: 4px;
-        drop-shadow-color: rgba(0, 0, 0, 0.08);
-
-        VerticalLayout {
-            padding: 20px;
-            spacing: 12px;
-
-            Text {
-                text: "License SPDX ID";
-                font-size: Theme.font-size-label;
-                color: Theme.text-color;
-            }
-
-            LineEdit {
-                placeholder-text: "e.g., MIT, GPL-3.0, Apache-2.0, BSD-2-Clause";
-                text <=> root.license-id-input;
-                min-height: 44px;
-            }
+        Text {
+            text: "Check License Compatibility";
+            font-size: Theme.font-size-heading;
+            color: Theme.text-color;
         }
-    }
 
-    Rectangle {
-        background: Theme.surface;
-        border-radius: Theme.radius;
-        border-width: 1px;
-        border-color: Theme.border;
-        clip: true;
-        drop-shadow-offset-x: 0px;
-        drop-shadow-offset-y: 1px;
-        drop-shadow-blur: 4px;
-        drop-shadow-color: rgba(0, 0, 0, 0.08);
+        Text {
+            text: "Enter a license SPDX ID and answer questions about your use case to check compatibility.";
+            font-size: Theme.font-size-label;
+            color: Theme.text-muted;
+            wrap: word-wrap;
+        }
 
-        VerticalLayout {
-            padding: 20px;
-            spacing: 16px;
+        Rectangle {
+            background: Theme.surface;
+            border-radius: Theme.radius;
+            border-width: 1px;
+            border-color: Theme.border;
+            clip: true;
+            drop-shadow-offset-x: 0px;
+            drop-shadow-offset-y: 1px;
+            drop-shadow-blur: 4px;
+            drop-shadow-color: rgba(0, 0, 0, 0.08);
 
-            Text {
-                text: "Your Use Case";
-                font-size: Theme.font-size-subheading;
-                color: Theme.text-color;
-            }
+            VerticalLayout {
+                padding: 20px;
+                spacing: 12px;
 
-            HorizontalLayout {
-                spacing: 16px;
-
-                VerticalLayout {
-                    spacing: 4px;
-                    horizontal-stretch: 1;
-                    Text { text: "Will you distribute?"; font-size: 14px; color: Theme.text-muted; }
-                    YesNoSkipCombo { current-value <=> root.distribute-an; }
+                Text {
+                    text: "License SPDX ID";
+                    font-size: Theme.font-size-label;
+                    color: Theme.text-color;
                 }
 
-                VerticalLayout {
-                    spacing: 4px;
-                    horizontal-stretch: 1;
-                    Text { text: "Used over network (SaaS)?"; font-size: 14px; color: Theme.text-muted; }
-                    YesNoSkipCombo { current-value <=> root.saas-an; }
-                }
-
-                VerticalLayout {
-                    spacing: 4px;
-                    horizontal-stretch: 1;
-                    Text { text: "Commercial use?"; font-size: 14px; color: Theme.text-muted; }
-                    YesNoSkipCombo { current-value <=> root.commercial-an; }
-                }
-            }
-
-            HorizontalLayout {
-                spacing: 16px;
-
-                VerticalLayout {
-                    spacing: 4px;
-                    horizontal-stretch: 1;
-                    Text { text: "Need patent protection?"; font-size: 14px; color: Theme.text-muted; }
-                    YesNoSkipCombo { current-value <=> root.patent-an; }
-                }
-
-                VerticalLayout {
-                    spacing: 4px;
-                    horizontal-stretch: 1;
-                    Text { text: "Want to relicense derivatives?"; font-size: 14px; color: Theme.text-muted; }
-                    YesNoSkipCombo { current-value <=> root.relicense-an; }
+                LineEdit {
+                    placeholder-text: "e.g., MIT, GPL-3.0, Apache-2.0, BSD-2-Clause";
+                    text <=> root.license-id-input;
+                    min-height: 44px;
                 }
             }
         }
+
+        Rectangle {
+            background: Theme.surface;
+            border-radius: Theme.radius;
+            border-width: 1px;
+            border-color: Theme.border;
+            clip: true;
+            drop-shadow-offset-x: 0px;
+            drop-shadow-offset-y: 1px;
+            drop-shadow-blur: 4px;
+            drop-shadow-color: rgba(0, 0, 0, 0.08);
+
+            VerticalLayout {
+                padding: 20px;
+                spacing: 16px;
+
+                Text {
+                    text: "Your Use Case";
+                    font-size: Theme.font-size-subheading;
+                    color: Theme.text-color;
+                }
+
+                if root.total_visible_questions > 0: Text {
+                    text: "Question " + (root.current_question_index + 1) + " of " + root.total_visible_questions;
+                    font-size: Theme.font-size-label;
+                    color: Theme.text-muted;
+                }
+
+                for q in visible_questions: VerticalLayout {
+                    spacing: 4px;
+                    Text { text: q.question; font-size: 14px; wrap: word-wrap; color: Theme.text-muted; }
+                    ComboBox {
+                        model: q.choices;
+                        current-value: q.current_answer;
+                        min-height: 32px;
+                        selected(v) => { root.on_answer_changed(q.fact_name, v); }
+                    }
+                }
+
+                HorizontalLayout {
+                    spacing: 8px;
+                    if root.current_question_index > 0: ActionButton {
+                        text: "Previous";
+                        clicked => { root.go-to-previous(); }
+                    }
+                    if root.current_question_index < root.total_visible_questions - 1: ActionButton {
+                        text: "Next";
+                        clicked => { root.go-to-next(); }
+                    }
+                }
+            }
+        }
+
+        ActionButton {
+            text: "Check Compatibility";
+            clicked => { root.check-compatibility(); }
+        }
     }
 
-    ActionButton {
-        text: "Check Compatibility";
-        clicked => { root.check-compatibility(); }
-    }
-
+    // RIGHT COLUMN: Results
     ResultsPanel {
+        horizontal-stretch: 1;
+        vertical-stretch: 1;
         output-text: root.output-text;
     }
 }

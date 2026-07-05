@@ -1,4 +1,4 @@
-import { Button, ComboBox, ScrollView } from "std-widgets.slint";
+import { Button, ScrollView } from "std-widgets.slint";
 
 export global Theme {
     in-out property <bool> dark-mode: true;
@@ -20,30 +20,6 @@ export global Theme {
     out property <length> font-size-subheading: 16px;
     out property <length> spacing-unit: 8px;
     out property <length> radius: 8px;
-}
-
-export component YesNoSkipCombo inherits ComboBox {
-    model: ["skip", "yes", "no"];
-    current-value: "skip";
-    min-height: 32px;
-    callback changed(string);
-    selected(v) => { root.changed(v); }
-}
-
-export component RecommendationCombo inherits ComboBox {
-    model: ["skip", "Software", "Library", "Content"];
-    current-value: "skip";
-    min-height: 32px;
-    callback changed(string);
-    selected(v) => { root.changed(v); }
-}
-
-export component LinkingCombo inherits ComboBox {
-    model: ["skip", "Dynamic", "Static"];
-    current-value: "skip";
-    min-height: 32px;
-    callback changed(string);
-    selected(v) => { root.changed(v); }
 }
 
 export component ActionButton inherits Button {

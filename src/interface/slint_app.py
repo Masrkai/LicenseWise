@@ -38,6 +38,18 @@ LICENSES_ERROR_TEMPLATE: str = (
 )
 
 
+def _match_requires_value(answer: str, required_value: Any) -> bool:
+    """Compare an answer string against a requires.value from JSON.
+
+    JSON ``true``/``false`` become Python booleans after ``json.load()``.
+    ComboBox answers are ``"yes"``/``"no"``/``"skip"`` for yes_no_skip, or
+    lowercased choice strings for choice questions.
+    """
+    if isinstance(required_value, bool):
+        return (answer.strip().lower() == "yes") == required_value
+    return answer.strip().lower() == str(required_value).lower()
+
+
 class QuestionNavigator:
     """Manages question visibility, navigation, and answer state for the GUI."""
 
@@ -51,11 +63,13 @@ class QuestionNavigator:
         if "requires" not in q:
             return True
         req = q["requires"]
+        answer = self.answers.get(req["fact"], "skip")
         if "unless" in req:
             un = req["unless"]
-            if self.answers.get(un["fact"]) == str(un["value"]):
+            un_answer = self.answers.get(un["fact"], "skip")
+            if _match_requires_value(un_answer, un["value"]):
                 return False
-        return self.answers.get(req["fact"]) == str(req["value"])
+        return _match_requires_value(answer, req["value"])
 
     def get_visible_questions(self) -> list[dict[str, Any]]:
         """Get all questions whose requires conditions are met."""
@@ -102,6 +116,9 @@ def _build_recommendation_output_dict(answers: dict[str, str]) -> str:
             "academic_project": yes_no_to_bool(answers.get("academic_project", "skip")),
             "mixed_open_proprietary": yes_no_to_bool(answers.get("mixed_open_proprietary", "skip")),
             "concerned_about_legal_recognition": yes_no_to_bool(answers.get("concerned_about_legal_recognition", "skip")),
+            "dual_licensing": yes_no_to_bool(answers.get("dual_licensing", "skip")),
+            "wants_attribution": yes_no_to_bool(answers.get("wants_attribution", "skip")),
+            "wants_patent_retaliation": yes_no_to_bool(answers.get("wants_patent_retaliation", "skip")),
         }
         facts["distribute"] = yes_no_to_bool(answers.get("distribute", "skip"))
         apply_closed_source_derivation(facts)
@@ -113,15 +130,8 @@ def _build_recommendation_output_dict(answers: dict[str, str]) -> str:
         return f"Error: An unexpected error occurred.\n\n{str(e)}"
 
 
-def _build_analysis_output(
-    license_id: str,
-    distribute: str | None,
-    saas: str | None,
-    commercial_use: str | None,
-    need_patent: str | None,
-    wants_relicense: str | None,
-) -> str:
-    """Handle license compatibility analysis with enhanced output."""
+def _build_analysis_output_dict(license_id: str, answers: dict[str, str]) -> str:
+    """Handle license compatibility analysis using a dictionary of answers."""
     if LOAD_ERROR:
         return LICENSES_ERROR_TEMPLATE.format(error=LOAD_ERROR)
 
@@ -130,11 +140,11 @@ def _build_analysis_output(
 
     try:
         facts = build_analysis_facts(
-            distribute=distribute,
-            saas=saas,
-            commercial_use=commercial_use,
-            need_patent=need_patent,
-            wants_relicense=wants_relicense,
+            distribute=answers.get("distribute"),
+            saas=answers.get("saas"),
+            commercial_use=answers.get("commercial_use"),
+            need_patent=answers.get("need_patent_protection"),
+            wants_relicense=answers.get("wants_relicense"),
         )
         result = backward_chain(license_id.strip(), facts, LICENSES_DATA)
         return f"Compatibility Check: {license_id}\n\n{format_compatibility_result(result, license_id)}"
@@ -170,11 +180,13 @@ def launch_gui() -> None:
 
     window.license_count = str(LICENSES_LOADED)
 
-    # Initialize question navigator
+    # Initialize question navigators
     navigator = QuestionNavigator(QUESTIONS["recommendation"])
+    analysis_navigator = QuestionNavigator(QUESTIONS["analysis"])
 
     def update_ui() -> None:
         """Update the UI to reflect current navigator state."""
+        # Recommendation questions
         visible_qs = navigator.get_visible_questions()
         if navigator.current_index >= len(visible_qs):
             navigator.current_index = max(0, len(visible_qs) - 1)
@@ -198,6 +210,30 @@ def launch_gui() -> None:
 
         window.visible_questions = slint.ListModel(visible)
 
+        # Analysis questions
+        analysis_visible_qs = analysis_navigator.get_visible_questions()
+        if analysis_navigator.current_index >= len(analysis_visible_qs):
+            analysis_navigator.current_index = max(0, len(analysis_visible_qs) - 1)
+
+        window.analysis_total_visible_questions = len(analysis_visible_qs)
+        window.analysis_current_question_index = analysis_navigator.current_index
+
+        analysis_visible: list[Any] = []
+        if analysis_visible_qs and analysis_navigator.current_index < len(analysis_visible_qs):
+            q = analysis_visible_qs[analysis_navigator.current_index]
+            q_struct = ui.Question()
+            q_struct.fact_name = str(q.get("fact_name", ""))
+            q_struct.question = str(q.get("question", ""))
+            q_struct.type = str(q.get("type", ""))
+            q_struct.info = str(q.get("info", ""))
+            q_struct.current_answer = str(analysis_navigator.answers.get(q.get("fact_name", ""), "skip"))
+            choices = q.get("choices", [])
+            if choices:
+                q_struct.choices = slint.ListModel([str(c) for c in choices])
+            analysis_visible.append(q_struct)
+
+        window.analysis_visible_questions = slint.ListModel(analysis_visible)
+
     def on_answer_changed(fact_name: str, value: str) -> None:
         navigator.on_answer_changed(fact_name, value)
         update_ui()
@@ -210,9 +246,24 @@ def launch_gui() -> None:
         navigator.go_to_next()
         update_ui()
 
+    def on_analysis_answer_changed(fact_name: str, value: str) -> None:
+        analysis_navigator.on_answer_changed(fact_name, value)
+        update_ui()
+
+    def on_analysis_go_to_previous() -> None:
+        analysis_navigator.go_to_previous()
+        update_ui()
+
+    def on_analysis_go_to_next() -> None:
+        analysis_navigator.go_to_next()
+        update_ui()
+
     window.on_answer_changed = on_answer_changed
     window.on_go_to_previous = on_go_to_previous
     window.on_go_to_next = on_go_to_next
+    window.on_analysis_answer_changed = on_analysis_answer_changed
+    window.on_analysis_go_to_previous = on_analysis_go_to_previous
+    window.on_analysis_go_to_next = on_analysis_go_to_next
     update_ui()
 
     def on_get_recommendation() -> None:
@@ -224,13 +275,9 @@ def launch_gui() -> None:
 
     def on_check_compatibility() -> None:
         try:
-            output = _build_analysis_output(
+            output = _build_analysis_output_dict(
                 window.license_id_input,
-                window.distribute_an,
-                window.saas_an,
-                window.commercial_an,
-                window.patent_an,
-                window.relicense_an,
+                analysis_navigator.answers,
             )
             window.analyze_output = output
         except Exception as e:

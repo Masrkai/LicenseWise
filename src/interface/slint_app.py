@@ -119,6 +119,9 @@ def _build_recommendation_output_dict(answers: dict[str, str]) -> str:
             "dual_licensing": yes_no_to_bool(answers.get("dual_licensing", "skip")),
             "wants_attribution": yes_no_to_bool(answers.get("wants_attribution", "skip")),
             "wants_patent_retaliation": yes_no_to_bool(answers.get("wants_patent_retaliation", "skip")),
+            "want_no_document_changes": yes_no_to_bool(answers.get("want_no_document_changes", "skip")),
+            "prefer_osi_approved": yes_no_to_bool(answers.get("prefer_osi_approved", "skip")),
+            "prefer_fsf_free": yes_no_to_bool(answers.get("prefer_fsf_free", "skip")),
         }
         facts["distribute"] = yes_no_to_bool(answers.get("distribute", "skip"))
         apply_closed_source_derivation(facts)

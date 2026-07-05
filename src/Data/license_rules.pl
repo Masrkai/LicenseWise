@@ -58,7 +58,9 @@ clear_metadata :-
     retractall(license_type(_, _)),
     retractall(license_condition(_, _)),
     retractall(license_permission(_, _)),
-    retractall(license_limitation(_, _)).
+    retractall(license_limitation(_, _)),
+    retractall(metadata_osi_approved(_, _)),
+    retractall(metadata_fsf_free(_, _)).
 
 % ============================================================
 % A. Permissive licenses (generic, metadata-driven)
@@ -94,18 +96,20 @@ recommend(License) :-
                 [License], 'This license includes an explicit patent grant for your protection.').
 
 % --- Public domain ---
-recommend(License) :-
-    license_type(License, permissive),
+recommend('Unlicense') :-
     fact(want_public_domain),
-    assert_step('A05', 'recommend_public_domain', 'RECOMMEND',
-                [License], 'Public domain dedication places no restrictions on use.').
+    assert_step('A05a', 'recommend_Unlicense_if_public_domain', 'RECOMMEND',
+                ['Unlicense'], 'Unlicense dedicates your work to the public domain.').
+recommend('CC0-1.0') :-
+    fact(want_public_domain),
+    assert_step('A05b', 'recommend_CC0_if_public_domain', 'RECOMMEND',
+                ['CC0-1.0'], 'CC0 dedicates your work to the public domain with a legal fallback. Safer than Unlicense internationally.').
 
 % --- Unlicense warning (public domain may not be recognized everywhere) ---
-warning(License, 'Public domain dedication may not be legally recognised everywhere. Consider CC0.') :-
-    license_type(License, permissive),
+warning('Unlicense', 'Unlicense is a public domain dedication and may not be legally recognised everywhere. Consider CC0-1.0 for better international coverage.') :-
     fact(want_public_domain),
-    assert_step('A06', 'warn_public_domain_jurisdiction', 'WARN',
-                [License], 'Public domain dedication may not be legally valid worldwide.').
+    assert_step('A06', 'warn_unlicense_jurisdiction', 'WARN',
+                ['Unlicense'], 'Unlicense public domain dedication may not be legally valid worldwide.').
 
 % ============================================================
 % B. Copyleft licenses (generic, metadata-driven)
@@ -227,8 +231,92 @@ recommend('ODbL') :-
                 ['ODbL'], 'ODbL is the standard open database license used by OpenStreetMap.').
 
 % ============================================================
-% E. Specialized licenses
+% E. User preference rules (wired from questions.json)
 % ============================================================
+
+% --- Attribution preference ---
+% User wants attribution from redistributors
+recommend(License) :-
+    license_condition(License, include_copyright),
+    license_condition(License, include_license),
+    fact(wants_attribution),
+    assert_step('E07', 'recommend_if_attribution_wanted', 'RECOMMEND',
+                [License], 'License requires attribution notices, matching your preference.').
+% Prefer no-attribution licenses when user explicitly says NO to attribution
+recommend(License) :-
+    license_type(License, permissive),
+    \+ license_condition(License, include_copyright),
+    \+ license_condition(License, include_license),
+    fact(wants_attribution(no)),
+    assert_step('E09', 'recommend_no_attribution_license', 'RECOMMEND',
+                [License], 'License requires no attribution, matching your preference.').
+
+% --- Patent retaliation preference ---
+% User wants patent retaliation clauses -- recommend licenses that have them
+recommend('Apache-2.0') :-
+    fact(wants_patent_retaliation),
+    assert_step('E12', 'recommend_apache_patent_retaliation', 'RECOMMEND',
+                ['Apache-2.0'], 'Apache-2.0 includes patent retaliation -- if you sue for patent infringement, your license terminates.').
+recommend('MPL-2.0') :-
+    fact(wants_patent_retaliation),
+    assert_step('E13', 'recommend_mpl_patent_retaliation', 'RECOMMEND',
+                ['MPL-2.0'], 'MPL-2.0 includes patent retaliation clauses as requested.').
+recommend('EPL-2.0') :-
+    fact(wants_patent_retaliation),
+    assert_step('E13b', 'recommend_epl_patent_retaliation', 'RECOMMEND',
+                ['EPL-2.0'], 'EPL-2.0 includes patent retaliation clauses as requested.').
+
+% --- Dual licensing preference ---
+% Dual licensing requires copyleft (enables dual-license business model)
+recommend(License) :-
+    license_condition(License, same_license),
+    \+ license_condition(License, net_copyleft),
+    fact(dual_licensing),
+    \+ fact(closed_source),
+    assert_step('E14', 'recommend_copyleft_for_dual_licensing', 'RECOMMEND',
+                [License], 'Copyleft license enables dual licensing: open-source version + commercial license under a CLA.').
+warning(License, 'Dual licensing typically requires a Contributor License Agreement (CLA).') :-
+    license_condition(License, same_license),
+    fact(dual_licensing),
+    assert_step('E15', 'warn_dual_licensing_cla', 'WARN',
+                [License], 'Dual licensing with copyleft requires a CLA to grant commercial licenses.').
+
+% ============================================================
+% I. Contradiction detection
+% ============================================================
+
+% Public domain + copyleft is contradictory
+warning('Unlicense', 'You selected both public domain and copyleft. Public domain dedication has no copyleft requirement -- these goals conflict.') :-
+    fact(want_public_domain),
+    fact(want_copyleft),
+    assert_step('I01', 'warn_pd_copyleft_contradiction', 'WARN',
+                ['Unlicense'], 'Public domain (no restrictions) contradicts copyleft (keep derivatives open).').
+
+% Public domain + non-commercial is contradictory
+warning('CC0-1.0', 'You selected both public domain and non-commercial use. Public domain dedication allows commercial use -- these goals conflict.') :-
+    fact(want_public_domain),
+    fact(commercial_use(no)),
+    assert_step('I02', 'warn_pd_noncommercial_contradiction', 'WARN',
+                ['CC0-1.0'], 'Public domain (no restrictions) contradicts non-commercial use.').
+
+% Eliminate ecosystem-specific licenses from generic recommendations
+% These are only relevant for specific projects (Perl, PostgreSQL, etc.)
+eliminate('Artistic-2.0') :-
+    \+ fact(perl_project),
+    assert_step('G04a', 'eliminate_Artistic_niche', 'ELIMINATE',
+                ['Artistic-2.0'], 'Artistic-2.0 is a Perl-specific license. Use MIT or BSD for general projects.').
+eliminate('PostgreSQL') :-
+    \+ fact(postgresql_project),
+    assert_step('G04b', 'eliminate_PostgreSQL_niche', 'ELIMINATE',
+                ['PostgreSQL'], 'PostgreSQL license is only used by the PostgreSQL project itself.').
+eliminate('CDDL-1.0') :-
+    \+ fact(zfs_project),
+    assert_step('G04c', 'eliminate_CDDL_niche', 'ELIMINATE',
+                ['CDDL-1.0'], 'CDDL-1.0 is primarily used for ZFS. Use MPL-2.0 for general file-level copyleft.').
+eliminate('EPL-2.0') :-
+    \+ fact(eclipse_project),
+    assert_step('G04d', 'eliminate_EPL_niche', 'ELIMINATE',
+                ['EPL-2.0'], 'EPL-2.0 is primarily used for Eclipse/Java projects. Use MPL-2.0 for general file-level copyleft.').
 
 % --- BSL-1.0 ---
 warning('BSL-1.0', 'BSL-1.0 has an executable name change requirement in modified versions.') :-
@@ -267,6 +355,8 @@ eliminate(License) :-
 :- dynamic license_condition/2.
 :- dynamic license_permission/2.
 :- dynamic license_limitation/2.
+:- dynamic metadata_osi_approved/2.
+:- dynamic metadata_fsf_free/2.
 
 % Elimination: network copyleft + closed-source SaaS
 eliminate(License) :-
@@ -291,6 +381,40 @@ warning(License, 'No patent grant - consider Apache-2.0.') :-
     fact(need_patent_protection),
     assert_step('F05', 'metadata_no_patent', 'WARN',
                 [License], 'License offers no patent protection.').
+
+% Elimination: document_changes required but user does not want it
+eliminate(License) :-
+    license_condition(License, document_changes),
+    fact(want_no_document_changes),
+    assert_step('F06', 'metadata_document_changes', 'ELIMINATE',
+                [License], 'License requires documenting changes but you want to avoid this obligation.').
+warning(License, 'This license requires documenting changes.') :-
+    license_condition(License, document_changes),
+    fact(want_no_document_changes(no)),
+    assert_step('F07', 'warn_document_changes', 'WARN',
+                [License], 'Apache-2.0, GPL, and LGPL require documenting changes to licensed files.').
+
+% Elimination: not OSI-approved when user prefers OSI
+eliminate(License) :-
+    license_id(License),
+    metadata_osi_approved(License, false),
+    fact(prefer_osi_approved),
+    assert_step('F08', 'metadata_not_osi_approved', 'ELIMINATE',
+                [License], 'License is not OSI-approved and you prefer OSI-recognized licenses.').
+
+% Elimination: not FSF-free when user prefers FSF
+eliminate(License) :-
+    license_id(License),
+    metadata_fsf_free(License, false),
+    fact(prefer_fsf_free),
+    assert_step('F09', 'metadata_not_fsf_free', 'ELIMINATE',
+                [License], 'License is not FSF-recognized as free software.').
+warning(License, 'This license is not FSF-recognized as free software.') :-
+    license_id(License),
+    metadata_fsf_free(License, false),
+    fact(prefer_fsf_free(no)),
+    assert_step('F10', 'warn_not_fsf_free', 'WARN',
+                [License], 'License is not listed as free by the FSF.').
 
 % ============================================================
 % G. Cross-license compatibility warnings
@@ -320,6 +444,7 @@ recommend('EUPL-1.2') :-
                 ['EUPL-1.2'], 'EUPL-1.2 is explicitly recognised by EU law, preferred in European public sector projects.').
 recommend('BSD-2-Clause') :-
     fact(academic_project),
+    \+ fact(want_copyleft),
     assert_step('J02', 'recommend_BSD_if_academic', 'RECOMMEND',
                 ['BSD-2-Clause'], 'BSD-2-Clause is widely used in academic and research settings.').
 
@@ -381,6 +506,18 @@ fact_explanation(modify_library,
     'If you modify a copyleft library, you must share those modifications. This affects whether LGPL or stronger copyleft applies.').
 fact_explanation(concerned_about_legal_recognition,
     'Some licenses (Unlicense) rely on public domain, which is not recognised in all countries. We need to know if legal certainty is a priority.').
+fact_explanation(wants_attribution,
+    'Attribution requirements vary: MIT/BSD require keeping the copyright notice, while Unlicense/MIT-0 impose no attribution. This affects compliance complexity.').
+fact_explanation(wants_patent_retaliation,
+    'Patent retaliation clauses terminate the license if the recipient sues for patent infringement. Apache-2.0, MPL-2.0, and EPL-2.0 include these.').
+fact_explanation(dual_licensing,
+    'Dual licensing means offering the same software under two licenses (e.g., GPL + commercial). This requires a Contributor License Agreement (CLA).').
+fact_explanation(want_no_document_changes,
+    'Apache-2.0, GPL, LGPL, and Zlib require documenting changes to licensed files. If you want to avoid this, choose MIT or BSD instead.').
+fact_explanation(prefer_osi_approved,
+    'The Open Source Initiative approves licenses that meet the Open Source Definition. Non-OSI licenses (BSL, Elastic, CC) are excluded.').
+fact_explanation(prefer_fsf_free,
+    'The Free Software Foundation maintains a list of licenses it considers free software. Some licenses (CC, Elastic, BSL) are not FSF-recognized.').
 
 get_question_explanation(Fact, Explanation) :-
     ( fact_explanation(Fact, Explanation) -> true

@@ -17,11 +17,13 @@ class FactManager:
         for key, value in facts.items():
             if value is True:
                 self.prolog.assertz(f"fact({key})")
+            elif value is False:
+                self.prolog.assertz(f"fact({key}(no))")
             elif isinstance(value, str):
                 self.prolog.assertz(f"fact({key}({value.lower()}))")
 
     def assert_license_metadata(self, license_id: str, lic: dict[str, Any]) -> None:
-        """Assert license conditions, permissions, and limitations as Prolog facts."""
+        """Assert license conditions, permissions, limitations, and metadata as Prolog facts."""
         self.prolog.assertz(f"license_id('{license_id}')")
         lic_type = lic.get("type")
         if lic_type:
@@ -35,3 +37,11 @@ class FactManager:
         for lim, val in lic.get("limitations", {}).items():
             if val:
                 self.prolog.assertz(f"license_limitation('{license_id}', '{lim}')")
+        # Assert metadata fields for filtering
+        metadata = lic.get("metadata", {})
+        osi = metadata.get("osi_approved")
+        if osi is not None:
+            self.prolog.assertz(f"metadata_osi_approved('{license_id}', {str(osi).lower()})")
+        fsf = metadata.get("fsf_free")
+        if fsf is not None:
+            self.prolog.assertz(f"metadata_fsf_free('{license_id}', {str(fsf).lower()})")

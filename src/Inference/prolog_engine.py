@@ -57,11 +57,46 @@ class PrologEngine:
         recommended = {str(sol["L"]) for sol in self.prolog.query("recommend(L)")}
         eliminated = {str(sol["L"]) for sol in self.prolog.query("eliminate(L)")}
         warnings = [
-            f"{str(sol['L'])}: {str(sol['Msg'])}" for sol in self.prolog.query("warning(L, Msg)")
+            f"{str(sol['L'])}: {str(sol['Msg'])}"
+            for sol in self.prolog.query("warning(L, Msg)")
+            if str(sol["L"]) not in eliminated
         ]
 
         # Elimination wins
         recommended -= eliminated
+
+        # Check if user preferences are unsatisfiable
+        # Load metadata to check license properties
+        license_meta: dict[str, dict[str, Any]] = {}
+        for lic in licenses_data:
+            lid = lic.get("id")
+            if lid:
+                license_meta[lid] = lic
+
+        # Copyleft preference check
+        if facts.get("want_copyleft") is True:
+            copyleft_licenses = {
+                lid for lid, meta in license_meta.items()
+                if meta.get("conditions", {}).get("same_license")
+                or meta.get("conditions", {}).get("net_copyleft")
+            }
+            if not (copyleft_licenses & recommended):
+                warnings.append(
+                    "CONFLICT: No copyleft license satisfies all your constraints. "
+                    "Consider relaxing 'avoid documenting changes' or 'prefer OSI-approved'."
+                )
+
+        # File copyleft preference check
+        if facts.get("want_file_copyleft") is True:
+            file_copyleft_licenses = {
+                lid for lid, meta in license_meta.items()
+                if meta.get("conditions", {}).get("copyleft_scope") == "file"
+            }
+            if not (file_copyleft_licenses & recommended):
+                warnings.append(
+                    "CONFLICT: No file-level copyleft license satisfies all your constraints. "
+                    "MPL-2.0 requires documenting changes. Consider relaxing that constraint."
+                )
 
         return {
             "recommended": recommended,

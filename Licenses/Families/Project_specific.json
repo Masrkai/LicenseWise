@@ -227,6 +227,51 @@
         },
         "explanation_hint": "Used by Firefox, Thunderbird, and many Mozilla projects. Ideal for mixed open/proprietary codebases where you want file-level copyleft."
       }
+    },
+    {
+      "id": "CDDL-1.0",
+      "spdx_id": "CDDL-1.0",
+      "name": "Common Development and Distribution License 1.0",
+      "type": "weak_copyleft",
+      "description": "File-level copyleft from Sun Microsystems; used for OpenSolaris and ZFS. Modifications to covered files must be shared.",
+      "permissions": {
+        "commercial_use": true,
+        "distribution": true,
+        "modification": true,
+        "private_use": true,
+        "patent_grant": true
+      },
+      "conditions": {
+        "include_copyright": true,
+        "document_changes": false,
+        "disclose_source": true,
+        "include_license": true,
+        "net_copyleft": false,
+        "same_license": false,
+        "copyleft_scope": "file"
+      },
+      "limitations": {
+        "liability": true,
+        "trademark_use": false,
+        "warranty": true,
+        "patent_use": true,
+        "patent_retaliation": false
+      },
+      "compatibility": {
+        "compatible_with": ["MPL-2.0", "EPL-2.0"],
+        "incompatible_with": ["GPL-2.0-only", "GPL-3.0-only"],
+        "notes": "INCOMPATIBLE with GPL (FSF says so explicitly). File-level copyleft similar to MPL. Historically significant for ZFS but a major source of controversy."
+      },
+      "metadata": {
+        "osi_approved": true,
+        "fsf_free": true,
+        "usage_stats": {
+          "source": null,
+          "value": null,
+          "as_of_date": null
+        },
+        "explanation_hint": "Historically used by Sun/Oracle for ZFS and NetBeans. INCOMPATIBLE with GPL (FSF says so explicitly) -- major source of controversy when Linux wanted ZFS. Not recommended for new projects."
+      }
     }
   ]
 }

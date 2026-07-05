@@ -262,6 +262,42 @@
         "yes",
         "no"
       ]
+    },
+    {
+      "fact_name": "want_no_document_changes",
+      "question": "Do you want to avoid documenting changes to licensed files?",
+      "type": "yes_no_skip",
+      "group": "preference",
+      "info": "Some licenses (Apache-2.0, GPL, LGPL) require documenting changes. Skip if unsure.",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
+    },
+    {
+      "fact_name": "prefer_osi_approved",
+      "question": "Do you prefer OSI-approved licenses only?",
+      "type": "yes_no_skip",
+      "group": "preference",
+      "info": "OSI (Open Source Initiative) approves licenses that meet the Open Source Definition",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
+    },
+    {
+      "fact_name": "prefer_fsf_free",
+      "question": "Do you prefer FSF-recognized free software licenses?",
+      "type": "yes_no_skip",
+      "group": "preference",
+      "info": "The Free Software Foundation maintains a list of licenses it considers free software",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     }
   ],
   "analysis": [

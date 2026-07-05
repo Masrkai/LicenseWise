@@ -27,5 +27,125 @@
       {"id": "MIT", "note": "No network copyleft"},
       {"id": "Apache-2.0", "note": "No network copyleft"}
     ]
+  },
+  {
+    "keywords": ["copyleft", "want_copyleft", "open_source"],
+    "suggestions": [
+      {"id": "GPL-3.0", "note": "Strong copyleft, ensures derivatives stay open"},
+      {"id": "MPL-2.0", "note": "File-level copyleft, only modified files stay open"},
+      {"id": "LGPL-3.0", "note": "Library-level copyleft, proprietary linking allowed"}
+    ]
+  },
+  {
+    "keywords": ["library", "project_type(library)", "weak_copyleft"],
+    "suggestions": [
+      {"id": "LGPL-3.0", "note": "Library stays open, proprietary linking allowed"},
+      {"id": "LGPL-2.1", "note": "Library-level copyleft, widely used for C libraries"},
+      {"id": "MPL-2.0", "note": "File-level copyleft for mixed codebases"}
+    ]
+  },
+  {
+    "keywords": ["content", "project_type(content)", "documentation"],
+    "suggestions": [
+      {"id": "CC-BY-4.0", "note": "Attribution only, simplest for content"},
+      {"id": "CC-BY-SA-4.0", "note": "Content copyleft, derivatives must be CC-BY-SA"},
+      {"id": "CC-BY-NC-4.0", "note": "Non-commercial content, no commercial use"}
+    ]
+  },
+  {
+    "keywords": ["patent", "need_patent_protection", "patent_grant"],
+    "suggestions": [
+      {"id": "Apache-2.0", "note": "Strong patent grant with retaliation clause"},
+      {"id": "GPL-3.0", "note": "Includes patent grant for copyleft projects"},
+      {"id": "MPL-2.0", "note": "Patent grant for file-level copyleft"}
+    ]
+  },
+  {
+    "keywords": ["attribution", "wants_attribution", "include_copyright"],
+    "suggestions": [
+      {"id": "MIT", "note": "Requires copyright notice retention"},
+      {"id": "Apache-2.0", "note": "Requires copyright + license + NOTICE file"},
+      {"id": "BSD-3-Clause", "note": "Requires copyright notice, no endorsement clause"}
+    ]
+  },
+  {
+    "keywords": ["no attribution", "no_attribution", "unlicense", "public_domain"],
+    "suggestions": [
+      {"id": "MIT-0", "note": "MIT without attribution requirement"},
+      {"id": "Unlicense", "note": "Public domain dedication, zero restrictions"},
+      {"id": "CC0-1.0", "note": "Public domain with fallback license, legally robust"}
+    ]
+  },
+  {
+    "keywords": ["document_changes", "no_document_changes", "avoid documenting"],
+    "suggestions": [
+      {"id": "MIT", "note": "No change documentation required"},
+      {"id": "BSD-2-Clause", "note": "No change documentation required"},
+      {"id": "ISC", "note": "No change documentation required"}
+    ]
+  },
+  {
+    "keywords": ["file_copyleft", "want_file_copyleft", "mixed_open_proprietary"],
+    "suggestions": [
+      {"id": "MPL-2.0", "note": "File-level copyleft, ideal for mixed codebases"},
+      {"id": "EPL-2.0", "note": "File-level copyleft with patent grant"},
+      {"id": "CDDL-1.0", "note": "File-level copyleft for ZFS/OpenSolaris style projects"}
+    ]
+  },
+  {
+    "keywords": ["patent_retaliation", "patent_termination"],
+    "suggestions": [
+      {"id": "Apache-2.0", "note": "Patent grant terminates if you sue for infringement"},
+      {"id": "MPL-2.0", "note": "Patent retaliation clause included"},
+      {"id": "EPL-2.0", "note": "Patent termination clause included"}
+    ]
+  },
+  {
+    "keywords": ["osi_approved", "open_source_initiative"],
+    "suggestions": [
+      {"id": "MIT", "note": "OSI-approved, most widely used permissive license"},
+      {"id": "Apache-2.0", "note": "OSI-approved, patent protection included"},
+      {"id": "GPL-3.0", "note": "OSI-approved, strongest copyleft"}
+    ]
+  },
+  {
+    "keywords": ["dual_licensing", "cla", "commercial_license"],
+    "suggestions": [
+      {"id": "GPL-3.0", "note": "Copyleft enables dual licensing with CLA"},
+      {"id": "AGPL-3.0", "note": "Network copyleft, strong dual licensing position"},
+      {"id": "LGPL-3.0", "note": "Weak copyleft, dual licensing for libraries"}
+    ]
+  },
+  {
+    "keywords": ["academic", "research", "university"],
+    "suggestions": [
+      {"id": "BSD-2-Clause", "note": "Widely used in academic and research settings"},
+      {"id": "MIT", "note": "Simple permissive, compatible with academic use"},
+      {"id": "Apache-2.0", "note": "Patent protection useful for research with IP"}
+    ]
+  },
+  {
+    "keywords": ["game", "gaming", "embedded"],
+    "suggestions": [
+      {"id": "MIT", "note": "Simple permissive, widely used in game engines"},
+      {"id": "Zlib", "note": "Common in game dev (libpng, SDL), modified sources must be marked"},
+      {"id": "BSD-2-Clause", "note": "Simple permissive, no patent grant"}
+    ]
+  },
+  {
+    "keywords": ["database", "dataset", "geographic"],
+    "suggestions": [
+      {"id": "ODbL", "note": "Standard open database license (OpenStreetMap)"},
+      {"id": "CC-BY-4.0", "note": "Attribution only for non-software data"},
+      {"id": "CC-BY-SA-4.0", "note": "ShareAlike for derivative datasets"}
+    ]
+  },
+  {
+    "keywords": ["government", "public_sector", "eu", "european"],
+    "suggestions": [
+      {"id": "EUPL-1.2", "note": "Designed for EU law, legally valid across all EU jurisdictions"},
+      {"id": "GPL-3.0", "note": "Strong copyleft for public works"},
+      {"id": "AGPL-3.0", "note": "Network copyleft for SaaS government services"}
+    ]
   }
 ]

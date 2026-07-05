@@ -3,7 +3,7 @@ import { Theme, YesNoSkipCombo, ActionButton, OutputScrollView } from "styles.sl
 import { ResultsPanel } from "results.slint";
 
 export component AnalysisTab inherits VerticalLayout {
-    spacing: 16px;
+    spacing: 20px;
     padding: 0px;
 
     in-out property <string> license-id-input: "";
@@ -53,7 +53,7 @@ export component AnalysisTab inherits VerticalLayout {
             LineEdit {
                 placeholder-text: "e.g., MIT, GPL-3.0, Apache-2.0, BSD-2-Clause";
                 text <=> root.license-id-input;
-                height: 36px;
+                min-height: 44px;
             }
         }
     }
@@ -71,7 +71,7 @@ export component AnalysisTab inherits VerticalLayout {
 
         VerticalLayout {
             padding: 20px;
-            spacing: 12px;
+            spacing: 16px;
 
             Text {
                 text: "Your Use Case";
@@ -85,21 +85,21 @@ export component AnalysisTab inherits VerticalLayout {
                 VerticalLayout {
                     spacing: 4px;
                     horizontal-stretch: 1;
-                    Text { text: "Will you distribute?"; font-size: 13px; color: Theme.text-muted; }
+                    Text { text: "Will you distribute?"; font-size: 14px; color: Theme.text-muted; }
                     YesNoSkipCombo { current-value <=> root.distribute-an; }
                 }
 
                 VerticalLayout {
                     spacing: 4px;
                     horizontal-stretch: 1;
-                    Text { text: "Used over network (SaaS)?"; font-size: 13px; color: Theme.text-muted; }
+                    Text { text: "Used over network (SaaS)?"; font-size: 14px; color: Theme.text-muted; }
                     YesNoSkipCombo { current-value <=> root.saas-an; }
                 }
 
                 VerticalLayout {
                     spacing: 4px;
                     horizontal-stretch: 1;
-                    Text { text: "Commercial use?"; font-size: 13px; color: Theme.text-muted; }
+                    Text { text: "Commercial use?"; font-size: 14px; color: Theme.text-muted; }
                     YesNoSkipCombo { current-value <=> root.commercial-an; }
                 }
             }
@@ -110,14 +110,14 @@ export component AnalysisTab inherits VerticalLayout {
                 VerticalLayout {
                     spacing: 4px;
                     horizontal-stretch: 1;
-                    Text { text: "Need patent protection?"; font-size: 13px; color: Theme.text-muted; }
+                    Text { text: "Need patent protection?"; font-size: 14px; color: Theme.text-muted; }
                     YesNoSkipCombo { current-value <=> root.patent-an; }
                 }
 
                 VerticalLayout {
                     spacing: 4px;
                     horizontal-stretch: 1;
-                    Text { text: "Want to relicense derivatives?"; font-size: 13px; color: Theme.text-muted; }
+                    Text { text: "Want to relicense derivatives?"; font-size: 14px; color: Theme.text-muted; }
                     YesNoSkipCombo { current-value <=> root.relicense-an; }
                 }
             }

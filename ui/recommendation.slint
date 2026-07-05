@@ -1,4 +1,5 @@
-import { Theme, YesNoSkipCombo, RecommendationCombo, LinkingCombo, ActionButton, OutputScrollView } from "styles.slint";
+import { ComboBox } from "std-widgets.slint";
+import { Theme, ActionButton } from "styles.slint";
 import { Question } from "types.slint";
 import { ResultsPanel } from "results.slint";
 
@@ -36,14 +37,12 @@ export component RecommendationTab inherits HorizontalLayout {
         // Dynamic Questions - show only the current question
         for q in visible_questions: VerticalLayout {
             spacing: 4px;
-            Text { text: q.question; font-size: 13px; color: Theme.text-muted; }
-            if q.type == "yes_no_skip": YesNoSkipCombo { 
+            Text { text: q.question; font-size: 14px; color: Theme.text-muted; }
+            ComboBox {
+                model: q.choices;
                 current-value: q.current_answer;
-                changed(v) => { root.on_answer_changed(q.fact_name, v); } 
-            }
-            if q.type == "choice": RecommendationCombo { 
-                current-value: q.current_answer;
-                changed(v) => { root.on_answer_changed(q.fact_name, v); }
+                min-height: 32px;
+                selected(v) => { root.on_answer_changed(q.fact_name, v); }
             }
         }
 
@@ -67,6 +66,7 @@ export component RecommendationTab inherits HorizontalLayout {
     }
     // RIGHT COLUMN: Results
     ResultsPanel {
+        horizontal-stretch: 1;
         output-text: root.output-text;
     }
 

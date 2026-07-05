@@ -12,8 +12,11 @@ export global Theme {
     out property <brush> background: dark-mode ? #0f172a : #f1f5f9;
     out property <brush> surface: dark-mode ? #1e293b : #ffffff;
     out property <brush> border: dark-mode ? #334155 : #e2e8f0;
+    out property <brush> focus-ring: dark-mode ? #818cf8 : #4f46e5;
+    out property <length> font-size-micro: 12px;
     out property <length> font-size-label: 14px;
-    out property <length> font-size-heading: 20px;
+    out property <length> font-size-body: 16px;
+    out property <length> font-size-heading: 22px;
     out property <length> font-size-subheading: 16px;
     out property <length> spacing-unit: 8px;
     out property <length> radius: 8px;
@@ -22,7 +25,7 @@ export global Theme {
 export component YesNoSkipCombo inherits ComboBox {
     model: ["skip", "yes", "no"];
     current-value: "skip";
-    // Callback to trigger when value changes
+    min-height: 32px;
     callback changed(string);
     selected(v) => { root.changed(v); }
 }
@@ -30,6 +33,7 @@ export component YesNoSkipCombo inherits ComboBox {
 export component RecommendationCombo inherits ComboBox {
     model: ["skip", "Software", "Library", "Content"];
     current-value: "skip";
+    min-height: 32px;
     callback changed(string);
     selected(v) => { root.changed(v); }
 }
@@ -37,13 +41,14 @@ export component RecommendationCombo inherits ComboBox {
 export component LinkingCombo inherits ComboBox {
     model: ["skip", "Dynamic", "Static"];
     current-value: "skip";
+    min-height: 32px;
     callback changed(string);
     selected(v) => { root.changed(v); }
 }
 
 export component ActionButton inherits Button {
     primary: true;
-    // Removed fixed height/width to allow standard sizing
+    min-height: 44px;
 }
 
 export component OutputScrollView inherits ScrollView {

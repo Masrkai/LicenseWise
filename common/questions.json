@@ -5,35 +5,60 @@
       "question": "Will you distribute your software to others?",
       "type": "yes_no_skip",
       "group": "distribution",
-      "info": "Distribution means giving copies to other people/organizations"
+      "info": "Distribution means giving copies to other people/organizations",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "saas",
       "question": "Will the software be used over a network (SaaS/web app)?",
       "type": "yes_no_skip",
       "group": "distribution",
-      "info": "Network use = users access it via web/API without downloading"
+      "info": "Network use = users access it via web/API without downloading",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "commercial_use",
       "question": "Is commercial use intended?",
       "type": "yes_no_skip",
       "group": "usage",
-      "info": "Will this be used to make money or in a commercial product?"
+      "info": "Will this be used to make money or in a commercial product?",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "need_patent_protection",
       "question": "Do you need patent protection?",
       "type": "yes_no_skip",
       "group": "usage",
-      "info": "Patent grants protect you from patent claims"
+      "info": "Patent grants protect you from patent claims",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "want_copyleft",
       "question": "Do you want derivatives to remain open source (copyleft)?",
       "type": "yes_no_skip",
       "group": "copyleft",
-      "info": "Copyleft ensures modifications stay open source"
+      "info": "Copyleft ensures modifications stay open source",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "want_weak_copyleft",
@@ -41,7 +66,15 @@
       "type": "yes_no_skip",
       "group": "copyleft",
       "info": "Library can be used in proprietary software",
-      "requires": {"fact": "want_copyleft", "value": true}
+      "requires": {
+        "fact": "want_copyleft",
+        "value": true
+      },
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "want_file_copyleft",
@@ -49,67 +82,130 @@
       "type": "yes_no_skip",
       "group": "copyleft",
       "info": "Only modified files must remain open",
-      "requires": {"fact": "want_copyleft", "value": true, "unless": {"fact": "want_weak_copyleft", "value": true}}
+      "requires": {
+        "fact": "want_copyleft",
+        "value": true,
+        "unless": {
+          "fact": "want_weak_copyleft",
+          "value": true
+        }
+      },
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "wants_relicense",
       "question": "Do you want freedom to relicense derivatives?",
       "type": "yes_no_skip",
       "group": "copyleft",
-      "info": "Can derivatives use different licenses?"
+      "info": "Can derivatives use different licenses?",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "project_type",
       "question": "What type of project is this?",
       "type": "choice",
-      "choices": ["Software", "Library", "Content"],
+      "choices": [
+        "Software",
+        "Library",
+        "Content"
+      ],
       "group": "project"
     },
     {
       "fact_name": "linking_type",
       "question": "How will the library be linked?",
       "type": "choice",
-      "choices": ["Dynamic", "Static"],
+      "choices": [
+        "Dynamic",
+        "Static"
+      ],
       "group": "project",
-      "requires": {"fact": "project_type", "value": "library"}
+      "requires": {
+        "fact": "project_type",
+        "value": "library"
+      }
     },
     {
       "fact_name": "modify_library",
       "question": "Will you modify the library?",
       "type": "yes_no_skip",
       "group": "project",
-      "requires": {"fact": "project_type", "value": "library"}
+      "requires": {
+        "fact": "project_type",
+        "value": "library"
+      },
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "want_public_domain",
       "question": "Do you want to dedicate this to the public domain?",
       "type": "yes_no_skip",
-      "group": "preference"
+      "group": "preference",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "want_simple_permissive",
       "question": "Do you prefer a simple permissive license (minimal requirements)?",
       "type": "yes_no_skip",
       "group": "preference",
-      "requires": {"fact": "want_public_domain", "value": false}
+      "requires": {
+        "fact": "want_public_domain",
+        "value": false
+      },
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "academic_project",
       "question": "Is this an academic or research project?",
       "type": "yes_no_skip",
-      "group": "project"
+      "group": "project",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "mixed_open_proprietary",
       "question": "Will this be a mixed open/proprietary codebase?",
       "type": "yes_no_skip",
-      "group": "project"
+      "group": "project",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     },
     {
       "fact_name": "concerned_about_legal_recognition",
       "question": "Are you concerned about legal recognition in all jurisdictions?",
       "type": "yes_no_skip",
-      "group": "preference"
+      "group": "preference",
+      "choices": [
+        "skip",
+        "yes",
+        "no"
+      ]
     }
   ],
   "analysis": [

@@ -48,55 +48,18 @@ class PrologEngine:
         self.fact_manager.load_facts(facts)
 
         # Load license metadata so metadata-based rules can fire
-        # Use only the canonical id to avoid duplicate facts for spdx variants
         for lic in licenses_data:
             lid = lic.get("id")
             if lid:
                 self.fact_manager.assert_license_metadata(lid, lic)
 
-        recommended = {str(sol["L"]) for sol in self.prolog.query("recommend(L)")}
+        # Prolog handles elimination-wins and warning filtering
+        recommended = {str(sol["L"]) for sol in self.prolog.query("collect_active_recommendations(L)")}
         eliminated = {str(sol["L"]) for sol in self.prolog.query("eliminate(L)")}
         warnings = [
             f"{str(sol['L'])}: {str(sol['Msg'])}"
-            for sol in self.prolog.query("warning(L, Msg)")
-            if str(sol["L"]) not in eliminated
+            for sol in self.prolog.query("collect_active_warnings(L, Msg)")
         ]
-
-        # Elimination wins
-        recommended -= eliminated
-
-        # Check if user preferences are unsatisfiable
-        # Load metadata to check license properties
-        license_meta: dict[str, dict[str, Any]] = {}
-        for lic in licenses_data:
-            lid = lic.get("id")
-            if lid:
-                license_meta[lid] = lic
-
-        # Copyleft preference check
-        if facts.get("want_copyleft") is True:
-            copyleft_licenses = {
-                lid for lid, meta in license_meta.items()
-                if meta.get("conditions", {}).get("same_license")
-                or meta.get("conditions", {}).get("net_copyleft")
-            }
-            if not (copyleft_licenses & recommended):
-                warnings.append(
-                    "CONFLICT: No copyleft license satisfies all your constraints. "
-                    "Consider relaxing 'avoid documenting changes' or 'prefer OSI-approved'."
-                )
-
-        # File copyleft preference check
-        if facts.get("want_file_copyleft") is True:
-            file_copyleft_licenses = {
-                lid for lid, meta in license_meta.items()
-                if meta.get("conditions", {}).get("copyleft_scope") == "file"
-            }
-            if not (file_copyleft_licenses & recommended):
-                warnings.append(
-                    "CONFLICT: No file-level copyleft license satisfies all your constraints. "
-                    "MPL-2.0 requires documenting changes. Consider relaxing that constraint."
-                )
 
         return {
             "recommended": recommended,
@@ -134,7 +97,7 @@ class PrologEngine:
 
         trace = self.trace_builder.build_trace()
 
-        # Determine status
+        # Determine status and extract relevant trace via Prolog
         is_eliminated = any(
             prolog_status.get(pid) == "incompatible" for pid in possible_ids
         )
@@ -144,28 +107,13 @@ class PrologEngine:
 
         if is_eliminated:
             compatible = False
-            violation_steps = [
-                s for s in trace
-                if s["action"] == "ELIMINATE"
-                and any(pid in s.get("licenses_affected", []) for pid in possible_ids)
-            ]
-            violations = [s["explanation"] for s in violation_steps]
-            how = "\n".join(f"Step {s['step']}: {s['explanation']}" for s in violation_steps)
+            violations, how = self._collect_trace_for_action(possible_ids, "ELIMINATE")
             explanation = "\n".join(violations) if violations else f"{license_id} was eliminated by the rules."
 
         elif is_recommended:
             compatible = True
-            rec_steps = [
-                s for s in trace
-                if s["action"] == "RECOMMEND"
-                and any(pid in s.get("licenses_affected", []) for pid in possible_ids)
-            ]
+            _, how = self._collect_trace_for_action(possible_ids, "RECOMMEND")
             explanation = f"{license_id} is recommended based on your answers."
-            how = (
-                "\n".join(f"Step {s['step']}: {s['explanation']}" for s in rec_steps)
-                if rec_steps
-                else "Forward rules did not explicitly recommend this licence."
-            )
             violations = []
 
         else:
@@ -184,11 +132,7 @@ class PrologEngine:
             how = "No rules matched for this license."
             violations = []
 
-        relevant_warnings = [
-            s["explanation"] for s in trace
-            if s["action"] == "WARN"
-            and any(pid in s.get("licenses_affected", []) for pid in possible_ids)
-        ]
+        relevant_warnings = self._collect_warnings_for_licenses(possible_ids)
 
         return {
             "compatible": compatible,
@@ -199,3 +143,27 @@ class PrologEngine:
             "warnings": relevant_warnings,
             "trace": trace,
         }
+
+    def _collect_trace_for_action(
+        self, possible_ids: list[str], action: str
+    ) -> tuple[list[str], str]:
+        """Extract trace explanations for a given action and license IDs via Prolog."""
+        explanations: list[str] = []
+        how_lines: list[str] = []
+        for pid in possible_ids:
+            for sol in self.prolog.query(
+                f"step(_, _, '{action}', _, Affected, Explanation), member('{pid}', Affected)"
+            ):
+                explanations.append(str(sol["Explanation"]))
+                how_lines.append(str(sol["Explanation"]))
+        return explanations, "\n".join(how_lines)
+
+    def _collect_warnings_for_licenses(self, possible_ids: list[str]) -> list[str]:
+        """Extract warning explanations for specific licenses via Prolog."""
+        warnings: list[str] = []
+        for pid in possible_ids:
+            for sol in self.prolog.query(
+                f"step(_, _, 'WARN', _, Affected, Explanation), member('{pid}', Affected)"
+            ):
+                warnings.append(str(sol["Explanation"]))
+        return warnings

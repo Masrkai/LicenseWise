@@ -470,6 +470,45 @@ compatible(License, Result) :-
     ; Result = unknown
     ).
 
+% Active recommendations: elimination-wins semantics
+collect_active_recommendations(Licenses) :-
+    findall(L, (recommend(L), \+ eliminate(L)), Raw),
+    list_to_set(Raw, Licenses).
+
+% Active warnings: skip warnings for eliminated licenses
+collect_active_warnings(L, Msg) :-
+    warning(L, Msg),
+    \+ eliminate(L).
+
+% Copyleft conflict detection: user wants copyleft but no copyleft license survives
+warning('CONFLICT', Msg) :-
+    fact(want_copyleft),
+    \+ (license_condition(L, same_license), recommend(L), \+ eliminate(L)),
+    \+ (license_condition(L, net_copyleft), recommend(L), \+ eliminate(L)),
+    Msg = 'CONFLICT: No copyleft license satisfies all your constraints. Consider relaxing constraints.'.
+
+% File copyleft conflict detection
+warning('CONFLICT', Msg) :-
+    fact(want_file_copyleft),
+    \+ (license_condition(L, copyleft_scope), license_id(L), recommend(L), \+ eliminate(L)),
+    Msg = 'CONFLICT: No file-level copyleft license satisfies all your constraints. MPL-2.0 requires documenting changes.'.
+
+% Trace extraction: relevant steps for a specific license
+relevant_elimination_trace(License, Steps) :-
+    findall(explanation(Explanation),
+        (step(_, _, 'ELIMINATE', _, Affected, Explanation), member(License, Affected)),
+        Steps).
+
+relevant_recommendation_trace(License, Steps) :-
+    findall(explanation(Explanation),
+        (step(_, _, 'RECOMMEND', _, Affected, Explanation), member(License, Affected)),
+        Steps).
+
+relevant_warning_trace(License, Steps) :-
+    findall(explanation(Explanation),
+        (step(_, _, 'WARN', _, Affected, Explanation), member(License, Affected)),
+        Steps).
+
 % ============================================================
 % Question explanations (why each fact is asked)
 % ============================================================

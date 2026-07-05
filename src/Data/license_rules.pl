@@ -471,9 +471,9 @@ compatible(License, Result) :-
     ).
 
 % Active recommendations: elimination-wins semantics
-collect_active_recommendations(Licenses) :-
-    findall(L, (recommend(L), \+ eliminate(L)), Raw),
-    list_to_set(Raw, Licenses).
+collect_active_recommendations(L) :-
+    recommend(L),
+    \+ eliminate(L).
 
 % Active warnings: skip warnings for eliminated licenses
 collect_active_warnings(L, Msg) :-

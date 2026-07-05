@@ -20,6 +20,8 @@ export component RecommendationTab inherits HorizontalLayout {
     VerticalLayout {
         spacing: 16px;
         horizontal-stretch: 1;
+        vertical-stretch: 1;
+        alignment: start;
 
         Text {
             text: "Project Requirements";
@@ -37,7 +39,7 @@ export component RecommendationTab inherits HorizontalLayout {
         // Dynamic Questions - show only the current question
         for q in visible_questions: VerticalLayout {
             spacing: 4px;
-            Text { text: q.question; font-size: 14px; color: Theme.text-muted; }
+            Text { text: q.question; font-size: 14px; wrap: word-wrap; color: Theme.text-muted; }
             ComboBox {
                 model: q.choices;
                 current-value: q.current_answer;
@@ -67,6 +69,7 @@ export component RecommendationTab inherits HorizontalLayout {
     // RIGHT COLUMN: Results
     ResultsPanel {
         horizontal-stretch: 1;
+        vertical-stretch: 1;
         output-text: root.output-text;
     }
 

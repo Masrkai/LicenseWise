@@ -30,11 +30,14 @@ export component ResultsPanel {
             OutputScrollView {
                 vertical-stretch: 1;
 
-                Text {
-                    text: root.output-text;
-                    font-size: Theme.font-size-label;
-                    color: Theme.text-color;
-                    wrap: word-wrap;
+                VerticalLayout {
+                    width: root.width - 32px; // account for panel padding if needed
+        Text {
+                        text: root.output-text;
+                        font-size: Theme.font-size-label;
+                        color: Theme.text-color;
+                        wrap: word-wrap;
+                    }
                 }
             }
         }

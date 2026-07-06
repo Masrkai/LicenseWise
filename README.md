@@ -1,7 +1,7 @@
 # LicenseWise – KBS License Advisor
 
 <p align="center">
-  <img src="./assets/licensewise_icon.svg" alt="licensewise icon" width="500">
+  <img src="./assets/licensewise_icon.svg" alt="licensewise icon" width="400">
 </p>
 
 **LicenseWise** is a knowledge‑based system (KBS) that helps developers and organizations choose the right open‑source license for their projects. It uses forward chaining to recommend licenses based on your project goals, and backward chaining to check if a specific license is compatible with your intended use.
